@@ -1,6 +1,6 @@
 CC      = gcc
 RM      = rm -f
-CFLAGS  = -Wall -pedantic
+CFLAGS  = -Wall -pedantic -std=c99
 
 OBJS    = $(patsubst %.c,%.o,$(wildcard *.c))
 TEST    = test
