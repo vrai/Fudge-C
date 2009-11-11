@@ -1,8 +1,42 @@
-#include "reference.h"
-#include "message.h"
+#include "fudge/reference.h"
+#include "fudge/message.h"
 #include <stdio.h>
+#include <math.h>
 
-int main ( int argc, char * argv [ ] )
+void testFloat ( float input )
+{
+    float output, original;
+
+    output = htonf ( input );
+    printf ( "Convert float %f to network: %f\n", input, output );
+    original = ntohf ( output );
+    printf ( "Convert float %f to host: %f\n", output, original );
+    printf ( "Difference after feedback: %f\n\n", input - original );
+}
+
+void testDouble ( double input )
+{
+    double output, original;
+
+    output = htond ( input );
+    printf ( "Convert double %e to network: %e\n", input, output );
+    original = ntohd ( output );
+    printf ( "Convert double %e to host: %e\n", output, original );
+    printf ( "Difference after feedback: %e\n\n", input - original );
+}
+
+void testI64 ( int64_t input )
+{
+    int64_t output, original;
+
+    output = htoni64 ( input );
+    printf ( "Convert i64 %lld to network: %lld\n", input, output );
+    original = ntohi64 ( output );
+    printf ( "Convert float %lld to host: %lld\n", output, original );
+    printf ( "Difference after feedback: %lld\n\n", input - original );
+}
+
+void testMessages ( )
 {
     int index;
     FudgeRefCount refcount;
@@ -37,6 +71,31 @@ int main ( int argc, char * argv [ ] )
     
     printf ( "Fields in message: %lu\n", FudgeMsg_numFields ( message ) );
     printf ( "Releasing message: %s\n", FudgeStatus_strerror ( FudgeMsg_release ( message ) ) );
+}
+
+int main ( int argc, char * argv [ ] )
+{
+    testFloat ( 0.0f );
+#ifdef NAN
+    testFloat ( NAN );
+#else
+    testFloat ( ( float ) 0x7fc00000 );
+#endif
+    testFloat ( 1.23456f );
+    testFloat ( 2E31f );
+
+    testDouble ( 0.0 );
+    testDouble ( ( double ) 0x7ff8000000000000ll );
+    testDouble ( 1E-63 );
+    testDouble ( 2.1E61 );
+
+    testI64 ( 0ll );
+    testI64 ( ( int64_t ) 2E31 );
+    testI64 ( ( int64_t ) -2E31 );
+    testI64 ( 123ll );
+    testI64 ( 456ll );
+
+    testMessages ( );
 
     return 0;
 }

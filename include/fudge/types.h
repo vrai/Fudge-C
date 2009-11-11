@@ -1,7 +1,7 @@
 #ifndef INC_FUDGE_TYPES_H
 #define INC_FUDGE_TYPES_H
 
-#include <stdint.h>
+#include "fudge/platform.h"
 
 /*****************************************************************************
  * Primitive type definitions

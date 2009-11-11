@@ -1,7 +1,7 @@
 #ifndef INC_FUDGE_REFERENCE_H
 #define INC_FUDGE_REFERENCE_H
 
-#include "status.h"
+#include "fudge/status.h"
 
 #ifdef __cplusplus
     extern "C" {

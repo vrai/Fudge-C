@@ -1,0 +1,9 @@
+#!/bin/sh
+rm -f config.cache
+echo "- aclocal."
+aclocal -I m4
+echo "- autoconf."
+autoconf
+echo "- automake."
+automake -a
+exit

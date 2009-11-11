@@ -1,8 +1,8 @@
 #ifndef INC_FUDGE_MESSAGE_H
 #define INC_FUDGE_MESSAGE_H
 
-#include "status.h"
-#include "types.h"
+#include "fudge/status.h"
+#include "fudge/types.h"
 
 #ifdef __cplusplus
     extern "C" {

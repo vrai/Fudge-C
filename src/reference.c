@@ -1,6 +1,6 @@
-#include "reference.h"
+#include "fudge/reference.h"
+#include "fudge/platform.h"
 #include <assert.h>
-#include <stdlib.h>
 
 struct FudgeRefCountImpl
 {

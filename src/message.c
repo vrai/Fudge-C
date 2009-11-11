@@ -1,8 +1,7 @@
-#include "message.h"
-#include "reference.h"
-#include "platform.h"
+#include "fudge/message.h"
+#include "fudge/reference.h"
+#include "fudge/platform.h"
 #include <assert.h>
-#include <stdlib.h>
 
 typedef struct FieldListNode
 {

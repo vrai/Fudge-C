@@ -2,3 +2,14 @@
 *.swp
 test_data
 test
+*.deps
+Makefile
+Makefile.in
+_configs.sed
+aclocal.m4
+autom4te.cache
+configure
+config/missing
+config/install-sh
+config/depcomp
+include/config.h.in

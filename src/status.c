@@ -1,4 +1,4 @@
-#include "status.h"
+#include "fudge/status.h"
 
 const char * FudgeStatus_strerror ( FudgeStatus status )
 {
