@@ -8,8 +8,10 @@ Makefile.in
 _configs.sed
 aclocal.m4
 autom4te.cache
+config.log
+config.status
 configure
-config/missing
-config/install-sh
-config/depcomp
+include/config.h
 include/config.h.in
+include/stamp-h1
+include/fudge/config.h
