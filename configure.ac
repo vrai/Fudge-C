@@ -3,6 +3,7 @@ AC_PREREQ([2.60])
 
 AC_INIT([Fudge-C], [0.1], [vrai.stacey@gmail.com])
 AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER(include/config.h)
 AC_CONFIG_FILES([Makefile \
                  src/Makefile \
@@ -17,7 +18,7 @@ AC_CONFIG_SRCDIR(./src/message.c)
 ### Make sure that the necessary programs are available
 AC_PROG_CC
 AC_PROG_INSTALL
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
 
 ### Make sure the inline keyword is present
 AC_C_INLINE

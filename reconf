@@ -1,5 +1,12 @@
 #!/bin/sh
 rm -f config.cache
+if [ "`which glibtoolize`" == "" ]; then
+    echo "- libtoolize."
+    libtoolize
+else
+    echo "- glibtoolize."
+    glibtoolize
+fi
 echo "- aclocal."
 aclocal -I m4
 echo "- autoheader."

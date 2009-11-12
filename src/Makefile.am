@@ -1,8 +1,8 @@
-bin_PROGRAMS = test
+lib_LTLIBRARIES = libfudgec.la
 
 INCLUDES = -I$(top_srcdir)/include
 
 noinst_HEADERS = reference.h
 
-test_SOURCES = message.c platform.c reference.c status.c test.c
+libfudgec_la_SOURCES = message.c platform.c reference.c status.c
 
