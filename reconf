@@ -1,6 +1,7 @@
 #!/bin/sh
 rm -f config.cache
-if [ "`which glibtoolize`" == "" ]; then
+if [ "`which glibtoolize`" = "" ]
+then
     echo "- libtoolize."
     libtoolize
 else

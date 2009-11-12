@@ -40,6 +40,8 @@ AC_CHECK_FUNC(strdup, AC_DEFINE(HAS_STRDUP, 1, [Define to 1 if strdup is availab
 ### Crank the warnings up to maximum
 AX_CFLAGS_WARN_ALL
 
+AX_CHECK_COMPILER_FLAGS(-fno-strict-aliasing,CFLAGS+=" -fno-strict-aliasing")
+
 ### The config.h file will be includes in the final package - make sure its
 ### definitions don't clash with anything else
 AX_PREFIX_CONFIG_H([include/fudge/config.h], FUDGE, [include/config.h])
