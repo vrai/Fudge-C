@@ -30,22 +30,17 @@ AC_TYPE_INT64_T
 AC_TYPE_SIZE_T
 
 ### Make sure the floating point types are the right size
-AC_CHECK_SIZEOF(float)
-AC_CHECK_SIZEOF(double)
-
-### TODO - Replace these with two macro calls?
-if test $ac_cv_sizeof_float -ne 4; then
-    AC_MSG_ERROR(Float is not 4 bytes wide! Reports width of $ac_cv_sizeof_float)
-fi
-if test $ac_cv_sizeof_double -ne 8; then
-    AC_MSG_ERROR(Double is not 8 bytes wide! Reports width of $ac_cv_sizeof_double)
-fi
+FM_TEST_SIZEOF(float,4)
+FM_TEST_SIZEOF(double,8)
 
 ### Check for the presence of strdup (missing in C99 compatible compilers)
 AC_CHECK_FUNC(strdup, AC_DEFINE(HAS_STRDUP, 1, [Define to 1 if strdup is available.]))
 
-### The config.h file will be includes in the final package - make sure it
-### doesn't clash with anything else
+### Crank the warnings up to maximum
+AX_CFLAGS_WARN_ALL
+
+### The config.h file will be includes in the final package - make sure its
+### definitions don't clash with anything else
 AX_PREFIX_CONFIG_H([include/fudge/config.h], FUDGE, [include/config.h])
 
 AC_OUTPUT

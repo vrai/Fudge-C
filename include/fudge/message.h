@@ -14,6 +14,10 @@ FudgeStatus FudgeMsg_release ( FudgeMsg message );
 
 unsigned long FudgeMsg_numFields ( FudgeMsg message );
 
+FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name );
+
+FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, fudge_bool value );
+
 FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg value );
 
 #ifdef __cplusplus

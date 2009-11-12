@@ -1,21 +1,26 @@
 All *.m4 macros are under the copyright of their respective authors.
-This is usually AllPermissive (read MIT-style) or GPLwithACException
-which is a GPL-style with exception of the results of m4 macroprocesor.
+These are AllPermissive (read MIT-style) or GPLwithACException which
+is a GPL-style with exception of the results of m4 macroprocesor.
 
-Special notice goes to the subdirectory ac-archive/ which contains the
-m4 macros assembled by Peter Simons at http://autoconf-archive.cryp.to
-His README AUTHORS COPYING is redistributed in that named subdirectory.
+=== MIT License ===
 
-The source tarball contains additionally the complete buildchain to 
-rebuild the website at http://ac-archive.sf.net, at the time of writing 
-these are mostly python files under GPL or CC-BY-NC-SA free licenses.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Each source file should have its own author and copyright notice - if
-the macro source code does not contain an explicit copyright notice then 
-you should assume that the macro has been created with the license of the
-autoconf project in the mind of the author. The original autoconf license 
-is the GNU GPL with an exeception for the output of the macroprocessor used 
-by the autoconf tools. 
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 == Autoconf Macro General Public License ==
 
@@ -62,3 +67,4 @@ with. (In other words, unless your change moves or copies text from
 the non-data portions to the data portions.) If your modification has
 such potential, you must delete any notice of this special exception
 to the GPL from your modified version.
+

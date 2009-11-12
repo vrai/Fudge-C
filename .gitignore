@@ -12,6 +12,6 @@ config.log
 config.status
 configure
 include/config.h
-include/config.h.in
+include/config.h.in*
 include/stamp-h1
 include/fudge/config.h

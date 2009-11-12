@@ -1,4 +1,4 @@
-#include "fudge/reference.h"
+#include "reference.h"
 #include "fudge/message.h"
 #include <stdio.h>
 #include <math.h>
@@ -68,8 +68,12 @@ void testMessages ( )
     printf ( "Creating submessage: %s\n", FudgeStatus_strerror ( FudgeMsg_create ( &submessage ) ) );
     printf ( "Adding submessage to message: %s\n", FudgeStatus_strerror ( FudgeMsg_addFieldMsg ( message, "SubMessage", submessage ) ) );
     printf ( "Releasing submessage: %s\n", FudgeStatus_strerror ( FudgeMsg_release ( submessage ) ) );
-    
     printf ( "Fields in message: %lu\n", FudgeMsg_numFields ( message ) );
+
+    printf ( "Adding indicator message: %s\n", FudgeStatus_strerror ( FudgeMsg_addFieldIndicator ( message, 0 ) ) );
+    printf ( "Adding bool to message: %s\n", FudgeStatus_strerror ( FudgeMsg_addFieldBool ( message, 0, FUDGE_TRUE ) ) );
+    printf ( "Fields in message: %lu\n", FudgeMsg_numFields ( message ) );
+
     printf ( "Releasing message: %s\n", FudgeStatus_strerror ( FudgeMsg_release ( message ) ) );
 }
 

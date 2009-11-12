@@ -36,6 +36,7 @@ typedef struct FudgeMsgImpl * FudgeMsg;
 typedef union
 {
     /* Primitive types */
+    fudge_bool boolean;
     fudge_byte byte;
     fudge_i16 i16;
     fudge_i32 i32;

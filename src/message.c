@@ -1,5 +1,5 @@
 #include "fudge/message.h"
-#include "fudge/reference.h"
+#include "reference.h"
 #include "fudge/platform.h"
 #include <assert.h>
 
@@ -67,8 +67,7 @@ FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
     node->next = 0;
     node->field.type = type;
     node->field.numbytes = numbytes;
-    node->field.data.message = 0;
-    node->field.data.bytes = 0;
+    memset ( &( node->field.data ), 0, sizeof ( FudgeFieldData ) );
     if ( name )
     {
         if ( ! ( node->field.name = strdup ( name ) ) )
@@ -159,6 +158,28 @@ unsigned long FudgeMsg_numFields ( FudgeMsg message )
     return message ? message->numfields : 0lu;
 }
 
+FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name )
+{
+    FudgeField * field;
+
+    if ( ! message )
+        return FUDGE_NULL_POINTER;
+    return FudgeMsg_appendField ( &field, message, FUDGE_TYPE_INDICATOR, 0, name );
+}
+
+FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, fudge_bool value )
+{
+    FudgeStatus status;
+    FudgeField * field;
+
+    if ( ! message )
+        return FUDGE_NULL_POINTER;
+    if ( ( status = FudgeMsg_appendField ( &field, message, FUDGE_TYPE_BOOLEAN, 0, name ) ) != FUDGE_OK )
+        return status;
+    field->data.boolean = value;
+    return FUDGE_OK;
+}
+
 FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg value )
 {
     FudgeStatus status;
@@ -173,9 +194,7 @@ FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg
         FudgeMsg_release ( value );
         return status;
     }
-
     field->data.message = value;
-
     return FUDGE_OK;
 }
 
