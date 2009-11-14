@@ -21,6 +21,7 @@ INCLUDES = -I$(top_srcdir)/include \
            -I$(top_srcdir)/src
 
 FRAMEWORK_SOURCE = simpletest.c
+EXTRA_DIST = simpletest.h
 
 test_utilities_SOURCES = test_utilities.c $(FRAMEWORK_SOURCE)
 test_utilities_LDADD = $(top_builddir)/src/libfudgec.la

@@ -3,8 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = reconf configure
 SUBDIRS = src include tests
 
-DIST_SUBDIRS = include
+DIST_SUBDIRS = src include tests
 
-test:
-	@(cd tests; $(MAKE) test)
-
+distclean-local:
+	$(RM) -f _configs.sed
