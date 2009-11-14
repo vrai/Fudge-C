@@ -50,6 +50,16 @@ extern FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const char * n
 
 extern FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const char * string, fudge_i32 numbytes );
 
+extern FudgeStatus FudgeMsg_addField4ByteArray   ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField8ByteArray   ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField16ByteArray  ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField20ByteArray  ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField32ByteArray  ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField64ByteArray  ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+extern FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes );
+
 #ifdef __cplusplus
     }
 #endif

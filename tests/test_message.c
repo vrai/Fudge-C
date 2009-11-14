@@ -23,9 +23,16 @@ DEFINE_TEST( FieldFunctions )
     static const fudge_i32 rawInts [ 4 ] = { 2147483647, 0, -2147483647, 0 };
     static const fudge_i64 rawLongs [ 12 ] = { ( fudge_i64 ) -9223372036854775807ll, 0, ( fudge_i64 ) 9223372036854775807ll, -1, 2, -3, 5, -8, 13, -21, 34, -55 };
     static const fudge_f32 rawFloats [ 8 ] = { 0.0f, 2147483647.0f, 214748364.7f, 21474836.47f, 2147483.647, 2.147483647f, 21.47483647f, 214.7483647f };
-    static const fudge_f64 rawDoubles [ 5 ] = { 9223372036854775807.0, 0.0, 0.0000000123456, 0.0, 1234560000000.0, -9223372036854775807.0 };
+    static const fudge_f64 rawDoubles [ 5 ] = { 9223372036854775807.0, 0.0, 0.0000000123456, 1234560000000.0, -9223372036854775807.0 };
 
+    fudge_byte largeByteArray [ 512 ];   /* Will need a large byte array for the fix array testing */
+    
     FudgeMsg message, submessage;
+    int index;
+
+    /* Populate the large byte array before use it in the tests */
+    for ( index = 0; index < sizeof ( largeByteArray ); ++index )
+        printf ( "%d\n", largeByteArray [ index ] = index % 256 - 128 );
 
     /* Construct an empty message */
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
@@ -50,13 +57,28 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 8 );
 
     /* TODO Add fixed width byte arrays in a sub message */
+    TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField4ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField8ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField20ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField32ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField64ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 9 );
+
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Byte Array SubMessage", submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     /* Add null, empty and populated strings */
     TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Null string", 0, 0 ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Empty string", "", 0 ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "String", "This is a string", 16 ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 11 );
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 12 );
 
     /* Add empty and populated arrays in a sub message */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
@@ -79,7 +101,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Empty SubMessage", submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 13 );
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 14 );
 
     /* Clean up */
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );

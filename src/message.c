@@ -257,15 +257,31 @@ FudgeStatus FudgeMsg_addFieldArray ( FudgeMsg message,
         return FudgeMsg_addFieldArray ( message, typeid, name, elements, numelements * sizeof ( type ) );                                \
     }
 
-FUDGE_ADDARRAYFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE_ARRAY );
-FUDGE_ADDARRAYFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT_ARRAY );
-FUDGE_ADDARRAYFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT_ARRAY );
-FUDGE_ADDARRAYFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG_ARRAY );
-FUDGE_ADDARRAYFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT_ARRAY );
-FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY );
+FUDGE_ADDARRAYFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE_ARRAY )
+FUDGE_ADDARRAYFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT_ARRAY )
+FUDGE_ADDARRAYFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT_ARRAY )
+FUDGE_ADDARRAYFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG_ARRAY )
+FUDGE_ADDARRAYFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT_ARRAY )
+FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY )
 
 FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const char * string, fudge_i32 numbytes )
 {
     return FudgeMsg_addFieldArray ( message, FUDGE_TYPE_STRING, name, string, numbytes );
 }
+
+#define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                                               \
+    FudgeStatus FudgeMsg_addField##size##ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes )    \
+    {                                                                                                                   \
+        return FudgeMsg_addFieldArray ( message, typeid, name, bytes, size );                                           \
+    }
+
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 4, FUDGE_TYPE_BYTE_ARRAY_4 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 8, FUDGE_TYPE_BYTE_ARRAY_8 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 16, FUDGE_TYPE_BYTE_ARRAY_16 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 20, FUDGE_TYPE_BYTE_ARRAY_20 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 32, FUDGE_TYPE_BYTE_ARRAY_32 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 64, FUDGE_TYPE_BYTE_ARRAY_64 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 128, FUDGE_TYPE_BYTE_ARRAY_128 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 256, FUDGE_TYPE_BYTE_ARRAY_256 )
+FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 512, FUDGE_TYPE_BYTE_ARRAY_512 )
 
