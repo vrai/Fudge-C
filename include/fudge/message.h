@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef INC_FUDGE_MESSAGE_H
 #define INC_FUDGE_MESSAGE_H
 
@@ -8,17 +23,32 @@
     extern "C" {
 #endif
 
-FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr );
-FudgeStatus FudgeMsg_retain ( FudgeMsg message );
-FudgeStatus FudgeMsg_release ( FudgeMsg message );
+extern FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr );
+extern FudgeStatus FudgeMsg_retain ( FudgeMsg message );
+extern FudgeStatus FudgeMsg_release ( FudgeMsg message );
 
-unsigned long FudgeMsg_numFields ( FudgeMsg message );
+extern unsigned long FudgeMsg_numFields ( FudgeMsg message );
 
-FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name );
+extern FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name );
 
-FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, fudge_bool value );
+extern FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, fudge_bool value );
+extern FudgeStatus FudgeMsg_addFieldByte ( FudgeMsg message, const char * name, fudge_byte value );
+extern FudgeStatus FudgeMsg_addFieldI16  ( FudgeMsg message, const char * name, fudge_i16 value );
+extern FudgeStatus FudgeMsg_addFieldI32  ( FudgeMsg message, const char * name, fudge_i32 value );
+extern FudgeStatus FudgeMsg_addFieldI64  ( FudgeMsg message, const char * name, fudge_i64 value );
+extern FudgeStatus FudgeMsg_addFieldF32  ( FudgeMsg message, const char * name, fudge_f32 value );
+extern FudgeStatus FudgeMsg_addFieldF64  ( FudgeMsg message, const char * name, fudge_f64 value );
 
-FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg value );
+extern FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg value );
+
+extern FudgeStatus FudgeMsg_addFieldByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes,  fudge_i32 numbytes );
+extern FudgeStatus FudgeMsg_addFieldI16Array  ( FudgeMsg message, const char * name, const fudge_i16 * ints,    fudge_i32 numints );
+extern FudgeStatus FudgeMsg_addFieldI32Array  ( FudgeMsg message, const char * name, const fudge_i32 * ints,    fudge_i32 numints );
+extern FudgeStatus FudgeMsg_addFieldI64Array  ( FudgeMsg message, const char * name, const fudge_i64 * ints,    fudge_i32 numints );
+extern FudgeStatus FudgeMsg_addFieldF32Array  ( FudgeMsg message, const char * name, const fudge_f32 * floats,  fudge_i32 numfloats );
+extern FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const char * name, const fudge_f64 * doubles, fudge_i32 numdoubles );
+
+extern FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const char * string, fudge_i32 numbytes );
 
 #ifdef __cplusplus
     }

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *     
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include "fudge/message.h"
 #include "reference.h"
 #include "fudge/platform.h"
@@ -53,7 +68,7 @@ struct FudgeMsgImpl
 
 FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
                                    FudgeMsg message,
-                                   int type,
+                                   fudge_type_id type,
                                    fudge_i32 numbytes,
                                    const char * name )
 {
@@ -167,18 +182,27 @@ FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name )
     return FudgeMsg_appendField ( &field, message, FUDGE_TYPE_INDICATOR, 0, name );
 }
 
-FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, fudge_bool value )
-{
-    FudgeStatus status;
-    FudgeField * field;
+#define FUDGE_ADDPRIMITIVEFIELD_IMPL( typename, type, typeid, bucket )                              \
+    FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const char * name, type value )     \
+    {                                                                                               \
+        FudgeStatus status;                                                                         \
+        FudgeField * field;                                                                         \
+                                                                                                    \
+        if ( ! message )                                                                            \
+            return FUDGE_NULL_POINTER;                                                              \
+        if ( ( status = FudgeMsg_appendField ( &field, message, typeid, 0, name ) ) != FUDGE_OK )   \
+            return status;                                                                          \
+        field->data . bucket = value;                                                               \
+        return FUDGE_OK;                                                                            \
+    }
 
-    if ( ! message )
-        return FUDGE_NULL_POINTER;
-    if ( ( status = FudgeMsg_appendField ( &field, message, FUDGE_TYPE_BOOLEAN, 0, name ) ) != FUDGE_OK )
-        return status;
-    field->data.boolean = value;
-    return FUDGE_OK;
-}
+FUDGE_ADDPRIMITIVEFIELD_IMPL( Bool, fudge_bool, FUDGE_TYPE_BOOLEAN, boolean )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE,    byte )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT,   i16 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_SHORT,   i32 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_SHORT,   i64 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_SHORT,   f32 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_SHORT,   f64 )
 
 FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg value )
 {
@@ -196,5 +220,52 @@ FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg
     }
     field->data.message = value;
     return FUDGE_OK;
+}
+
+FudgeStatus FudgeMsg_addFieldArray ( FudgeMsg message,
+                                     fudge_type_id type,
+                                     const char * name,
+                                     const void * bytes,
+                                     fudge_i32 numbytes )
+{
+    FudgeStatus status;
+    FudgeField * field;
+    fudge_byte * bytebucket = 0;
+
+    if ( ( ! message ) || ( ! bytes && numbytes ) )
+        return FUDGE_NULL_POINTER;
+    if ( numbytes )
+        if ( ! ( bytebucket = ( fudge_byte * ) malloc ( numbytes ) ) )
+            return FUDGE_OUT_OF_MEMORY;
+    if ( ( status = FudgeMsg_appendField ( &field, message, type, numbytes, name ) ) != FUDGE_OK )
+    {
+        free ( bytebucket );
+        return status;
+    }
+    if ( numbytes )
+    {
+        assert ( bytebucket );
+        memcpy ( bytebucket, bytes, numbytes );
+        field->data.bytes = bytebucket;
+    }
+    return FUDGE_OK;
+}
+
+#define FUDGE_ADDARRAYFIELD_IMPL( typename, type, typeid )                                                                               \
+    FudgeStatus FudgeMsg_addField##typename##Array ( FudgeMsg message, const char * name, const type * elements, fudge_i32 numelements ) \
+    {                                                                                                                                    \
+        return FudgeMsg_addFieldArray ( message, typeid, name, elements, numelements * sizeof ( type ) );                                \
+    }
+
+FUDGE_ADDARRAYFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE_ARRAY );
+FUDGE_ADDARRAYFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT_ARRAY );
+FUDGE_ADDARRAYFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT_ARRAY );
+FUDGE_ADDARRAYFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG_ARRAY );
+FUDGE_ADDARRAYFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT_ARRAY );
+FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY );
+
+FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const char * string, fudge_i32 numbytes )
+{
+    return FudgeMsg_addFieldArray ( message, FUDGE_TYPE_STRING, name, string, numbytes );
 }
 

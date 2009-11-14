@@ -68,18 +68,18 @@ DEFINE_TEST( EndianConversion )
 #ifdef NAN
     testFloatConversion ( NAN );
 #endif
-    testFloatConversion ( 1E31 );
-    testFloatConversion ( -1E31 );
+    testFloatConversion ( 2147483647.0f );
+    testFloatConversion ( -2147483647.0f );
 
     /* Test doubles */
     testDoubleConversion ( 0.0f );
-    testDoubleConversion ( 1E63 );
-    testDoubleConversion ( -1E63 );
+    testDoubleConversion ( 9223372036854775807.0 );
+    testDoubleConversion ( -9223372036854775807.0 );
 
     /* Test 64bit integers */
     testI64Conversion ( 0 );
-    testI64Conversion ( ( int64_t ) 2E31 );
-    testI64Conversion ( ( int64_t ) -2E31 );
+    testI64Conversion ( ( int64_t ) 9223372036854775806ll );
+    testI64Conversion ( ( int64_t ) -9223372036854775805ll );
 END_TEST
 
 
