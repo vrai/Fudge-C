@@ -30,7 +30,7 @@ typedef struct TestFunctorList
 static const char * g_suiteName = 0;
 static const char * g_testName = 0;
 static int g_fileDescriptor = 0;
-static fpos_t g_filePosition = 0;
+static fpos_t g_filePosition;
 static TestFunctorList * g_testlist = 0;
 jmp_buf g_simpleTest_jmpBuffer;
 
@@ -84,7 +84,11 @@ void SimpleTest_initialiseSuite ( const char * name )
     fgetpos ( stdout, &g_filePosition );
     g_fileDescriptor = dup ( fileno ( stdout ) );
     snprintf ( filename, sizeof ( filename ), "test_%s.log", name );
-    freopen ( filename, "w", stdout );
+    if ( ! freopen ( filename, "w", stdout ) )
+    {
+        fprintf ( stderr, "Failed to reopen stdout stream with filename \"%s\".\n", filename );
+        exit ( 1 );
+    }
 
     /* Log output header */
     SimpleTest_log ( "Log file for test suite \"%s\"", g_suiteName );
@@ -195,8 +199,8 @@ void SimpleTest_equalsTrue ( const char * file, int line, const char * xStr, int
 void SimpleTest_equalsInt ( const char * file, int line, const char * xStr, const char * yStr, int64_t x, int64_t y )
 {
     if ( x != y )
-        SimpleTest_failTest ( "%s:%d : %s (%d) != %s (%d)", file, line, xStr, x, yStr, y );
-    SimpleTest_log ( "%s:%d : %s (%d) == %s (%d)", file, line, xStr, x, yStr, y );
+        SimpleTest_failTest ( "%s:%d : %s (%lld) != %s (%lld)", file, line, xStr, x, yStr, y );
+    SimpleTest_log ( "%s:%d : %s (%lld) == %s (%lld)", file, line, xStr, x, yStr, y );
 }
 
 void SimpleTest_equalsFloat ( const char * file, int line, const char * xStr, const char * yStr, double x, double y, double epsilon )
