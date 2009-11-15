@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "fudge/codec.h"
+#include "fudge/platform.h"
 #include "header.h"
 
 #include <stdio.h>      /* TODO Remove this */
@@ -76,12 +77,11 @@ FUDGECODEC_TYPEDARRAYFIELD_DECODE_IMPL( fudge_i16, I16, ntohs )
 FUDGECODEC_TYPEDARRAYFIELD_DECODE_IMPL( fudge_i32, I32, ntohl )
 FUDGECODEC_TYPEDARRAYFIELD_DECODE_IMPL( fudge_i64, I64, ntohi64 )
 FUDGECODEC_TYPEDARRAYFIELD_DECODE_IMPL( fudge_f32, F32, ntohf )
-FUDGECODEC_TYPEDARRAYFIELD_DECODE_IMPL( fudge_f64, F64, ntohf )
+FUDGECODEC_TYPEDARRAYFIELD_DECODE_IMPL( fudge_f64, F64, ntohd )
 
 FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, fudge_i32 width, const fudge_byte * bytes, fudge_i32 numbytes )
 {
     FudgeStatus status;
-    int index, count;
 
     if ( width > numbytes )
         return FUDGE_OUT_OF_BYTES;
@@ -90,13 +90,13 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     {
         /* Fixed width types are handled individually */
         case FUDGE_TYPE_INDICATOR:  return FudgeMsg_addFieldIndicator ( message, header.name );
-        case FUDGE_TYPE_BOOLEAN:    return FudgeMsg_addFieldBool ( message, header.name, *( ( fudge_bool * ) bytes ) );
+        case FUDGE_TYPE_BOOLEAN:    return FudgeMsg_addFieldBool ( message, header.name, *bytes != 0 );
         case FUDGE_TYPE_BYTE:       return FudgeMsg_addFieldByte ( message, header.name, *( ( fudge_byte * ) bytes ) );
         case FUDGE_TYPE_SHORT:      return FudgeMsg_addFieldI16  ( message, header.name, ntohs ( *( ( fudge_i16 * ) bytes ) ) );
         case FUDGE_TYPE_INT:        return FudgeMsg_addFieldI32  ( message, header.name, ntohl ( *( ( fudge_i32 * ) bytes ) ) );
         case FUDGE_TYPE_LONG:       return FudgeMsg_addFieldI32  ( message, header.name, ntohi64 ( *( ( fudge_i64 * ) bytes ) ) );
         case FUDGE_TYPE_FLOAT:      return FudgeMsg_addFieldF32  ( message, header.name, ntohf ( *( ( fudge_f32 * ) bytes ) ) );
-        case FUDGE_TYPE_DOUBLE:     return FudgeMsg_addFieldF64  ( message, header.name, ntohf ( *( ( fudge_f64 * ) bytes ) ) );
+        case FUDGE_TYPE_DOUBLE:     return FudgeMsg_addFieldF64  ( message, header.name, ntohd ( *( ( fudge_f64 * ) bytes ) ) );
 
         /* Submessages should be a simple list of fields */
         case FUDGE_TYPE_FUDGE_MSG:
@@ -112,15 +112,15 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
 
         /* Typed arrays need to be converted to host ordering */
         case FUDGE_TYPE_SHORT_ARRAY:
-            return FudgeCodec_decodeI16Field ( message, header, ( const fudge_i16 * ) bytes, numbytes / sizeof ( fudge_i16 ) );
+            return FudgeCodec_decodeI16Field ( message, header, ( const fudge_i16 * ) bytes, width / sizeof ( fudge_i16 ) );
         case FUDGE_TYPE_INT_ARRAY:
-            return FudgeCodec_decodeI32Field ( message, header, ( const fudge_i32 * ) bytes, numbytes / sizeof ( fudge_i32 ) );
+            return FudgeCodec_decodeI32Field ( message, header, ( const fudge_i32 * ) bytes, width / sizeof ( fudge_i32 ) );
         case FUDGE_TYPE_LONG_ARRAY:
-            return FudgeCodec_decodeI64Field ( message, header, ( const fudge_i64 * ) bytes, numbytes / sizeof ( fudge_i64 ) );
+            return FudgeCodec_decodeI64Field ( message, header, ( const fudge_i64 * ) bytes, width / sizeof ( fudge_i64 ) );
         case FUDGE_TYPE_FLOAT_ARRAY:
-            return FudgeCodec_decodeF32Field ( message, header, ( const fudge_f32 * ) bytes, numbytes / sizeof ( fudge_f32 ) );
+            return FudgeCodec_decodeF32Field ( message, header, ( const fudge_f32 * ) bytes, width / sizeof ( fudge_f32 ) );
         case FUDGE_TYPE_DOUBLE_ARRAY:
-            return FudgeCodec_decodeF64Field ( message, header, ( const fudge_f64 * ) bytes, numbytes / sizeof ( fudge_f64 ) );
+            return FudgeCodec_decodeF64Field ( message, header, ( const fudge_f64 * ) bytes, width / sizeof ( fudge_f64 ) );
 
         /* Everything else can be loaded as a block of bytes */
         default:
@@ -164,7 +164,7 @@ FudgeStatus FudgeCodec_decodeMsgFields ( FudgeMsg message, const fudge_byte * by
             goto release_fieldheader_and_fail;
         bytes += width;
         numbytes -= width;
-        printf ( "Consumed %d, %d left\n", consumed, numbytes );
+        printf ( "Consumed %d, %d left\n", width, numbytes );
 
         /* Clean up this iteration */
         FudgeHeader_destroyFieldHeader ( fieldheader );
