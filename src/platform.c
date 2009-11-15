@@ -1,7 +1,6 @@
 #include "fudge/platform.h"
 #include <assert.h>
 #include <math.h>
-#include <arpa/inet.h>
 
 #ifdef _BIG_ENDIAN
 

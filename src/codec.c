@@ -105,8 +105,9 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
 
             if ( ( status = FudgeMsg_create ( &submessage ) ) != FUDGE_OK )
                 return status;
-            if ( ( status = FudgeCodec_decodeMsgFields ( submessage, bytes, width ) ) != FUDGE_OK )
-                FudgeMsg_release ( submessage );
+            if ( ( status = FudgeCodec_decodeMsgFields ( submessage, bytes, width ) ) == FUDGE_OK )
+                status = FudgeMsg_addFieldMsg ( message, header.name, submessage );
+            FudgeMsg_release ( submessage );
             return status;
         }
 

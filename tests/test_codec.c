@@ -16,7 +16,8 @@
 #include "fudge/codec.h"
 #include "simpletest.h"
 
-#define ALLNAMES_FILENAME "test_data/allNames.dat"
+#define ALLNAMES_FILENAME   "test_data/allNames.dat"
+#define SUBMSG_FILENAME     "test_data/subMsg.dat"
 
 FudgeMsg loadFudgeMsg ( const char * filename );
 void loadFile ( fudge_byte * * target, fudge_i32 * targetSize, const char * filename );
@@ -44,10 +45,10 @@ DEFINE_TEST( DecodeAllNames )
     TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_MEMORY( fields [ 5 ].name, 6, "Short", 6 );     TEST_EQUALS_INT( fields [ 5 ].data.i16, 127 + 5 );
     TEST_EQUALS_INT( fields [ 6 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 6 ].name, 4, "int", 4 );       TEST_EQUALS_INT( fields [ 6 ].data.i32, 32767 + 5 );
     TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 7 ].name, 7, "Integer", 7 );   TEST_EQUALS_INT( fields [ 7 ].data.i32, 32767 + 5 );
-    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 8 ].name, 5, "long", 5 );      TEST_EQUALS_INT( fields [ 8 ].data.i32, ( fudge_i32 ) ( 2147483647l + 5 ) );     /* This should have been encoded as an I64 */
-    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 9 ].name, 5, "Long", 5 );      TEST_EQUALS_INT( fields [ 9 ].data.i32, ( fudge_i32 ) ( 2147483647l + 5 ) );     /* Ditto */
-    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_MEMORY( fields [ 10 ].name, 6, "float", 6 );    TEST_EQUALS_FLOAT( fields [ 10 ].data.f32, 0.5, 0.000001 ); 
-    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_MEMORY( fields [ 11 ].name, 6, "Float", 6 );    TEST_EQUALS_FLOAT( fields [ 11 ].data.f32, 0.5, 0.000001 ); 
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 8 ].name, 5, "long", 5 );      TEST_EQUALS_INT( fields [ 8 ].data.i32, ( fudge_i32 ) ( 2147483647ll + 5ll ) ); /* This should have been encoded as an I64 */
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 9 ].name, 5, "Long", 5 );      TEST_EQUALS_INT( fields [ 9 ].data.i32, ( fudge_i32 ) ( 2147483647ll + 5ll ) ); /* Ditto */
+    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_MEMORY( fields [ 10 ].name, 6, "float", 6 );    TEST_EQUALS_FLOAT( fields [ 10 ].data.f32, 0.5, 0.00001 ); 
+    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_MEMORY( fields [ 11 ].name, 6, "Float", 6 );    TEST_EQUALS_FLOAT( fields [ 11 ].data.f32, 0.5, 0.00001 ); 
     TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_MEMORY( fields [ 12 ].name, 7, "double", 7 );   TEST_EQUALS_FLOAT( fields [ 12 ].data.f64, 0.27362, 0.000001 ); 
     TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_MEMORY( fields [ 13 ].name, 7, "Double", 7 );   TEST_EQUALS_FLOAT( fields [ 13 ].data.f64, 0.27362, 0.000001 ); 
 
@@ -64,9 +65,32 @@ DEFINE_TEST( DecodeAllNames )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( DecodeSubMsgs )
+    FudgeField field;
+    FudgeMsg message = loadFudgeMsg ( SUBMSG_FILENAME );
+    FudgeMsg submessage;
+
+    /* Check message contents */
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 2 );
+
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 0 ), FUDGE_OK );   TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );    TEST_EQUALS_MEMORY( field.name, 4, "sub1", 4 );
+    TEST_EQUALS_TRUE( ( submessage = field.data.message ) != 0 );
+    TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 2 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 0 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   TEST_EQUALS_MEMORY( field.name, 7, "bibble", 7 );   TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes + 1, "fibble", 7 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   /* TODO Test ordinal == 827 */                      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes + 1, "Blibble", 8 );
+
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 1 ), FUDGE_OK );   TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );    TEST_EQUALS_MEMORY( field.name, 4, "sub2", 4 );
+    TEST_EQUALS_TRUE( ( submessage = field.data.message ) != 0 );
+    TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 2 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 0 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_INT );      TEST_EQUALS_MEMORY( field.name, 8, "bibble9", 8 );  TEST_EQUALS_INT( field.data.i32, 9837438 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_FLOAT);     /* TODO Test ordinal == 828 */                      TEST_EQUALS_FLOAT( field.data.f32, 82.77, 0.00001 );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+END_TEST
 
 DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( DecodeAllNames )
+    REGISTER_TEST( DecodeSubMsgs )
 END_TEST_SUITE
 
 FudgeMsg loadFudgeMsg ( const char * filename )
