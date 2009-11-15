@@ -211,7 +211,7 @@ void SimpleTest_equalsFloat ( const char * file, int line, const char * xStr, co
     SimpleTest_log ( "%s:%d : %s (%f) and %s (%f) differ by %f (limit is %f)", file, line, xStr, x, yStr, y, diff, epsilon );
 }
 
-void SimpleTest_equalsMemory ( const char * file, int line, const char * xStr, const char * yStr, void * x, int sizeX, const void * y, int sizeY )
+void SimpleTest_equalsMemory ( const char * file, int line, const char * xStr, const char * yStr, const void * x, int sizeX, const void * y, int sizeY )
 {
     int index;
     const int8_t * xBytes = x,

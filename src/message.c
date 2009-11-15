@@ -199,10 +199,10 @@ FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( Bool, fudge_bool, FUDGE_TYPE_BOOLEAN, boolean )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE,    byte )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT,   i16 )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_SHORT,   i32 )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_SHORT,   i64 )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_SHORT,   f32 )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_SHORT,   f64 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT,     i32 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG,    i64 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT,   f32 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE,  f64 )
 
 FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg value )
 {
@@ -284,4 +284,26 @@ FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 64, FUDGE_TYPE_BYTE_ARRAY_64 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 128, FUDGE_TYPE_BYTE_ARRAY_128 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 256, FUDGE_TYPE_BYTE_ARRAY_256 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 512, FUDGE_TYPE_BYTE_ARRAY_512 )
+
+FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, unsigned long index )
+{
+    FieldListNode * node;
+
+    if ( ! ( message &&  field ) )
+        return FUDGE_NULL_POINTER;
+    if ( index >= message->numfields )
+        return FUDGE_INVALID_INDEX;
+
+    node = message->fieldhead;
+    while ( node && index-- )
+        node = node->next;
+
+    if ( node )
+    {
+        *field = node->field;
+        return FUDGE_OK;
+    }
+    else
+        return FUDGE_INTERNAL_LIST_STATE;
+}
 

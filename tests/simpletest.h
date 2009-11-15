@@ -69,7 +69,7 @@ extern int SimpleTest_countTests ( );
 extern void SimpleTest_equalsTrue ( const char * file, int line, const char * xStr, int x );
 extern void SimpleTest_equalsInt ( const char * file, int line, const char * xStr, const char * yStr, int64_t x, int64_t y );
 extern void SimpleTest_equalsFloat ( const char * file, int line, const char * xStr, const char * yStr, double x, double y, double epsilon );
-extern void SimpleTest_equalsMemory ( const char * file, int line, const char * xStr, const char * yStr, void * x, int sizeX, const void * y, int sizeY );
+extern void SimpleTest_equalsMemory ( const char * file, int line, const char * xStr, const char * yStr, const void * x, int sizeX, const void * y, int sizeY );
 
 #endif
 
