@@ -52,7 +52,7 @@ DEFINE_TEST( DecodeAllNames )
     TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_MEMORY( fields [ 12 ].name, 7, "double", 7 );   TEST_EQUALS_FLOAT( fields [ 12 ].data.f64, 0.27362, 0.000001 ); 
     TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_MEMORY( fields [ 13 ].name, 7, "Double", 7 );   TEST_EQUALS_FLOAT( fields [ 13 ].data.f64, 0.27362, 0.000001 ); 
 
-    TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_STRING );   TEST_EQUALS_MEMORY( fields [ 14 ].name, 7, "String", 7 );   TEST_EQUALS_MEMORY( fields [ 14 ].data.bytes, fields [ 14 ].numbytes + 1, "Kirk Wylie", 11 );
+    TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_STRING );   TEST_EQUALS_MEMORY( fields [ 14 ].name, 7, "String", 7 );   TEST_EQUALS_MEMORY( fields [ 14 ].data.bytes, fields [ 14 ].numbytes, "Kirk Wylie", 10 );
 
     TEST_EQUALS_INT( fields [ 15 ].type, FUDGE_TYPE_FLOAT_ARRAY );   TEST_EQUALS_MEMORY( fields [ 15 ].name, 12, "float array", 12 );   TEST_EQUALS_MEMORY( fields [ 15 ].data.bytes, fields [ 15 ].numbytes, empty, 24 * sizeof ( fudge_f32 ) );
     TEST_EQUALS_INT( fields [ 16 ].type, FUDGE_TYPE_DOUBLE_ARRAY );  TEST_EQUALS_MEMORY( fields [ 16 ].name, 13, "double array", 13 );  TEST_EQUALS_MEMORY( fields [ 16 ].data.bytes, fields [ 16 ].numbytes, empty, 273 * sizeof ( fudge_f64 ) );
@@ -76,8 +76,8 @@ DEFINE_TEST( DecodeSubMsgs )
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 0 ), FUDGE_OK );   TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );    TEST_EQUALS_MEMORY( field.name, 4, "sub1", 4 );
     TEST_EQUALS_TRUE( ( submessage = field.data.message ) != 0 );
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 2 );
-    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 0 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   TEST_EQUALS_MEMORY( field.name, 7, "bibble", 7 );   TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes + 1, "fibble", 7 );
-    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   /* TODO Test ordinal == 827 */                      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes + 1, "Blibble", 8 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 0 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   TEST_EQUALS_MEMORY( field.name, 7, "bibble", 7 );   TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, "fibble", 6 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   /* TODO Test ordinal == 827 */                      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, "Blibble", 7 );
 
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 1 ), FUDGE_OK );   TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );    TEST_EQUALS_MEMORY( field.name, 4, "sub2", 4 );
     TEST_EQUALS_TRUE( ( submessage = field.data.message ) != 0 );
