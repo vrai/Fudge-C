@@ -13,26 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INC_FUDGE_STATUS_H
-#define INC_FUDGE_STATUS_H
+#ifndef INC_FUDGE_CODEC_H
+#define INC_FUDGE_CODEC_H
+
+#include "fudge/message.h"
 
 #ifdef __cplusplus
     extern "C" {
 #endif
 
-typedef enum
-{
-    FUDGE_OK                    = 0x0000,
-    FUDGE_OUT_OF_MEMORY         = 0x0001,
-    FUDGE_NULL_POINTER          = 0x0002,
-    FUDGE_INVALID_INDEX         = 0x0010,
-    FUDGE_OUT_OF_BYTES          = 0x0100,
-    FUDGE_UNKNOWN_FIELD_WIDTH   = 0x0101,
-    FUDGE_INTERNAL_LIST_STATE   = 0x1000
-
-} FudgeStatus;
-
-extern const char * FudgeStatus_strerror ( FudgeStatus status );
+extern FudgeStatus FudgeCodec_decodeMsg ( FudgeMsg * message, const fudge_byte * bytes, fudge_i32 numbytes );
 
 #ifdef __cplusplus
     }

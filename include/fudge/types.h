@@ -73,7 +73,6 @@ typedef struct
 #define FUDGE_TYPE_LONG             5     /* Signed 64-bit integer        */
 #define FUDGE_TYPE_FLOAT            10    /* 32-bit floating point        */
 #define FUDGE_TYPE_DOUBLE           11    /* 64-bit floating point        */
-#define FUDGE_TYPE_FUDGE_MSG        15    /* Indicates a sub-message      */
 
 /* Variable length types */
 #define FUDGE_TYPE_BYTE_ARRAY       6 
@@ -83,6 +82,7 @@ typedef struct
 #define FUDGE_TYPE_FLOAT_ARRAY      12 
 #define FUDGE_TYPE_DOUBLE_ARRAY     13 
 #define FUDGE_TYPE_STRING           14    /* UTF-8 encoded string         */
+#define FUDGE_TYPE_FUDGE_MSG        15    /* Indicates a sub-message      */
 
 /* Fixed length byte array types */
 #define FUDGE_TYPE_BYTE_ARRAY_4     17    /* Byte array with 4 elements   */

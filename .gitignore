@@ -1,7 +1,6 @@
 .libs
 *.o
 *.swp
-test_data
 test
 *.deps
 Makefile

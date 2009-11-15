@@ -222,11 +222,11 @@ FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, FudgeMsg
     return FUDGE_OK;
 }
 
-FudgeStatus FudgeMsg_addFieldArray ( FudgeMsg message,
-                                     fudge_type_id type,
-                                     const char * name,
-                                     const void * bytes,
-                                     fudge_i32 numbytes )
+FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
+                                      fudge_type_id type,
+                                      const char * name,
+                                      const fudge_byte * bytes,
+                                      fudge_i32 numbytes )
 {
     FudgeStatus status;
     FudgeField * field;
@@ -254,7 +254,7 @@ FudgeStatus FudgeMsg_addFieldArray ( FudgeMsg message,
 #define FUDGE_ADDARRAYFIELD_IMPL( typename, type, typeid )                                                                               \
     FudgeStatus FudgeMsg_addField##typename##Array ( FudgeMsg message, const char * name, const type * elements, fudge_i32 numelements ) \
     {                                                                                                                                    \
-        return FudgeMsg_addFieldArray ( message, typeid, name, elements, numelements * sizeof ( type ) );                                \
+        return FudgeMsg_addFieldOpaque ( message, typeid, name, ( const fudge_byte * ) elements, numelements * sizeof ( type ) );        \
     }
 
 FUDGE_ADDARRAYFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE_ARRAY )
@@ -266,13 +266,13 @@ FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY )
 
 FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const char * string, fudge_i32 numbytes )
 {
-    return FudgeMsg_addFieldArray ( message, FUDGE_TYPE_STRING, name, string, numbytes );
+    return FudgeMsg_addFieldOpaque ( message, FUDGE_TYPE_STRING, name, string, numbytes );
 }
 
 #define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                                               \
     FudgeStatus FudgeMsg_addField##size##ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes )    \
     {                                                                                                                   \
-        return FudgeMsg_addFieldArray ( message, typeid, name, bytes, size );                                           \
+        return FudgeMsg_addFieldOpaque ( message, typeid, name, bytes, size );                                           \
     }
 
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 4, FUDGE_TYPE_BYTE_ARRAY_4 )

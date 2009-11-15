@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 TESTS = test_utilities  \
-        test_message
+        test_message    \
+        test_codec
 
 check_PROGRAMS = $(TESTS)
 
@@ -28,6 +29,9 @@ test_utilities_LDADD = $(top_builddir)/src/libfudgec.la
 
 test_message_SOURCES = test_message.c $(FRAMEWORK_SOURCE)
 test_message_LDADD = $(top_builddir)/src/libfudgec.la
+
+test_codec_SOURCES = test_codec.c $(FRAMEWORK_SOURCE)
+test_codec_LDADD = $(top_builddir)/src/libfudgec.la
 
 clean-local:
 	$(RM) -f *.log

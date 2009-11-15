@@ -60,6 +60,8 @@ extern FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const char 
 extern FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes );
 extern FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const char * name, const fudge_byte * bytes );
 
+extern FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message, fudge_type_id type, const char * name, const fudge_byte * bytes, fudge_i32 numbytes );
+
 extern FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, unsigned long index );
 
 #ifdef __cplusplus
