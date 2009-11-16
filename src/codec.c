@@ -47,13 +47,10 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsg * message, const fudge_byte * bytes,
 
     /* Consume fields */
     if ( ( status = FudgeCodec_decodeMsgFields ( *message, bytes, numbytes ) ) != FUDGE_OK )
-        goto release_msg_and_fail;
-
-    return FUDGE_OK;
-
-release_msg_and_fail: 
-    FudgeMsg_release ( *message );
-    *message = 0;
+    {
+        FudgeMsg_release ( *message );
+        *message = 0;
+    }
     return status;
 }
 

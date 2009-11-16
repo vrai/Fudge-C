@@ -16,8 +16,11 @@
 #include "fudge/codec.h"
 #include "simpletest.h"
 
-#define ALLNAMES_FILENAME   "test_data/allNames.dat"
-#define SUBMSG_FILENAME     "test_data/subMsg.dat"
+#define ALLNAMES_FILENAME       "test_data/allNames.dat"
+#define FIXED_WIDTH_FILENAME    "test_data/fixedWidthByteArrays.dat"
+#define SUBMSG_FILENAME         "test_data/subMsg.dat"
+#define UNKNOWN_FILENAME        "test_data/unknown.dat"
+#define VARIABLE_WIDTH_FILENAME "test_data/variableWidthColumnSizes.dat"
 
 FudgeMsg loadFudgeMsg ( const char * filename );
 void loadFile ( fudge_byte * * target, fudge_i32 * targetSize, const char * filename );
@@ -65,6 +68,33 @@ DEFINE_TEST( DecodeAllNames )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( DecodeFixedWidths )
+    FudgeField fields [ 16 ];
+    fudge_byte bytes [ 512 ];
+    int index;
+    FudgeMsg message = loadFudgeMsg ( FIXED_WIDTH_FILENAME );
+
+    /* The arrays are populated in this test */
+    for ( index = 0; index < sizeof ( bytes ); ++index )
+        bytes [ index ] = ( fudge_byte ) index;
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 10 );
+    for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
+        TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
+
+    TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BYTE_ARRAY_4 );      TEST_EQUALS_MEMORY( fields [ 0 ].name, 7, "byte[4]", 7 );    TEST_EQUALS_MEMORY( fields [ 0 ].data.bytes, fields [ 0 ].numbytes, bytes, 4 );
+    TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BYTE_ARRAY_8 );      TEST_EQUALS_MEMORY( fields [ 1 ].name, 7, "byte[8]", 7 );    TEST_EQUALS_MEMORY( fields [ 1 ].data.bytes, fields [ 1 ].numbytes, bytes, 8 );
+    TEST_EQUALS_INT( fields [ 2 ].type, FUDGE_TYPE_BYTE_ARRAY_16 );     TEST_EQUALS_MEMORY( fields [ 2 ].name, 8, "byte[16]", 8 );   TEST_EQUALS_MEMORY( fields [ 2 ].data.bytes, fields [ 2 ].numbytes, bytes, 16 );
+    TEST_EQUALS_INT( fields [ 3 ].type, FUDGE_TYPE_BYTE_ARRAY_20 );     TEST_EQUALS_MEMORY( fields [ 3 ].name, 8, "byte[20]", 8 );   TEST_EQUALS_MEMORY( fields [ 3 ].data.bytes, fields [ 3 ].numbytes, bytes, 20 );
+    TEST_EQUALS_INT( fields [ 4 ].type, FUDGE_TYPE_BYTE_ARRAY_32 );     TEST_EQUALS_MEMORY( fields [ 4 ].name, 8, "byte[32]", 8 );   TEST_EQUALS_MEMORY( fields [ 4 ].data.bytes, fields [ 4 ].numbytes, bytes, 32 );
+    TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_BYTE_ARRAY_64 );     TEST_EQUALS_MEMORY( fields [ 5 ].name, 8, "byte[64]", 8 );   TEST_EQUALS_MEMORY( fields [ 5 ].data.bytes, fields [ 5 ].numbytes, bytes, 64 );
+    TEST_EQUALS_INT( fields [ 6 ].type, FUDGE_TYPE_BYTE_ARRAY_128 );    TEST_EQUALS_MEMORY( fields [ 6 ].name, 9, "byte[128]", 9 );  TEST_EQUALS_MEMORY( fields [ 6 ].data.bytes, fields [ 6 ].numbytes, bytes, 128 );
+    TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_BYTE_ARRAY_256 );    TEST_EQUALS_MEMORY( fields [ 7 ].name, 9, "byte[256]", 9 );  TEST_EQUALS_MEMORY( fields [ 7 ].data.bytes, fields [ 7 ].numbytes, bytes, 256 );
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_BYTE_ARRAY_512 );    TEST_EQUALS_MEMORY( fields [ 8 ].name, 9, "byte[512]", 9 );  TEST_EQUALS_MEMORY( fields [ 8 ].data.bytes, fields [ 8 ].numbytes, bytes, 512 );
+    
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_BYTE_ARRAY );        TEST_EQUALS_MEMORY( fields [ 9 ].name, 8, "byte[28]", 8 );   TEST_EQUALS_MEMORY( fields [ 9 ].data.bytes, fields [ 9 ].numbytes, bytes, 28 );
+END_TEST
+
 DEFINE_TEST( DecodeSubMsgs )
     FudgeField field;
     FudgeMsg message = loadFudgeMsg ( SUBMSG_FILENAME );
@@ -88,9 +118,47 @@ DEFINE_TEST( DecodeSubMsgs )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( DecodeUnknown )
+    fudge_byte empty [ 16 ];
+    FudgeField field;
+    FudgeMsg message = loadFudgeMsg ( UNKNOWN_FILENAME );
+
+    memset ( empty, 0, sizeof ( empty ) );
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 1 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, -56 );
+    TEST_EQUALS_MEMORY( field.name, 7, "unknown", 7 );
+    TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, empty, 10 );
+END_TEST
+
+DEFINE_TEST( DecodeVariableWidths )
+    fudge_byte empty [ 131072 ];
+    int index;
+    FudgeField fields [ 8 ];
+    FudgeMsg message = loadFudgeMsg ( VARIABLE_WIDTH_FILENAME );
+
+    /* All the arrays in this test are empty */
+    memset ( empty, 0, sizeof ( empty ) );
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 3 );
+    for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
+    {
+        TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
+        TEST_EQUALS_INT( fields [ index ].type, FUDGE_TYPE_BYTE_ARRAY );
+    }
+
+    TEST_EQUALS_MEMORY( fields [ 0 ].name, 3, "100", 3 );    TEST_EQUALS_MEMORY( fields [ 0 ].data.bytes, fields [ 0 ].numbytes, empty, 100 );
+    TEST_EQUALS_MEMORY( fields [ 1 ].name, 4, "1000", 4 );   TEST_EQUALS_MEMORY( fields [ 1 ].data.bytes, fields [ 1 ].numbytes, empty, 1000 );
+    TEST_EQUALS_MEMORY( fields [ 2 ].name, 5, "10000", 5 );  TEST_EQUALS_MEMORY( fields [ 2 ].data.bytes, fields [ 2 ].numbytes, empty, 100000 );
+END_TEST
+
 DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( DecodeAllNames )
+    REGISTER_TEST( DecodeFixedWidths )
     REGISTER_TEST( DecodeSubMsgs )
+    REGISTER_TEST( DecodeUnknown )
+    REGISTER_TEST( DecodeVariableWidths )
 END_TEST_SUITE
 
 FudgeMsg loadFudgeMsg ( const char * filename )
@@ -101,6 +169,7 @@ FudgeMsg loadFudgeMsg ( const char * filename )
 
     loadFile ( &referenceBytes, &numReferenceBytes, filename );
     TEST_EQUALS_INT( FudgeCodec_decodeMsg ( &message, referenceBytes, numReferenceBytes ), FUDGE_OK );
+    free ( referenceBytes );
     return message;
 }
 
