@@ -93,6 +93,8 @@ DEFINE_TEST( DecodeFixedWidths )
     TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_BYTE_ARRAY_512 );    TEST_EQUALS_MEMORY( fields [ 8 ].name, 9, "byte[512]", 9 );  TEST_EQUALS_MEMORY( fields [ 8 ].data.bytes, fields [ 8 ].numbytes, bytes, 512 );
     
     TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_BYTE_ARRAY );        TEST_EQUALS_MEMORY( fields [ 9 ].name, 8, "byte[28]", 8 );   TEST_EQUALS_MEMORY( fields [ 9 ].data.bytes, fields [ 9 ].numbytes, bytes, 28 );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
 DEFINE_TEST( DecodeSubMsgs )
@@ -130,6 +132,8 @@ DEFINE_TEST( DecodeUnknown )
     TEST_EQUALS_INT( field.type, -56 );
     TEST_EQUALS_MEMORY( field.name, 7, "unknown", 7 );
     TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, empty, 10 );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
 DEFINE_TEST( DecodeVariableWidths )
@@ -151,6 +155,8 @@ DEFINE_TEST( DecodeVariableWidths )
     TEST_EQUALS_MEMORY( fields [ 0 ].name, 3, "100", 3 );    TEST_EQUALS_MEMORY( fields [ 0 ].data.bytes, fields [ 0 ].numbytes, empty, 100 );
     TEST_EQUALS_MEMORY( fields [ 1 ].name, 4, "1000", 4 );   TEST_EQUALS_MEMORY( fields [ 1 ].data.bytes, fields [ 1 ].numbytes, empty, 1000 );
     TEST_EQUALS_MEMORY( fields [ 2 ].name, 5, "10000", 5 );  TEST_EQUALS_MEMORY( fields [ 2 ].data.bytes, fields [ 2 ].numbytes, empty, 100000 );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
 DEFINE_TEST_SUITE( Codec )
