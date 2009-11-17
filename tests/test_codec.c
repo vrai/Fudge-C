@@ -18,6 +18,7 @@
 
 #define ALLNAMES_FILENAME       "test_data/allNames.dat"
 #define FIXED_WIDTH_FILENAME    "test_data/fixedWidthByteArrays.dat"
+#define ALLORDINALS_FILENAME    "test_data/allOrdinals.dat"
 #define SUBMSG_FILENAME         "test_data/subMsg.dat"
 #define UNKNOWN_FILENAME        "test_data/unknown.dat"
 #define VARIABLE_WIDTH_FILENAME "test_data/variableWidthColumnSizes.dat"
@@ -97,6 +98,40 @@ DEFINE_TEST( DecodeFixedWidths )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( DecodeAllOrdinals )
+    FudgeField fields [ 32 ];
+    fudge_byte empty [ 4096 ];
+    int index;
+    FudgeMsg message = loadFudgeMsg ( ALLORDINALS_FILENAME );
+    
+    memset ( empty, 0, sizeof ( empty ) );
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 17 );
+    for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
+        TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
+
+    TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BOOLEAN );   /*TODO Check ordinal */ TEST_EQUALS_TRUE( fields [ 0 ].data.boolean ); 
+    TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BOOLEAN );   /*TODO Check ordinal */ TEST_EQUALS_TRUE( ! fields [ 1 ].data.boolean ); 
+    TEST_EQUALS_INT( fields [ 2 ].type, FUDGE_TYPE_BYTE );      /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 2 ].data.byte, 5 ); 
+    TEST_EQUALS_INT( fields [ 3 ].type, FUDGE_TYPE_BYTE );      /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 3 ].data.byte, 5 ); 
+    TEST_EQUALS_INT( fields [ 4 ].type, FUDGE_TYPE_SHORT );     /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 4 ].data.i16, 127 + 5 );
+    TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_SHORT );     /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 5 ].data.i16, 127 + 5 );
+    TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_INT );       /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 7 ].data.i32, 32767 + 5 );
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_INT );       /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 8 ].data.i32, ( fudge_i32 ) ( 2147483647ll + 5ll ) ); /* This should have been encoded as an I64 */
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_INT );       /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 9 ].data.i32, ( fudge_i32 ) ( 2147483647ll + 5ll ) ); /* Ditto */
+    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_FLOAT );    /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 10 ].data.f32, 0.5, 0.00001 ); 
+    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FLOAT );    /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 11 ].data.f32, 0.5, 0.00001 ); 
+    TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DOUBLE );   /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 12 ].data.f64, 0.27362, 0.000001 ); 
+    TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_DOUBLE );   /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 13 ].data.f64, 0.27362, 0.000001 ); 
+
+    TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_STRING );   /*TODO Check ordinal */ TEST_EQUALS_MEMORY( fields [ 14 ].data.bytes, fields [ 14 ].numbytes, "Kirk Wylie", 10 );
+
+    TEST_EQUALS_INT( fields [ 15 ].type, FUDGE_TYPE_FLOAT_ARRAY );   /*TODO Check ordinal */    TEST_EQUALS_MEMORY( fields [ 15 ].data.bytes, fields [ 15 ].numbytes, empty, 24 * sizeof ( fudge_f32 ) );
+    TEST_EQUALS_INT( fields [ 16 ].type, FUDGE_TYPE_DOUBLE_ARRAY );  /*TODO Check ordinal */    TEST_EQUALS_MEMORY( fields [ 16 ].data.bytes, fields [ 16 ].numbytes, empty, 273 * sizeof ( fudge_f64 ) );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+END_TEST
+
 DEFINE_TEST( DecodeSubMsgs )
     FudgeField field;
     FudgeMsg message = loadFudgeMsg ( SUBMSG_FILENAME );
@@ -162,6 +197,7 @@ END_TEST
 DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( DecodeAllNames )
     REGISTER_TEST( DecodeFixedWidths )
+    REGISTER_TEST( DecodeAllOrdinals )
     REGISTER_TEST( DecodeSubMsgs )
     REGISTER_TEST( DecodeUnknown )
     REGISTER_TEST( DecodeVariableWidths )
