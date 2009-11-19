@@ -65,7 +65,7 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsg * message, const fudge_byte * bytes,
             return FUDGE_OUT_OF_MEMORY;                                                                                                         \
         for ( index = 0; index < numelements; ++index )                                                                                         \
             mutable [ index ] = swapper ( elements [ index ] );                                                                                 \
-        status = FudgeMsg_addField##typename##Array ( message, header.name, elements, numelements );                                            \
+        status = FudgeMsg_addField##typename##Array ( message, header.name, FudgeHeader_getOrdinal ( &header ), elements, numelements );        \
         free ( mutable );                                                                                                                       \
         return status;                                                                                                                          \
     }
@@ -86,14 +86,14 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     switch ( header.type )
     {
         /* Fixed width types are handled individually */
-        case FUDGE_TYPE_INDICATOR:  return FudgeMsg_addFieldIndicator ( message, header.name );
-        case FUDGE_TYPE_BOOLEAN:    return FudgeMsg_addFieldBool ( message, header.name, *bytes != 0 );
-        case FUDGE_TYPE_BYTE:       return FudgeMsg_addFieldByte ( message, header.name, *( ( fudge_byte * ) bytes ) );
-        case FUDGE_TYPE_SHORT:      return FudgeMsg_addFieldI16  ( message, header.name, ntohs ( *( ( fudge_i16 * ) bytes ) ) );
-        case FUDGE_TYPE_INT:        return FudgeMsg_addFieldI32  ( message, header.name, ntohl ( *( ( fudge_i32 * ) bytes ) ) );
-        case FUDGE_TYPE_LONG:       return FudgeMsg_addFieldI64  ( message, header.name, ntohi64 ( *( ( fudge_i64 * ) bytes ) ) );
-        case FUDGE_TYPE_FLOAT:      return FudgeMsg_addFieldF32  ( message, header.name, ntohf ( *( ( fudge_f32 * ) bytes ) ) );
-        case FUDGE_TYPE_DOUBLE:     return FudgeMsg_addFieldF64  ( message, header.name, ntohd ( *( ( fudge_f64 * ) bytes ) ) );
+        case FUDGE_TYPE_INDICATOR:  return FudgeMsg_addFieldIndicator ( message, header.name, FudgeHeader_getOrdinal ( &header ) );
+        case FUDGE_TYPE_BOOLEAN:    return FudgeMsg_addFieldBool ( message, header.name, FudgeHeader_getOrdinal ( &header ), *bytes != 0 );
+        case FUDGE_TYPE_BYTE:       return FudgeMsg_addFieldByte ( message, header.name, FudgeHeader_getOrdinal ( &header ), *( ( fudge_byte * ) bytes ) );
+        case FUDGE_TYPE_SHORT:      return FudgeMsg_addFieldI16  ( message, header.name, FudgeHeader_getOrdinal ( &header ), ntohs ( *( ( fudge_i16 * ) bytes ) ) );
+        case FUDGE_TYPE_INT:        return FudgeMsg_addFieldI32  ( message, header.name, FudgeHeader_getOrdinal ( &header ), ntohl ( *( ( fudge_i32 * ) bytes ) ) );
+        case FUDGE_TYPE_LONG:       return FudgeMsg_addFieldI64  ( message, header.name, FudgeHeader_getOrdinal ( &header ), ntohi64 ( *( ( fudge_i64 * ) bytes ) ) );
+        case FUDGE_TYPE_FLOAT:      return FudgeMsg_addFieldF32  ( message, header.name, FudgeHeader_getOrdinal ( &header ), ntohf ( *( ( fudge_f32 * ) bytes ) ) );
+        case FUDGE_TYPE_DOUBLE:     return FudgeMsg_addFieldF64  ( message, header.name, FudgeHeader_getOrdinal ( &header ), ntohd ( *( ( fudge_f64 * ) bytes ) ) );
 
         /* Submessages should be a simple list of fields */
         case FUDGE_TYPE_FUDGE_MSG:
@@ -103,7 +103,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
             if ( ( status = FudgeMsg_create ( &submessage ) ) != FUDGE_OK )
                 return status;
             if ( ( status = FudgeCodec_decodeMsgFields ( submessage, bytes, width ) ) == FUDGE_OK )
-                status = FudgeMsg_addFieldMsg ( message, header.name, submessage );
+                status = FudgeMsg_addFieldMsg ( message, header.name, FudgeHeader_getOrdinal ( &header ), submessage );
             FudgeMsg_release ( submessage );
             return status;
         }
@@ -122,7 +122,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
 
         /* Everything else can be loaded as a block of bytes */
         default:
-            return FudgeMsg_addFieldOpaque ( message, header.type, header.name, bytes, width );
+            return FudgeMsg_addFieldOpaque ( message, header.type, header.name, FudgeHeader_getOrdinal ( &header ), bytes, width );
     }
 }
 
@@ -145,6 +145,8 @@ FudgeStatus FudgeCodec_decodeMsgFields ( FudgeMsg message, const fudge_byte * by
         printf ( "\nType: %d\n", fieldheader.type );
         printf ( "Width of width: %d\n", fieldheader.widthofwidth );
         printf ( "{%s}\n", fieldheader.name ? fieldheader.name : "NULL" );
+        if ( fieldheader.hasordinal )
+            printf ( "Ordinal: %d\n", fieldheader.ordinal );
         printf ( "Consumed %d, %d left\n", consumed, numbytes );
 
         /* Get the field width */

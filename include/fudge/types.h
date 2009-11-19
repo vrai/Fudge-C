@@ -7,6 +7,14 @@
  * Primitive type definitions
  */
 
+/* Bitmap values used to indicate the presence of optional values in the
+   FudgeField type. */
+typedef enum
+{
+    FUDGE_FIELD_HAS_NAME    = 0x1,
+    FUDGE_FIELD_HAS_ORDINAL = 0x2
+} FudgeFieldFlags;
+
 /* Custom boolean definition: matches the standard definitions, in that it's
    the same length as an int and is false if zero. */
 typedef enum
@@ -56,8 +64,10 @@ typedef struct
 {
     fudge_type_id type;     /* The field type: used to interpret the data union */
     fudge_i32 numbytes;     /* The size of the bytes array in the data union */
-    const char * name;      /* The name of the field, can be null */
     FudgeFieldData data;    /* Union holding the field data */
+    FudgeFieldFlags flags;  /* Indicates the presence of optional values */
+    const char * name;      /* The name of the field, can be null */
+    fudge_i16 ordinal;      /* The field ordinal, or zero if unset */
 } FudgeField;
 
 /*****************************************************************************

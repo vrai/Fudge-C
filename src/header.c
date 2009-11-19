@@ -68,7 +68,7 @@ FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32
         if ( index + 1 > numbytes )
             return FUDGE_OUT_OF_BYTES;
         header->hasordinal = 1;
-        header->ordinal = *( ( fudge_i16 * ) ( bytes + index ) );
+        header->ordinal = ntohs ( *( ( fudge_i16 * ) ( bytes + index ) ) );
         index += 2;
     }
     else
@@ -158,5 +158,10 @@ FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed,
         *consumed = 0;
     }
     return FUDGE_OK;
+}
+
+const fudge_i16 * FudgeHeader_getOrdinal ( FudgeFieldHeader * header )
+{
+    return header && header->hasordinal ? &( header->ordinal ) : 0;
 }
 

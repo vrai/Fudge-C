@@ -39,7 +39,11 @@ DEFINE_TEST( DecodeAllNames )
     /* Check message contents */
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 21 );
     for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
+    {
         TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
+        TEST_EQUALS_TRUE( fields [ index ].flags & FUDGE_FIELD_HAS_NAME );
+        TEST_EQUALS_TRUE( ! ( fields [ index ].flags & FUDGE_FIELD_HAS_ORDINAL ) );
+    }
 
     TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BOOLEAN );   TEST_EQUALS_MEMORY( fields [ 0 ].name, 8, "boolean", 8 );   TEST_EQUALS_TRUE( fields [ 0 ].data.boolean ); 
     TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BOOLEAN );   TEST_EQUALS_MEMORY( fields [ 1 ].name, 8, "Boolean", 8 );   TEST_EQUALS_TRUE( ! fields [ 1 ].data.boolean ); 
@@ -49,8 +53,8 @@ DEFINE_TEST( DecodeAllNames )
     TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_MEMORY( fields [ 5 ].name, 6, "Short", 6 );     TEST_EQUALS_INT( fields [ 5 ].data.i16, 127 + 5 );
     TEST_EQUALS_INT( fields [ 6 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 6 ].name, 4, "int", 4 );       TEST_EQUALS_INT( fields [ 6 ].data.i32, 32767 + 5 );
     TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_MEMORY( fields [ 7 ].name, 7, "Integer", 7 );   TEST_EQUALS_INT( fields [ 7 ].data.i32, 32767 + 5 );
-    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_LONG );       TEST_EQUALS_MEMORY( fields [ 8 ].name, 5, "long", 5 );     TEST_EQUALS_INT( fields [ 8 ].data.i64, 2147483647ll + 5ll );
-    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_LONG );       TEST_EQUALS_MEMORY( fields [ 9 ].name, 5, "Long", 5 );     TEST_EQUALS_INT( fields [ 9 ].data.i64, 2147483647ll + 5ll );;
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_LONG );      TEST_EQUALS_MEMORY( fields [ 8 ].name, 5, "long", 5 );     TEST_EQUALS_INT( fields [ 8 ].data.i64, 2147483647ll + 5ll );
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_LONG );      TEST_EQUALS_MEMORY( fields [ 9 ].name, 5, "Long", 5 );     TEST_EQUALS_INT( fields [ 9 ].data.i64, 2147483647ll + 5ll );;
     TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_MEMORY( fields [ 10 ].name, 6, "float", 6 );    TEST_EQUALS_FLOAT( fields [ 10 ].data.f32, 0.5, 0.00001 ); 
     TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_MEMORY( fields [ 11 ].name, 6, "Float", 6 );    TEST_EQUALS_FLOAT( fields [ 11 ].data.f32, 0.5, 0.00001 ); 
     TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_MEMORY( fields [ 12 ].name, 7, "double", 7 );   TEST_EQUALS_FLOAT( fields [ 12 ].data.f64, 0.27362, 0.000001 ); 
@@ -81,7 +85,11 @@ DEFINE_TEST( DecodeFixedWidths )
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 10 );
     for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
+    {
         TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
+        TEST_EQUALS_TRUE( fields [ index ].flags & FUDGE_FIELD_HAS_NAME );
+        TEST_EQUALS_TRUE( ! ( fields [ index ].flags & FUDGE_FIELD_HAS_ORDINAL ) );
+    }
 
     TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BYTE_ARRAY_4 );      TEST_EQUALS_MEMORY( fields [ 0 ].name, 7, "byte[4]", 7 );    TEST_EQUALS_MEMORY( fields [ 0 ].data.bytes, fields [ 0 ].numbytes, bytes, 4 );
     TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BYTE_ARRAY_8 );      TEST_EQUALS_MEMORY( fields [ 1 ].name, 7, "byte[8]", 7 );    TEST_EQUALS_MEMORY( fields [ 1 ].data.bytes, fields [ 1 ].numbytes, bytes, 8 );
@@ -108,26 +116,31 @@ DEFINE_TEST( DecodeAllOrdinals )
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 17 );
     for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
+    {
         TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
+        TEST_EQUALS_TRUE( ! ( fields [ index ].flags & FUDGE_FIELD_HAS_NAME ) );
+        TEST_EQUALS_TRUE( fields [ index ].flags & FUDGE_FIELD_HAS_ORDINAL );
+    }
 
-    TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BOOLEAN );   /*TODO Check ordinal */ TEST_EQUALS_TRUE( fields [ 0 ].data.boolean ); 
-    TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BOOLEAN );   /*TODO Check ordinal */ TEST_EQUALS_TRUE( ! fields [ 1 ].data.boolean ); 
-    TEST_EQUALS_INT( fields [ 2 ].type, FUDGE_TYPE_BYTE );      /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 2 ].data.byte, 5 ); 
-    TEST_EQUALS_INT( fields [ 3 ].type, FUDGE_TYPE_BYTE );      /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 3 ].data.byte, 5 ); 
-    TEST_EQUALS_INT( fields [ 4 ].type, FUDGE_TYPE_SHORT );     /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 4 ].data.i16, 127 + 5 );
-    TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_SHORT );     /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 5 ].data.i16, 127 + 5 );
-    TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_INT );       /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 7 ].data.i32, 32767 + 5 );
-    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_LONG );      /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 8 ].data.i64, 2147483647ll + 5ll );
-    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_LONG );      /*TODO Check ordinal */ TEST_EQUALS_INT( fields [ 9 ].data.i64, 2147483647ll + 5ll );
-    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_FLOAT );    /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 10 ].data.f32, 0.5, 0.00001 ); 
-    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FLOAT );    /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 11 ].data.f32, 0.5, 0.00001 ); 
-    TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DOUBLE );   /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 12 ].data.f64, 0.27362, 0.000001 ); 
-    TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_DOUBLE );   /*TODO Check ordinal */ TEST_EQUALS_FLOAT( fields [ 13 ].data.f64, 0.27362, 0.000001 ); 
+    TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BOOLEAN );   TEST_EQUALS_INT( fields [ 0 ].ordinal, 1 );     TEST_EQUALS_TRUE( fields [ 0 ].data.boolean ); 
+    TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BOOLEAN );   TEST_EQUALS_INT( fields [ 1 ].ordinal, 2 );     TEST_EQUALS_TRUE( ! fields [ 1 ].data.boolean ); 
+    TEST_EQUALS_INT( fields [ 2 ].type, FUDGE_TYPE_BYTE );      TEST_EQUALS_INT( fields [ 2 ].ordinal, 3 );     TEST_EQUALS_INT( fields [ 2 ].data.byte, 5 ); 
+    TEST_EQUALS_INT( fields [ 3 ].type, FUDGE_TYPE_BYTE );      TEST_EQUALS_INT( fields [ 3 ].ordinal, 4 );     TEST_EQUALS_INT( fields [ 3 ].data.byte, 5 ); 
+    TEST_EQUALS_INT( fields [ 4 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_INT( fields [ 4 ].ordinal, 5 );     TEST_EQUALS_INT( fields [ 4 ].data.i16, 127 + 5 );
+    TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_INT( fields [ 5 ].ordinal, 6 );     TEST_EQUALS_INT( fields [ 5 ].data.i16, 127 + 5 );
+    TEST_EQUALS_INT( fields [ 6 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_INT( fields [ 6 ].ordinal, 7 );     TEST_EQUALS_INT( fields [ 6 ].data.i32, 32767 + 5 );
+    TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_INT( fields [ 7 ].ordinal, 8 );     TEST_EQUALS_INT( fields [ 7 ].data.i32, 32767 + 5 );
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_LONG );      TEST_EQUALS_INT( fields [ 8 ].ordinal, 9 );     TEST_EQUALS_INT( fields [ 8 ].data.i64, 2147483647ll + 5ll );
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_LONG );      TEST_EQUALS_INT( fields [ 9 ].ordinal, 10 );    TEST_EQUALS_INT( fields [ 9 ].data.i64, 2147483647ll + 5ll );
+    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_INT( fields [ 10 ].ordinal, 11 );   TEST_EQUALS_FLOAT( fields [ 10 ].data.f32, 0.5, 0.00001 ); 
+    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FLOAT );    TEST_EQUALS_INT( fields [ 11 ].ordinal, 12 );   TEST_EQUALS_FLOAT( fields [ 11 ].data.f32, 0.5, 0.00001 ); 
+    TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_INT( fields [ 12 ].ordinal, 13 );   TEST_EQUALS_FLOAT( fields [ 12 ].data.f64, 0.27362, 0.000001 ); 
+    TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_DOUBLE );   TEST_EQUALS_INT( fields [ 13 ].ordinal, 14 );   TEST_EQUALS_FLOAT( fields [ 13 ].data.f64, 0.27362, 0.000001 ); 
 
-    TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_STRING );   /*TODO Check ordinal */ TEST_EQUALS_MEMORY( fields [ 14 ].data.bytes, fields [ 14 ].numbytes, "Kirk Wylie", 10 );
+    TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_STRING );   TEST_EQUALS_INT( fields [ 14 ].ordinal, 15 );   TEST_EQUALS_MEMORY( fields [ 14 ].data.bytes, fields [ 14 ].numbytes, "Kirk Wylie", 10 );
 
-    TEST_EQUALS_INT( fields [ 15 ].type, FUDGE_TYPE_FLOAT_ARRAY );   /*TODO Check ordinal */    TEST_EQUALS_MEMORY( fields [ 15 ].data.bytes, fields [ 15 ].numbytes, empty, 24 * sizeof ( fudge_f32 ) );
-    TEST_EQUALS_INT( fields [ 16 ].type, FUDGE_TYPE_DOUBLE_ARRAY );  /*TODO Check ordinal */    TEST_EQUALS_MEMORY( fields [ 16 ].data.bytes, fields [ 16 ].numbytes, empty, 273 * sizeof ( fudge_f64 ) );
+    TEST_EQUALS_INT( fields [ 15 ].type, FUDGE_TYPE_FLOAT_ARRAY );   TEST_EQUALS_INT( fields [ 15 ].ordinal, 16 );   TEST_EQUALS_MEMORY( fields [ 15 ].data.bytes, fields [ 15 ].numbytes, empty, 24 * sizeof ( fudge_f32 ) );
+    TEST_EQUALS_INT( fields [ 16 ].type, FUDGE_TYPE_DOUBLE_ARRAY );  TEST_EQUALS_INT( fields [ 16 ].ordinal, 17 );   TEST_EQUALS_MEMORY( fields [ 16 ].data.bytes, fields [ 16 ].numbytes, empty, 273 * sizeof ( fudge_f64 ) );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
@@ -144,13 +157,13 @@ DEFINE_TEST( DecodeSubMsgs )
     TEST_EQUALS_TRUE( ( submessage = field.data.message ) != 0 );
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 2 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 0 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   TEST_EQUALS_MEMORY( field.name, 7, "bibble", 7 );   TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, "fibble", 6 );
-    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   /* TODO Test ordinal == 827 */                      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, "Blibble", 7 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );   TEST_EQUALS_INT( field.ordinal, 827 );              TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, "Blibble", 7 );
 
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 1 ), FUDGE_OK );   TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );    TEST_EQUALS_MEMORY( field.name, 4, "sub2", 4 );
     TEST_EQUALS_TRUE( ( submessage = field.data.message ) != 0 );
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 2 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 0 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_INT );      TEST_EQUALS_MEMORY( field.name, 8, "bibble9", 8 );  TEST_EQUALS_INT( field.data.i32, 9837438 );
-    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_FLOAT);     /* TODO Test ordinal == 828 */                      TEST_EQUALS_FLOAT( field.data.f32, 82.77, 0.00001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, submessage, 1 ), FUDGE_OK );    TEST_EQUALS_INT( field.type, FUDGE_TYPE_FLOAT);     TEST_EQUALS_INT( field.ordinal, 828 );              TEST_EQUALS_FLOAT( field.data.f32, 82.77, 0.00001 );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
@@ -185,6 +198,8 @@ DEFINE_TEST( DecodeVariableWidths )
     {
         TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
         TEST_EQUALS_INT( fields [ index ].type, FUDGE_TYPE_BYTE_ARRAY );
+        TEST_EQUALS_TRUE( fields [ index ].flags & FUDGE_FIELD_HAS_NAME );
+        TEST_EQUALS_TRUE( ! ( fields [ index ].flags & FUDGE_FIELD_HAS_ORDINAL ) );
     }
 
     TEST_EQUALS_MEMORY( fields [ 0 ].name, 3, "100", 3 );    TEST_EQUALS_MEMORY( fields [ 0 ].data.bytes, fields [ 0 ].numbytes, empty, 100 );

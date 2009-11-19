@@ -54,5 +54,7 @@ FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header );
 fudge_i32 FudgeHeader_getFixedFieldWidth ( fudge_type_id type );
 FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed, FudgeFieldHeader header, const fudge_byte * bytes, fudge_i32 numbytes );
 
+const fudge_i16 * FudgeHeader_getOrdinal ( FudgeFieldHeader * header );
+
 #endif
 

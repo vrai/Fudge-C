@@ -30,6 +30,7 @@ DEFINE_TEST( FieldFunctions )
     FudgeField field;
     FudgeField fields [ 32 ];            /* Needs to be big enough to hold the largest field in the test */
     int index;
+    fudge_i16 ordinal;
 
     /* Populate the large byte array before use it in the tests */
     for ( index = 0; index < sizeof ( largeByteArray ); ++index )
@@ -40,68 +41,68 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 0 );
 
     /* Test some failure cases */
-    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( 0, 0, FUDGE_FALSE ), FUDGE_NULL_POINTER );
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Null message", 0 ), FUDGE_NULL_POINTER );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Null, non zero-length string", 0, 1 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( 0, 0, 0, FUDGE_FALSE ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Null message", 0, 0 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Null, non zero-length string", 0, 0, 1 ), FUDGE_NULL_POINTER );
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 0 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( 0, message, 0 ), FUDGE_NULL_POINTER );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields, message, 0 ), FUDGE_INVALID_INDEX );
 
     /* Add indicator, boolean, integer and float fields */
-    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, 0, FUDGE_TRUE ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, 127 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16 ( message, 0, ( fudge_i16 ) 32767 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32 ( message, 0, ( fudge_i32 ) -2147483647 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64 ( message, 0, ( fudge_i64 ) 9223372036854775807ll ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32 ( message, 0, 2147483647.0f ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64 ( message, 0, -9223372036854775807.0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, 0, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, 0, 0, FUDGE_TRUE ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, 0, 127 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16 ( message, 0, 0, ( fudge_i16 ) 32767 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32 ( message, 0, 0, ( fudge_i32 ) -2147483647 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64 ( message, 0, 0, ( fudge_i64 ) 9223372036854775807ll ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32 ( message, 0, 0, 2147483647.0f ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64 ( message, 0, 0, -9223372036854775807.0 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 8 );
 
     /* Add fixed width byte arrays in a sub message */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField4ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField8ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField20ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField32ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField64ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( submessage, 0, largeByteArray ), FUDGE_OK );
+    ordinal = 1; TEST_EQUALS_INT( FudgeMsg_addField4ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 2; TEST_EQUALS_INT( FudgeMsg_addField8ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 3; TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 4; TEST_EQUALS_INT( FudgeMsg_addField20ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 5; TEST_EQUALS_INT( FudgeMsg_addField32ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 6; TEST_EQUALS_INT( FudgeMsg_addField64ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 7; TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 8; TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
+    ordinal = 9; TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 9 );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Byte Array SubMessage", submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Byte Array SubMessage", 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     /* Add null, empty and populated strings */
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Null string", 0, 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Empty string", "", 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "String", "This is a string", 16 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Null string", 0, 0, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Empty string", 0, "", 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "String", 0, "This is a string", 16 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 12 );
 
     /* Add empty and populated arrays in a sub message */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, "No Bytes", 0, 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, "Bytes", rawBytes, 16 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( submessage, "Shorts", rawShorts, 10 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( submessage, "Ints", rawInts, 4 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( submessage, "Longs", rawLongs, 12 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( submessage, "Floats", rawFloats, 8 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( submessage, "Doubles", rawDoubles, 5 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, "No Bytes", 0, 0, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, "Bytes", 0, rawBytes, 16 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( submessage, "Shorts", 0, rawShorts, 10 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( submessage, "Ints", 0, rawInts, 4 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( submessage, "Longs", 0, rawLongs, 12 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( submessage, "Floats", 0, rawFloats, 8 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( submessage, "Doubles", 0, rawDoubles, 5 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 7 );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Array SubMessage", submessage ), FUDGE_OK );
+    ordinal = 0; TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Array SubMessage", &ordinal, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     /* Add an empty sub message */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Empty SubMessage", submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Empty SubMessage", 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 14 );
