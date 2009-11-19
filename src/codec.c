@@ -91,7 +91,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
         case FUDGE_TYPE_BYTE:       return FudgeMsg_addFieldByte ( message, header.name, *( ( fudge_byte * ) bytes ) );
         case FUDGE_TYPE_SHORT:      return FudgeMsg_addFieldI16  ( message, header.name, ntohs ( *( ( fudge_i16 * ) bytes ) ) );
         case FUDGE_TYPE_INT:        return FudgeMsg_addFieldI32  ( message, header.name, ntohl ( *( ( fudge_i32 * ) bytes ) ) );
-        case FUDGE_TYPE_LONG:       return FudgeMsg_addFieldI32  ( message, header.name, ntohi64 ( *( ( fudge_i64 * ) bytes ) ) );
+        case FUDGE_TYPE_LONG:       return FudgeMsg_addFieldI64  ( message, header.name, ntohi64 ( *( ( fudge_i64 * ) bytes ) ) );
         case FUDGE_TYPE_FLOAT:      return FudgeMsg_addFieldF32  ( message, header.name, ntohf ( *( ( fudge_f32 * ) bytes ) ) );
         case FUDGE_TYPE_DOUBLE:     return FudgeMsg_addFieldF64  ( message, header.name, ntohd ( *( ( fudge_f64 * ) bytes ) ) );
 
