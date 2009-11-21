@@ -21,3 +21,12 @@ DIST_SUBDIRS = src include tests
 
 distclean-local:
 	$(RM) -f _configs.sed
+
+dist-hook: GenChangeLog
+
+.PHONY: GenChangeLog
+GenChangeLog:
+	if test -d .git; then \
+        $(top_srcdir)/scripts/git2changelog.py > $(distdir)/ChangeLog; \
+    fi
+

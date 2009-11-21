@@ -1,5 +1,6 @@
 #!/bin/sh
 rm -f config.cache
+touch ChangeLog
 if [ "`which glibtoolize`" = "" ]
 then
     echo "- libtoolize."
