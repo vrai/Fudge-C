@@ -143,7 +143,8 @@ FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed,
             return FUDGE_OUT_OF_BYTES;
         switch ( header.widthofwidth )
         {
-            case 1: *width = *( ( fudge_byte * ) bytes );           break;
+            /* 1 byte widths are stored unsigned, everything else is a signed value */
+            case 1: *width = ( unsigned char ) *bytes;              break;
             case 2: *width = ntohs ( *( ( fudge_i16 * ) bytes ) );  break;
             case 4: *width = ntohl ( *( ( fudge_i32 * ) bytes ) );  break;
             default:

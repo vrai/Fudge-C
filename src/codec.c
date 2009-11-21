@@ -65,7 +65,7 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsg * message, const fudge_byte * bytes,
             return FUDGE_OUT_OF_MEMORY;                                                                                                         \
         for ( index = 0; index < numelements; ++index )                                                                                         \
             mutable [ index ] = swapper ( elements [ index ] );                                                                                 \
-        status = FudgeMsg_addField##typename##Array ( message, header.name, FudgeHeader_getOrdinal ( &header ), elements, numelements );        \
+        status = FudgeMsg_addField##typename##Array ( message, header.name, FudgeHeader_getOrdinal ( &header ), mutable, numelements );         \
         free ( mutable );                                                                                                                       \
         return status;                                                                                                                          \
     }
