@@ -15,5 +15,5 @@ autoheader
 echo "- autoconf."
 autoconf
 echo "- automake."
-automake -a
+automake
 exit

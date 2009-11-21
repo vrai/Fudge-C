@@ -5,8 +5,8 @@ dnl If the sizes don't match a failure is generated.
 dnl
 dnl Example:
 dnl
-dnl     TE_TEST_SIZEOF(float, 4)
-dnl     TE_TEST_SIZEOF(double, 8)
+dnl     FM_TEST_SIZEOF(float, 4)
+dnl     FM_TEST_SIZEOF(double, 8)
 dnl
 dnl @category Misc
 dnl @author Vra Stacey <vrai.stacey@gmail.com>

@@ -1,0 +1,60 @@
+This is Fudge-C, a C implementation of the Fudge message encoding system. Full
+details of Fudge, including the specification can be found at
+
+    http://fudgemsg.org/
+
+In brief: Fudge is a hierarchical, typesafe, binary, self-describing message
+encoding specification.
+
+    Hierarchical:
+        Fudge messages aren't just a flat structure, they can be nested,
+        creating larger, more complex data structures.
+
+    Typesafe:
+        Individual fields in a Fudge message are provided with their type data
+        encoded, so that you can extract data safely.
+
+    Binary:
+        Fudge encoded data is binary, making it much smaller than text-based
+        representations like XML or JSON.
+
+    Self-Describing:
+        Fudge messages contain metadata about the fields encoded (like a name
+        or an ordinal), meaning that you can manipulate them without knowing
+        the schema in advance.
+
+    Message:
+        Fudge was originally designed for encoding data to pass in a Message
+        Oriented Middleware system, and so are more suited to the types of
+        objects likely to be transmitted over a network connection than to a
+        pure streaming mode.
+
+The Fudge-C implementation is a lightweight, simple, native implementation of
+this specification. By its nature it lacks the complex type inference
+functionality of the Fudge-Java and Fudge-Net implementations. However it
+fully supports all transport types and opaque "blocks of bytes" for custom
+type instances. It has no external library dependencies and requires only a C
+compiler and a tool chain.
+
+-----
+
+Copyright (C) 2009
+Vrai Stacey <vrai.stacey@gmail.com>
+
+This file is part of Fudge-C.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+ 
+    http://www.apache.org/licenses/LICENSE-2.0
+     
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Fudge specification description taken from the Fudge Messaging website,
+Copyright (C) 2009, OpenGamma Inc.
+
