@@ -323,12 +323,12 @@ FudgeMsg loadFudgeMsg ( const char * filename )
 {
     fudge_byte * referenceBytes;
     fudge_i32 numReferenceBytes;
-    FudgeMsg message;
+    FudgeMsgEnvelope envelope;
 
     loadFile ( &referenceBytes, &numReferenceBytes, filename );
-    TEST_EQUALS_INT( FudgeCodec_decodeMsg ( &message, referenceBytes, numReferenceBytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeCodec_decodeMsg ( &envelope, referenceBytes, numReferenceBytes ), FUDGE_OK );
     free ( referenceBytes );
-    return message;
+    return envelope.message;
 }
 
 void loadFile ( fudge_byte * * target, fudge_i32 * targetSize, const char * filename )

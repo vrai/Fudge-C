@@ -41,6 +41,14 @@ typedef fudge_byte fudge_type_id;
 
 typedef struct FudgeMsgImpl * FudgeMsg;
 
+typedef struct
+{
+    fudge_byte directives;      /* Processing directives, for future use */
+    fudge_byte schemaversion;   /* Application specific Schema version */
+    fudge_i16 taxonomy;         /* Application specific taxonomy reference */
+    FudgeMsg message;           /* The actual message */
+} FudgeMsgEnvelope;
+
 typedef union
 {
     /* Primitive types */

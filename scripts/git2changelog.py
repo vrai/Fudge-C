@@ -1,4 +1,4 @@
-#!/usr/bin/env python -t
+#!/usr/bin/python -t
 
 # Copyright (C) 2009 - 2009, Vrai Stacey.
 #

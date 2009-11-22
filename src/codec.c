@@ -23,34 +23,39 @@ FudgeStatus FudgeCodec_decodeMsgFields ( FudgeMsg message, const fudge_byte * by
 FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, fudge_i32 width, const fudge_byte * bytes, fudge_i32 numbytes );
 
 
-FudgeStatus FudgeCodec_decodeMsg ( FudgeMsg * message, const fudge_byte * bytes, fudge_i32 numbytes )
+FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte * bytes, fudge_i32 numbytes )
 {
     FudgeStatus status;
     FudgeMsgHeader header;
+    FudgeMsg message;
 
-    if ( ! message )
+    if ( ! envelope )
         return FUDGE_NULL_POINTER;
 
-    /* Get the message header and use it to create the message */
+    /* Get the message header and use it to create the envelope and the message */
     if ( ( status = FudgeHeader_decodeMsgHeader ( &header, bytes, numbytes ) ) != FUDGE_OK )
         return status;
     if ( numbytes < header.numbytes )
         return FUDGE_OUT_OF_BYTES;
-    if ( ( status = FudgeMsg_create ( message ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_create ( &message ) ) != FUDGE_OK )
         return status;
 
-    /* TODO Populate message with schema version and taxonomy */
+    envelope->directives = header.directives;
+    envelope->schemaversion = header.schemaversion;
+    envelope->taxonomy = header.taxonomy;
+    envelope->message = message;
 
     /* Advance to the end of the header */
     bytes += sizeof ( FudgeMsgHeader );
     numbytes -= sizeof ( FudgeMsgHeader );
 
     /* Consume fields */
-    if ( ( status = FudgeCodec_decodeMsgFields ( *message, bytes, numbytes ) ) != FUDGE_OK )
+    if ( ( status = FudgeCodec_decodeMsgFields ( message, bytes, numbytes ) ) != FUDGE_OK )
     {
-        FudgeMsg_release ( *message );
-        *message = 0;
+        FudgeMsg_release ( message );
+        envelope->message = 0;
     }
+
     return status;
 }
 

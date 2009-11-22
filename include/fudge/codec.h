@@ -22,7 +22,7 @@
     extern "C" {
 #endif
 
-extern FudgeStatus FudgeCodec_decodeMsg ( FudgeMsg * message, const fudge_byte * bytes, fudge_i32 numbytes );
+extern FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte * bytes, fudge_i32 numbytes );
 
 #ifdef __cplusplus
     }
