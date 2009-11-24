@@ -25,6 +25,7 @@ typedef enum
     FUDGE_OK                    = 0x0000,
     FUDGE_OUT_OF_MEMORY         = 0x0001,
     FUDGE_NULL_POINTER          = 0x0002,
+    FUDGE_NAME_TOO_LONG         = 0x0003,
     FUDGE_INVALID_INDEX         = 0x0010,
     FUDGE_OUT_OF_BYTES          = 0x0100,
     FUDGE_UNKNOWN_FIELD_WIDTH   = 0x0101,

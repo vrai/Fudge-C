@@ -107,34 +107,6 @@ FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header )
     return FUDGE_OK;
 }
 
-fudge_i32 FudgeHeader_getFixedFieldWidth ( fudge_type_id type )
-{
-    switch ( type )
-    {
-        case FUDGE_TYPE_INDICATOR:  return 0;
-        case FUDGE_TYPE_BOOLEAN:    return 1;
-        case FUDGE_TYPE_BYTE:       return 1;
-        case FUDGE_TYPE_SHORT:      return 2;
-        case FUDGE_TYPE_INT:        return 4;
-        case FUDGE_TYPE_LONG:       return 8;
-        case FUDGE_TYPE_FLOAT:      return 4;
-        case FUDGE_TYPE_DOUBLE:     return 8;
-
-        case FUDGE_TYPE_BYTE_ARRAY_4:   return 4;
-        case FUDGE_TYPE_BYTE_ARRAY_8:   return 8;
-        case FUDGE_TYPE_BYTE_ARRAY_16:  return 16;
-        case FUDGE_TYPE_BYTE_ARRAY_20:  return 20;
-        case FUDGE_TYPE_BYTE_ARRAY_32:  return 32;
-        case FUDGE_TYPE_BYTE_ARRAY_64:  return 64;
-        case FUDGE_TYPE_BYTE_ARRAY_128: return 128;
-        case FUDGE_TYPE_BYTE_ARRAY_256: return 256;
-        case FUDGE_TYPE_BYTE_ARRAY_512: return 512;
-
-        default:
-            return -1;
-    }
-}
-
 FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed, FudgeFieldHeader header, const fudge_byte * bytes, fudge_i32 numbytes )
 {
     if ( header.widthofwidth )
@@ -154,7 +126,7 @@ FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed,
     }
     else
     {
-        if ( ( *width = FudgeHeader_getFixedFieldWidth ( header.type ) ) < 0 )
+        if ( ( *width = FudgeType_getFixedWidth ( header.type ) ) < 0 )
             return FUDGE_UNKNOWN_FIELD_WIDTH;
         *consumed = 0;
     }

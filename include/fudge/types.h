@@ -3,6 +3,10 @@
 
 #include "fudge/platform.h"
 
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 /*****************************************************************************
  * Primitive type definitions
  */
@@ -33,7 +37,7 @@ typedef int64_t fudge_i64;
 typedef float   fudge_f32;
 typedef double  fudge_f64;
 
-typedef fudge_byte fudge_type_id;
+typedef uint8_t fudge_type_id;
 
 /*****************************************************************************
  * Structure/union type definitions
@@ -72,6 +76,7 @@ typedef struct
 {
     fudge_type_id type;     /* The field type: used to interpret the data union */
     fudge_i32 numbytes;     /* The size of the bytes array in the data union */
+    fudge_i32 width;        /* The size of the field in bytes, or -1 if it's a submessage */
     FudgeFieldData data;    /* Union holding the field data */
     FudgeFieldFlags flags;  /* Indicates the presence of optional values */
     const char * name;      /* The name of the field, can be null */
@@ -112,6 +117,17 @@ typedef struct
 #define FUDGE_TYPE_BYTE_ARRAY_128   23    /* Byte array with 128 elements */
 #define FUDGE_TYPE_BYTE_ARRAY_256   24    /* Byte array with 256 elements */
 #define FUDGE_TYPE_BYTE_ARRAY_512   25    /* Byte array with 512 elements */
+
+/*****************************************************************************
+ * Type information functions
+ */
+
+extern fudge_bool FudgeType_typeIsFixedWidth ( fudge_type_id type );
+extern fudge_i32 FudgeType_getFixedWidth ( fudge_type_id type );
+
+#ifdef __cplusplus
+    }
+#endif
 
 #endif
 

@@ -24,6 +24,8 @@
 
 extern FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte * bytes, fudge_i32 numbytes );
 
+extern FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * bytes, fudge_i32 * numbytes );
+
 #ifdef __cplusplus
     }
 #endif

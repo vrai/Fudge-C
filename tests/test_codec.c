@@ -178,7 +178,7 @@ DEFINE_TEST( DecodeUnknown )
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 1 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( field.type, -56 );
+    TEST_EQUALS_INT( field.type, 200 );
     TEST_EQUALS_MEMORY( field.name, 7, "unknown", 7 );
     TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, empty, 10 );
 
@@ -210,7 +210,7 @@ DEFINE_TEST( DecodeVariableWidths )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
-DEFINE_TEST( DeepTree )
+DEFINE_TEST( DecodeDeepTree )
     int index;
     FudgeField fields [ 32 ];
     fudge_byte bytes [ 512 ], empty [ 128 ];
@@ -306,8 +306,104 @@ DEFINE_TEST( DeepTree )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( EncodeUnknown )
+    fudge_byte empty [ 16 ];
+    fudge_byte * encoded, * reference;
+    fudge_i32 encodedsize, referencesize;
+    FudgeMsgEnvelope envelope;
+    FudgeMsg message;
+
+    memset ( empty, 0, sizeof ( empty ) );
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldOpaque ( message, 200, "unknown", 0, empty, 10 ), FUDGE_OK );
+
+    envelope.directives = 0;
+    envelope.schemaversion = 0;
+    envelope.taxonomy = 0;
+    envelope.message = message;
+
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+
+    loadFile ( &reference, &referencesize, UNKNOWN_FILENAME );
+    TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
+
+    free ( encoded );
+    free ( reference );
+END_TEST
+
+DEFINE_TEST( EncodeSubMsgs )
+    fudge_byte * encoded, * reference;
+    fudge_i32 encodedsize, referencesize;
+    fudge_i16 ordinal;
+    FudgeMsgEnvelope envelope;
+    FudgeMsg message, submessage;
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+
+    /* Create and add the first submessage */
+    TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, "bibble", 0, "fibble", 6 ), FUDGE_OK );
+    ordinal = 827;
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, 0, &ordinal, "Blibble", 7 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "sub1", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
+
+    /* Create and add the second submessage */
+    TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32 ( submessage, "bibble9", 0, 9837438 ), FUDGE_OK );
+    ordinal = 828;
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32 ( submessage, 0, &ordinal, 82.77f ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "sub2", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
+
+    envelope.directives = 0;
+    envelope.schemaversion = 0;
+    envelope.taxonomy = 0;
+    envelope.message = message;
+
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+
+    loadFile ( &reference, &referencesize, SUBMSG_FILENAME );
+    TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
+
+    free ( encoded );
+    free ( reference );
+END_TEST
+
+DEFINE_TEST( EncodeVariableWidths )
+    fudge_byte empty [ 100000 ];
+    fudge_byte * encoded, * reference;
+    fudge_i32 encodedsize, referencesize;
+    FudgeMsgEnvelope envelope;
+    FudgeMsg message;
+
+    memset ( empty, 0, sizeof ( empty ) );
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "100", 0, empty, 100 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "1000", 0, empty, 1000 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "10000", 0, empty, 100000 ), FUDGE_OK );
+
+    envelope.directives = 0;
+    envelope.schemaversion = 0;
+    envelope.taxonomy = 0;
+    envelope.message = message;
+
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+
+    loadFile ( &reference, &referencesize, VARIABLE_WIDTH_FILENAME );
+    TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
+
+    free ( encoded );
+    free ( reference );
+END_TEST
+
 DEFINE_TEST_SUITE( Codec )
-    /* Interop test files */
+    /* Interop decode test files */
     REGISTER_TEST( DecodeAllNames )
     REGISTER_TEST( DecodeFixedWidths )
     REGISTER_TEST( DecodeAllOrdinals )
@@ -315,8 +411,13 @@ DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( DecodeUnknown )
     REGISTER_TEST( DecodeVariableWidths )
 
-    /* Other test files */
-    REGISTER_TEST( DeepTree )
+    /* Other decode test files */
+    REGISTER_TEST( DecodeDeepTree )
+
+    /* Interop encode tests */
+    REGISTER_TEST( EncodeUnknown )
+    REGISTER_TEST( EncodeSubMsgs )
+    REGISTER_TEST( EncodeVariableWidths )
 END_TEST_SUITE
 
 FudgeMsg loadFudgeMsg ( const char * filename )
