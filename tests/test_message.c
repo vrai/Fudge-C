@@ -47,6 +47,9 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 0 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( 0, message, 0 ), FUDGE_NULL_POINTER );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields, message, 0 ), FUDGE_INVALID_INDEX );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, "This message field name is too long. The limit for message field names is 256 characters; this is because "
+                                                      "the name's length must be stored in a single leading byte (a bit like a length limited version Pascal). A "
+                                                      "special error code exists just for this eventuality, so hopefully it will be thrown here.", 0, FUDGE_TRUE ), FUDGE_NAME_TOO_LONG );
 
     /* Add indicator, boolean, integer and float fields */
     TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, 0, 0 ), FUDGE_OK );

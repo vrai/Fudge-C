@@ -74,6 +74,7 @@ FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
                                    const char * name,
                                    const fudge_i16 * ordinal )
 {
+    FudgeStatus status;
     FieldListNode * node ;
 
     assert ( message );
@@ -100,16 +101,16 @@ FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
         /* Names may not have a length greater than 255 bytes (only one byte is
            available for their length) */
         fudge_i32 namelen = strlen ( name );
-        if ( namelen > 255 )
+        if ( namelen > 256 )
         {
-            free ( node );
-            return FUDGE_NAME_TOO_LONG;
+            status = FUDGE_NAME_TOO_LONG;
+            goto release_node_and_fail;
         }
         
         if ( ! ( node->field.name = ( char * ) malloc ( namelen + 1 ) ) )
         {
-            free ( node );
-            return FUDGE_OUT_OF_MEMORY;
+            status = FUDGE_OUT_OF_MEMORY;
+            goto release_node_and_fail;
         }
 
         memcpy ( ( char * ) node->field.name, name, namelen + 1 );
@@ -144,6 +145,10 @@ FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
     message->numfields += 1ul;
     *field = &( node->field );
     return FUDGE_OK;
+
+release_node_and_fail:
+    free ( node );
+    return status;
 }
 
 

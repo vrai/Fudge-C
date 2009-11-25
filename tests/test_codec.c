@@ -306,6 +306,95 @@ DEFINE_TEST( DecodeDeepTree )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( EncodeAllNames )
+    fudge_byte empty [ 8192 ];
+    fudge_byte * encoded, * reference;
+    fudge_i32 encodedsize, referencesize;
+    FudgeMsgEnvelope envelope;
+    FudgeMsg message;
+
+    memset ( empty, 0, sizeof ( empty ) );
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, "boolean", 0, FUDGE_TRUE ),       FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, "Boolean", 0, FUDGE_FALSE ),      FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, "byte",    0, 5 ),                FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, "Byte",    0, 5 ),                FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, "short",   0, 127 + 5 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, "Short",   0, 127 + 5 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, "int",     0, 32767 + 5 ),        FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, "Integer", 0, 32767 + 5 ),        FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, "long",    0, 2147483647ll + 5 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, "Long",    0, 2147483647ll + 5 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, "float",   0, 0.5 ),              FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, "Float",   0, 0.5 ),              FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, "double",  0, 0.27362 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, "Double",  0, 0.27362 ),          FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "String", 0, "Kirk Wylie", 10 ), FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, "float array",  0, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, "double array", 0, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( message, "short array",  0, ( fudge_i16 * ) empty, 32 ),  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( message, "int array",    0, ( fudge_i32 * ) empty, 83 ),  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( message, "long array",   0, ( fudge_i64 * ) empty, 837 ), FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, "indicator", 0 ), FUDGE_OK );
+
+    envelope.directives = 0;
+    envelope.schemaversion = 0;
+    envelope.taxonomy = 0;
+    envelope.message = message;
+
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+
+    loadFile ( &reference, &referencesize, ALLNAMES_FILENAME );
+    TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
+
+    free ( encoded );
+    free ( reference );
+END_TEST
+
+DEFINE_TEST( EncodeFixedWidths )
+    fudge_byte bytes [ 512 ];
+    int index;
+    fudge_byte * encoded, * reference;
+    fudge_i32 encodedsize, referencesize;
+    FudgeMsgEnvelope envelope;
+    FudgeMsg message;
+
+    for ( index = 0; index < sizeof ( bytes ); ++index )
+        bytes [ index ] = ( fudge_byte ) index;
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField4ByteArray   ( message, "byte[4]",   0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField8ByteArray   ( message, "byte[8]",   0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray  ( message, "byte[16]",  0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField20ByteArray  ( message, "byte[20]",  0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField32ByteArray  ( message, "byte[32]",  0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField64ByteArray  ( message, "byte[64]",  0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( message, "byte[128]", 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( message, "byte[256]", 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( message, "byte[512]", 0, bytes ), FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "byte[28]", 0, bytes, 28 ), FUDGE_OK );
+
+    envelope.directives = 0;
+    envelope.schemaversion = 0;
+    envelope.taxonomy = 0;
+    envelope.message = message;
+
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+
+    loadFile ( &reference, &referencesize, FIXED_WIDTH_FILENAME );
+    TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
+
+    free ( encoded );
+    free ( reference );
+END_TEST
+
 DEFINE_TEST( EncodeUnknown )
     fudge_byte empty [ 16 ];
     fudge_byte * encoded, * reference;
@@ -415,6 +504,8 @@ DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( DecodeDeepTree )
 
     /* Interop encode tests */
+    REGISTER_TEST( EncodeAllNames )
+    REGISTER_TEST( EncodeFixedWidths )
     REGISTER_TEST( EncodeUnknown )
     REGISTER_TEST( EncodeSubMsgs )
     REGISTER_TEST( EncodeVariableWidths )
