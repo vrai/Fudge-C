@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fudge/codec.h"
-#include "fudge/platform.h"
+#include "codec_encode.h"
 #include "header.h"
 #include "prefix.h"
 #include <assert.h>
@@ -93,32 +92,6 @@ FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * nu
     return FUDGE_OK;
 }
 
-FudgeStatus FudgeCodec_populateFieldPrefix ( const FudgeField * field, FudgeFieldPrefix * prefix )
-{
-    if ( ! ( field && prefix ) )
-        return FUDGE_NULL_POINTER;
-
-    if ( FudgeType_typeIsFixedWidth ( field->type ) )
-    {
-        prefix->fixedwidth = FUDGE_TRUE;
-        prefix->variablewidth = 0;
-    }
-    else
-    {
-        prefix->fixedwidth = FUDGE_FALSE;
-        prefix->variablewidth = FudgeCodec_calculateBytesToHoldSize ( FudgeCodec_getFieldDataLength ( field ) );
-
-        /* As there's only 2 bytes for this value, 4 bytes is stored as 3 */
-        if ( prefix->variablewidth > 2 )
-            prefix->variablewidth = 3;
-    }
-
-    prefix->ordinal = field->flags & FUDGE_FIELD_HAS_ORDINAL;
-    prefix->name = field->flags & FUDGE_FIELD_HAS_NAME;
-
-    return FUDGE_OK;
-}
-
 void FudgeCodec_encodeFieldByte ( fudge_byte byte, fudge_byte * * writepos )
 {
     **writepos = byte;
@@ -180,25 +153,46 @@ FUDGECODEC_ENCODEFIELDARRAY_IMPL( I64, fudge_i64 )
 FUDGECODEC_ENCODEFIELDARRAY_IMPL( F32, fudge_f32 )
 FUDGECODEC_ENCODEFIELDARRAY_IMPL( F64, fudge_f64 )
 
+FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFieldHeader * header )
+{
+    if ( ! ( field && header ) )
+        return FUDGE_NULL_POINTER;
+
+    header->type = field->type;
+    if ( FudgeType_typeIsFixedWidth ( field->type ) )
+        header->widthofwidth = 0;
+    else
+        header->widthofwidth = FudgeCodec_calculateBytesToHoldSize ( FudgeCodec_getFieldDataLength ( field ) );;
+
+    header->hasordinal = field->flags & FUDGE_FIELD_HAS_ORDINAL;
+    header->ordinal = header->hasordinal ? field->ordinal : 0;
+
+    if ( field->flags & FUDGE_FIELD_HAS_NAME )
+    {
+        if ( ! ( header->name = field->name ? strdup ( field->name ) : strdup ( "" ) ) )
+            return FUDGE_OUT_OF_MEMORY;
+    }
+    else
+        header->name = 0;
+
+    return FUDGE_OK;
+}
+
 FudgeStatus FudgeCodec_encodeField ( const FudgeField * field, fudge_byte * * writepos )
 {
-    FudgeFieldPrefix prefix;
+    FudgeFieldHeader header;
     FudgeStatus status;
 
     if ( ! field || ! writepos || ! *writepos )
         return FUDGE_NULL_POINTER;
 
-    /* Encode the field prefix */
-    if ( ( status = FudgeCodec_populateFieldPrefix ( field, &prefix ) ) != FUDGE_OK )
+    /* Populate and encode the header */
+    if ( ( status = FudgeCodec_populateFieldHeader ( field, &header ) ) != FUDGE_OK )
         return status;
-    FudgeCodec_encodeFieldByte ( FudgePrefix_encodeFieldPrefix ( prefix ), writepos );
-
-    /* Encode the rest of the field header */
-    FudgeCodec_encodeFieldByte ( field->type, writepos );
-    if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
-        FudgeCodec_encodeFieldI16 ( field->ordinal, writepos );
-    if ( field->flags & FUDGE_FIELD_HAS_NAME )
-        FudgeCodec_encodeFieldOpaque ( ( const fudge_byte * ) field->name, field->name ? strlen ( field->name ) : 0, writepos );
+    status = FudgeHeader_encodeFieldHeader ( &header, writepos );
+    FudgeHeader_destroyFieldHeader ( header );
+    if ( status != FUDGE_OK )
+        return status;
 
     /* Encode the field data */
     switch ( field->type )

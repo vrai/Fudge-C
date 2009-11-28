@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 #include "header.h"
+#include "codec_encode.h"
 #include "prefix.h"
-#include "fudge/platform.h"
 
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes )
 {
@@ -55,13 +55,13 @@ FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32
     {
         if ( index + 1 > numbytes )
             return FUDGE_OUT_OF_BYTES;
-        header->hasordinal = 1;
+        header->hasordinal = FUDGE_TRUE;
         header->ordinal = ntohs ( *( ( fudge_i16 * ) ( bytes + index ) ) );
         index += 2;
     }
     else
     {
-        header->hasordinal = 0;
+        header->hasordinal = FUDGE_FALSE;
         header->ordinal = 0;
     }
 
@@ -86,6 +86,31 @@ FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32
         header->name = 0;
 
     *consumed = index;
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fudge_byte * * writepos )
+{
+    FudgeFieldPrefix prefix;
+
+    if ( ! ( header && writepos ) )
+        return FUDGE_NULL_POINTER;
+
+    /* Populate and encode the prefix */
+    prefix.fixedwidth = FudgeType_typeIsFixedWidth ( header->type );
+    prefix.variablewidth = prefix.fixedwidth ? 0 : header->widthofwidth;
+    prefix.ordinal = header->hasordinal;
+    prefix.name = header->name != 0;
+
+    FudgeCodec_encodeFieldByte ( FudgePrefix_encodeFieldPrefix ( prefix ), writepos );
+
+    /* Encode the rest of the header */
+    FudgeCodec_encodeFieldByte ( header->type, writepos );
+    if ( header->hasordinal )
+        FudgeCodec_encodeFieldI16 ( header->ordinal, writepos );
+    if ( header->name )
+        FudgeCodec_encodeFieldOpaque ( ( const fudge_byte * ) header->name, strlen ( header->name ), writepos );
+
     return FUDGE_OK;
 }
 
@@ -121,7 +146,7 @@ FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed,
     return FUDGE_OK;
 }
 
-const fudge_i16 * FudgeHeader_getOrdinal ( FudgeFieldHeader * header )
+const fudge_i16 * FudgeHeader_getOrdinal ( const FudgeFieldHeader * header )
 {
     return header && header->hasordinal ? &( header->ordinal ) : 0;
 }

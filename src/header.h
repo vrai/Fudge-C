@@ -39,11 +39,12 @@ typedef struct
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes );
 
 FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32 * consumed, const fudge_byte * bytes, fudge_i32 numbytes );
+FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fudge_byte * * writepos );
 FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header );
 
 FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed, FudgeFieldHeader header, const fudge_byte * bytes, fudge_i32 numbytes );
 
-const fudge_i16 * FudgeHeader_getOrdinal ( FudgeFieldHeader * header );
+const fudge_i16 * FudgeHeader_getOrdinal ( const FudgeFieldHeader * header );
 
 #endif
 

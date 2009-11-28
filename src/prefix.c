@@ -30,9 +30,12 @@ FudgeStatus FudgePrefix_decodeFieldPrefix ( FudgeFieldPrefix * prefix, fudge_byt
 
 fudge_byte FudgePrefix_encodeFieldPrefix ( const FudgeFieldPrefix prefix )
 {
-    fudge_byte encoded;
+    fudge_byte encoded, varwidth;
 
-    encoded = ( prefix.fixedwidth ? 0 : prefix.variablewidth ) << 5;
+    /* Only two bits are available for this, so 4 is stored as 3 */
+    varwidth = prefix.variablewidth < 4 ? prefix.variablewidth : 3;
+
+    encoded = ( prefix.fixedwidth ? 0 : varwidth ) << 5;
     encoded |= prefix.fixedwidth    ? 0x80 : 0;
     encoded |= prefix.ordinal       ? 0x10 : 0;
     encoded |= prefix.name          ? 0x08 : 0;
