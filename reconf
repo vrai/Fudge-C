@@ -1,7 +1,7 @@
 #!/bin/sh
 rm -f config.cache
 touch ChangeLog
-if [ "`which glibtoolize`" = "" ]
+if [ "`which glibtoolize 2> /dev/null`" = "" ]
 then
     echo "- libtoolize."
     libtoolize
@@ -16,5 +16,5 @@ autoheader
 echo "- autoconf."
 autoconf
 echo "- automake."
-automake
+automake -a
 exit
