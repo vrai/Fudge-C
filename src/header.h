@@ -29,14 +29,6 @@ typedef struct
 
 typedef struct
 {
-    fudge_bool fixedwidth;      /* Field has a fixed width determined by its type */
-    fudge_byte variablewidth;   /* Field has a variable width encoded in the field header */
-    fudge_bool ordinal;         /* Field has a ordinal, application specific */
-    fudge_bool name;            /* Field has a name */
-} FudgeFieldPrefix;
-
-typedef struct
-{
     fudge_type_id type;         /* Field type */
     fudge_byte widthofwidth;    /* Number of bytes used to hold field width, zero for fixed width */
     fudge_bool hasordinal;      /* If non-zero, then the ordinal field is populated */
@@ -45,8 +37,6 @@ typedef struct
 } FudgeFieldHeader;
 
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes );
-
-FudgeStatus FudgeHeader_decodeFieldPrefix ( FudgeFieldPrefix * prefix, fudge_byte byte );
 
 FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32 * consumed, const fudge_byte * bytes, fudge_i32 numbytes );
 FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header );

@@ -23,6 +23,7 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        header.c         \
                        message.c        \
                        platform.c       \
+                       prefix.c         \
                        reference.c      \
                        status.c         \
                        types.c

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "header.h"
+#include "prefix.h"
 #include "fudge/platform.h"
 
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes )
@@ -29,19 +30,6 @@ FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_b
     return FUDGE_OK;
 }
 
-FudgeStatus FudgeHeader_decodeFieldPrefix ( FudgeFieldPrefix * prefix, fudge_byte byte )
-{
-    prefix->fixedwidth = ( byte & 0x80 ) != 0;
-    prefix->ordinal = ( byte & 0x10 ) != 0;
-    prefix->name = ( byte & 0x08 ) != 0;
-
-    prefix->variablewidth = ( byte & 0x60 ) >> 5;
-    if ( prefix->variablewidth == 3 )
-        prefix->variablewidth = 4;
-
-    return FUDGE_OK;
-}
-
 FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32 * consumed, const fudge_byte * bytes, fudge_i32 numbytes )
 {
     FudgeStatus status;
@@ -51,7 +39,7 @@ FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32
     /* The prefix is needed to know how to decode the rest of the header */
     if ( numbytes < 1 )
         return FUDGE_OUT_OF_BYTES;
-    if ( ( status = FudgeHeader_decodeFieldPrefix ( &prefix, bytes [ index++ ] ) ) != FUDGE_OK )
+    if ( ( status = FudgePrefix_decodeFieldPrefix ( &prefix, bytes [ index++ ] ) ) != FUDGE_OK )
         return status;
 
     /* Set message width */
