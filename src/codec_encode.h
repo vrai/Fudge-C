@@ -25,5 +25,7 @@ extern void FudgeCodec_encodeFieldI64  ( fudge_i64 value,  fudge_byte * * writep
 extern void FudgeCodec_encodeFieldF32  ( fudge_f32 value,  fudge_byte * * writepos );
 extern void FudgeCodec_encodeFieldF64  ( fudge_f64 value,  fudge_byte * * writepos );
 
+extern void FudgeCodec_encodeFieldOpaque ( const fudge_byte * bytes, fudge_i32 length, fudge_byte * * writepos );
+
 #endif
 
