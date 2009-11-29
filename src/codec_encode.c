@@ -15,6 +15,7 @@
  */
 #include "codec_encode.h"
 #include "header.h"
+#include "message_internal.h"
 #include "prefix.h"
 #include <assert.h>
 
@@ -47,7 +48,6 @@ fudge_i32 FudgeCodec_getFieldDataLength ( const FudgeField * field )
     {
         /* Message fields don't store their width in the field object (as
            they are mutable), so determine the width now */
-        /* TODO Memoize the width the of message fields to avoid repeated calls */
         fudge_i32 fieldwidth;
         FudgeStatus status = FudgeCodec_getMessageLength ( field->data.message, &fieldwidth );
         assert ( status == FUDGE_OK );
@@ -89,6 +89,10 @@ FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * nu
     if ( ! ( message && numbytes ) )
         return FUDGE_NULL_POINTER;
 
+    /* Has the length been cached? */
+    if ( ( *numbytes = FudgeMsg_getWidth ( message ) ) >= 0 )
+        return FUDGE_OK;
+
     /* Iterate over the fields in the message and sum their encoded length */
     *numbytes = 0;
     for ( index = 0, numfields = FudgeMsg_numFields ( message ); index < numfields; ++index )
@@ -96,6 +100,9 @@ FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * nu
             return status;
         else
             *numbytes += FudgeCodec_getFieldLength ( &field );
+
+    /* Cache the length */
+    FudgeMsg_setWidth ( message, *numbytes );
 
     return FUDGE_OK;
 }
@@ -245,7 +252,6 @@ FudgeStatus FudgeCodec_encodeField ( const FudgeField * field, fudge_byte * * wr
             FudgeStatus status;
             fudge_i32 numbytes;
 
-            /* TODO This should be cached in a context object! */
             if ( ( status = FudgeCodec_getMessageLength ( field->data.message, &numbytes ) ) != FUDGE_OK )
                 return status;
             FudgeCodec_encodeFieldLength ( numbytes, writepos );

@@ -15,6 +15,7 @@
  */
 #include "fudge/message.h"
 #include "fudge/platform.h"
+#include "message_internal.h"
 #include "header.h"
 #include "reference.h"
 #include <assert.h>
@@ -65,6 +66,7 @@ struct FudgeMsgImpl
     FieldListNode * fieldhead,
                   * fieldtail;
     unsigned long numfields;
+    fudge_i32 width;
 };
 
 FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
@@ -77,7 +79,11 @@ FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
     FudgeStatus status;
     FieldListNode * node ;
 
-    assert ( message );
+    if ( ! message )
+        return FUDGE_NULL_POINTER;
+
+    /* Adding a field will invalidate the message's width */
+    message->width = -1;
 
     /* Allocate and initialise the new node, taking a copy of the name if required */
     if ( ! ( node = ( FieldListNode * ) malloc ( sizeof ( FieldListNode ) ) ) )
@@ -157,6 +163,7 @@ FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr )
     ( *messageptr )->fieldhead = 0;
     ( *messageptr )->fieldtail = 0;
     ( *messageptr )->numfields = 0ul;
+    ( *messageptr )->width = -1;
 
     return FUDGE_OK;
 }
@@ -339,5 +346,19 @@ FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, uns
     }
     else
         return FUDGE_INTERNAL_LIST_STATE;
+}
+
+FudgeStatus FudgeMsg_setWidth ( FudgeMsg message, fudge_i32 width )
+{
+    if ( ! message )
+        return FUDGE_NULL_POINTER;
+
+    message->width = width;
+    return FUDGE_OK;
+}
+
+fudge_i32 FudgeMsg_getWidth ( const FudgeMsg message )
+{
+    return message ? message->width : -1;
 }
 
