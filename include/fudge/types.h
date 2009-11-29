@@ -76,7 +76,6 @@ typedef struct
 {
     fudge_type_id type;     /* The field type: used to interpret the data union */
     fudge_i32 numbytes;     /* The size of the bytes array in the data union */
-    fudge_i32 width;        /* The size of the field in bytes, or -1 if it's a submessage */
     FudgeFieldData data;    /* Union holding the field data */
     FudgeFieldFlags flags;  /* Indicates the presence of optional values */
     const char * name;      /* The name of the field, can be null */

@@ -33,8 +33,16 @@ fudge_byte FudgeCodec_calculateBytesToHoldSize ( fudge_i32 size )
 
 fudge_i32 FudgeCodec_getFieldDataLength ( const FudgeField * field )
 {
+    fudge_i32 width;
+
     assert ( field );
 
+    /* Fixed width fields are easy enough */
+    if ( ( width = FudgeType_getFixedWidth ( field->type ) ) >= 0 )
+        return width;
+
+    /* Variable width fields are either messages, handled separately, or simply blocks
+       of bytes */
     if ( field->type == FUDGE_TYPE_FUDGE_MSG )
     {
         /* Message fields don't store their width in the field object (as
@@ -46,7 +54,7 @@ fudge_i32 FudgeCodec_getFieldDataLength ( const FudgeField * field )
         return fieldwidth;
     }
     else
-        return field->width;
+        return field->numbytes;
 }
 
 fudge_i32 FudgeCodec_getFieldLength ( const FudgeField * field )

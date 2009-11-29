@@ -88,16 +88,9 @@ FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
     node->field.flags = name ? FUDGE_FIELD_HAS_NAME : 0;
     memset ( &( node->field.data ), 0, sizeof ( FudgeFieldData ) );
 
-    /* Set the field width */
-    node->field.width = FudgeType_getFixedWidth ( type );
-    if ( node->field.width < 0 && type != FUDGE_TYPE_FUDGE_MSG )
-        node->field.width = numbytes;
-
     /* Set the field name and ordinal (if required) */
     if ( name )
     {
-        /* TODO Clean up this code - one failure exit point only */
-
         /* Names may not have a length greater than 255 bytes (only one byte is
            available for their length) */
         fudge_i32 namelen = strlen ( name );
