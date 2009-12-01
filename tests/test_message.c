@@ -142,6 +142,16 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_FUDGE_MSG );
     TEST_EQUALS_TRUE( fields [ 13 ].data.message != 0 );
 
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "Null string" ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "Empty SubMessage" ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );
+
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "" ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "null string" ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "Bytes" ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, message, 10 ), FUDGE_INVALID_ORDINAL );
+
     /* Check the fixed array message */
     submessage = fields [ 8 ].data.message;
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 9 );
@@ -176,6 +186,15 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( fields [ 8 ].numbytes, 512 );
     TEST_EQUALS_MEMORY( fields [ 8 ].data.bytes, 512, largeByteArray, 512 );
 
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 1 ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, FUDGE_TYPE_BYTE_ARRAY_4 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 4 ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, FUDGE_TYPE_BYTE_ARRAY_20 );
+
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 0 ), FUDGE_INVALID_ORDINAL );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, -1 ), FUDGE_INVALID_ORDINAL );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 10 ), FUDGE_INVALID_ORDINAL );
+
     /* Check the variable array message */
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 12 ), FUDGE_OK );
     submessage = field.data.message;
@@ -204,6 +223,14 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( fields [ 6 ].type, FUDGE_TYPE_DOUBLE_ARRAY );
     TEST_EQUALS_INT( fields [ 6 ].numbytes, 40 );
     TEST_EQUALS_MEMORY( fields [ 6 ].data.bytes, 40, rawDoubles, 40 );
+
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, "Bytes" ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, FUDGE_TYPE_BYTE_ARRAY );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, "Floats" ), FUDGE_OK );
+    TEST_EQUALS_INT( field.type, FUDGE_TYPE_FLOAT_ARRAY );
+
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, "Empty SubMessage" ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 1 ), FUDGE_INVALID_ORDINAL );
 
     /* Check the empty message */
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 13 ), FUDGE_OK );

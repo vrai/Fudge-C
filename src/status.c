@@ -23,6 +23,8 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_OUT_OF_MEMORY:       return "Out of Memory";
         case FUDGE_NULL_POINTER:        return "Null Pointer";
         case FUDGE_INVALID_INDEX:       return "Invalid Index";
+        case FUDGE_INVALID_NAME:        return "Invalid Name";
+        case FUDGE_INVALID_ORDINAL:     return "Invalid Ordinal";
         case FUDGE_NAME_TOO_LONG:       return "Name Too Long";
         case FUDGE_OUT_OF_BYTES:        return "Out of Bytes";
         case FUDGE_UNKNOWN_FIELD_WIDTH: return "Unknown Field Width";

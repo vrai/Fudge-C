@@ -26,13 +26,18 @@ typedef enum
     FUDGE_OUT_OF_MEMORY         = 0x0001,
     FUDGE_NULL_POINTER          = 0x0002,
     FUDGE_INVALID_INDEX         = 0x0010,
-    FUDGE_NAME_TOO_LONG         = 0x0011,
+    FUDGE_INVALID_NAME          = 0x0011,
+    FUDGE_INVALID_ORDINAL       = 0x0012,
+    FUDGE_NAME_TOO_LONG         = 0x0013,
     FUDGE_OUT_OF_BYTES          = 0x0100,
     FUDGE_UNKNOWN_FIELD_WIDTH   = 0x0101,
     FUDGE_INTERNAL_LIST_STATE   = 0x1000
 
 } FudgeStatus;
 
+/* Returns a reference to a constant static string containing the error
+   message for the status provided. Returns a standard error if the status 
+   is unknown. */
 extern const char * FudgeStatus_strerror ( FudgeStatus status );
 
 #ifdef __cplusplus

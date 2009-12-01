@@ -330,7 +330,7 @@ FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, uns
 {
     FieldListNode * node;
 
-    if ( ! ( message &&  field ) )
+    if ( ! ( message && field ) )
         return FUDGE_NULL_POINTER;
     if ( index >= message->numfields )
         return FUDGE_INVALID_INDEX;
@@ -346,6 +346,40 @@ FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, uns
     }
     else
         return FUDGE_INTERNAL_LIST_STATE;
+}
+
+FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const char * name )
+{
+    FieldListNode * node;
+
+    if ( ! ( message && field && name ) )
+        return FUDGE_NULL_POINTER;
+
+    for ( node = message->fieldhead; node; node = node->next )
+        if ( node->field.name && strcmp ( node->field.name, name ) == 0 )
+        {
+            *field = node->field;
+            return FUDGE_OK;
+        }
+
+    return FUDGE_INVALID_NAME;
+}
+
+FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, FudgeMsg message, fudge_i16 ordinal )
+{
+    FieldListNode * node;
+
+    if ( ! ( message && field ) )
+        return FUDGE_NULL_POINTER;
+
+    for ( node = message->fieldhead; node; node = node->next )
+        if ( node->field.flags & FUDGE_FIELD_HAS_ORDINAL && node->field.ordinal == ordinal )
+        {
+            *field = node->field;
+            return FUDGE_OK;
+        }
+
+    return FUDGE_INVALID_ORDINAL;
 }
 
 FudgeStatus FudgeMsg_setWidth ( FudgeMsg message, fudge_i32 width )
