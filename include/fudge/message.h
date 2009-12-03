@@ -99,6 +99,20 @@ extern FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
                                              const fudge_byte * bytes,
                                              fudge_i32 numbytes );
 
+/* Creates a FudgeMsgField and adds it to the message. The name and ordinal
+   are optional and can be NULL, other values must be valid.
+   Note that for byte data (strings, arrays, etc), the memory is not copied.
+   It is the job of the calling code to ensure that this memory is not
+   destroyed. The FudgeMsg will destroy the memory when it is released.
+   The same applies to submessage fields: the message's reference count will
+   not be increased, but it will be decreased when the parent is destroyed. */
+extern FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
+                                           fudge_type_id type,
+                                           const char * name,
+                                           const fudge_i16 * ordinal,
+                                           FudgeFieldData * data,
+                                           fudge_i32 numbytes );
+
 /* Retrieves the field at the index provided (returns FUDGE_INVALID_INDEX if
    the index is out of range). Note that the field's contents are not copied
    and remained owned by the parent message (do not release the message until

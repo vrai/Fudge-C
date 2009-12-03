@@ -16,6 +16,7 @@
 #include "fudge/message.h"
 #include "fudge/platform.h"
 #include "message_internal.h"
+#include "registry.h"
 #include "header.h"
 #include "reference.h"
 #include <assert.h>
@@ -68,6 +69,94 @@ struct FudgeMsgImpl
     unsigned long numfields;
     fudge_i32 width;
 };
+
+FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
+                                    fudge_type_id type,
+                                    const char * name,
+                                    const fudge_i16 * ordinal,
+                                    FudgeFieldData * data,
+                                    fudge_i32 numbytes )
+{
+    FudgeStatus status;
+    FieldListNode * node;
+    const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( type );
+
+    if ( ! ( message && data ) )
+        return FUDGE_NULL_POINTER;
+
+    /* Adding a field will invalidate the message's width */
+    message->width = -1;
+
+    /* Allocate and initialise the new node, taking a copy of the name if required */
+    if ( ! ( node = ( FieldListNode * ) malloc ( sizeof ( FieldListNode ) ) ) )
+        return FUDGE_OUT_OF_MEMORY;
+    node->next = 0;
+    node->field.type = type;
+    node->field.numbytes = numbytes;
+    node->field.flags = 0;
+
+    /* Copy across the data */
+    if ( typedesc->payload == FUDGE_TYPE_PAYLOAD_SUBMSG && ! data->message )
+        return FUDGE_NULL_POINTER;
+    node->field.data = *data;
+
+    /* Set the field name (if required) */
+    if ( name )
+    {
+        /* Names may not have a length greater than 255 bytes (only one byte is
+           available for their length) */
+        fudge_i32 namelen = strlen ( name );
+        if ( namelen > 256 )
+        {
+            status = FUDGE_NAME_TOO_LONG;
+            goto release_node_and_fail;
+        }
+        
+        if ( ! ( node->field.name = ( char * ) malloc ( namelen + 1 ) ) )
+        {
+            status = FUDGE_OUT_OF_MEMORY;
+            goto release_node_and_fail;
+        }
+
+        memcpy ( ( char * ) node->field.name, name, namelen + 1 );
+        node->field.flags |= FUDGE_FIELD_HAS_NAME;
+    }
+    else
+        node->field.name = 0;
+
+    /* Set the field ordinal (if required) */
+    if ( ordinal )
+    {
+        node->field.ordinal = *ordinal;
+        node->field.flags |= FUDGE_FIELD_HAS_ORDINAL;
+    }
+    else
+        node->field.ordinal = 0;
+
+    /* Append the node to the message's list */
+    if ( message->fieldtail )
+    {
+        if ( message->fieldtail->next )
+        {
+            /* Field tail is pointing at a non-tail node - something's gone very wrong */
+            assert ( message->fieldtail->next == 0 );
+            FieldListNode_destroy ( node );
+            return FUDGE_INTERNAL_LIST_STATE;
+        }
+
+        message->fieldtail->next = node;
+        message->fieldtail = node;
+    }
+    else
+        message->fieldhead = message->fieldtail = node;
+
+    message->numfields += 1ul;
+    return FUDGE_OK;
+
+release_node_and_fail:
+    free ( node );
+    return status;
+}
 
 FudgeStatus FudgeMsg_appendField ( FudgeField * * field,
                                    FudgeMsg message,

@@ -16,6 +16,7 @@
 #ifndef INC_FUDGE_SIMPLETEST_H
 #define INC_FUDGE_SIMPLETEST_H
 
+#include "fudge/fudge.h"
 #include "fudge/platform.h"
 #include <stdio.h>
 #include <setjmp.h>     /* TODO Retrieve header through autoconf macros */
@@ -41,7 +42,8 @@ extern jmp_buf g_simpleTest_jmpBuffer;
         if ( _jmpReturnValue )                                  \
             return _jmpReturnValue;                             \
         else                                                    \
-        {
+        {                                                       \
+            TEST_EQUALS_INT( Fudge_init ( ), FUDGE_OK );
 
 
 #define END_TEST                                                \

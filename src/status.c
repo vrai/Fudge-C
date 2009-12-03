@@ -19,17 +19,19 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
 {
     switch ( status )
     {
-        case FUDGE_OK:                  return "OK";
-        case FUDGE_OUT_OF_MEMORY:       return "Out of Memory";
-        case FUDGE_NULL_POINTER:        return "Null Pointer";
-        case FUDGE_INVALID_INDEX:       return "Invalid Index";
-        case FUDGE_INVALID_NAME:        return "Invalid Name";
-        case FUDGE_INVALID_ORDINAL:     return "Invalid Ordinal";
-        case FUDGE_NAME_TOO_LONG:       return "Name Too Long";
-        case FUDGE_OUT_OF_BYTES:        return "Out of Bytes";
-        case FUDGE_UNKNOWN_FIELD_WIDTH: return "Unknown Field Width";
-        case FUDGE_INTERNAL_LIST_STATE: return "Internal List State";
-        default:                        return "Unknown Status";
+        case FUDGE_OK:                     return "OK";
+        case FUDGE_OUT_OF_MEMORY:          return "Out of Memory";
+        case FUDGE_NULL_POINTER:           return "Null Pointer";
+        case FUDGE_INVALID_INDEX:          return "Invalid Index";
+        case FUDGE_INVALID_NAME:           return "Invalid Name";
+        case FUDGE_INVALID_ORDINAL:        return "Invalid Ordinal";
+        case FUDGE_NAME_TOO_LONG:          return "Name Too Long";
+        case FUDGE_OUT_OF_BYTES:           return "Out of Bytes";
+        case FUDGE_UNKNOWN_FIELD_WIDTH:    return "Unknown Field Width";
+        case FUDGE_INTERNAL_LIST_STATE:    return "Internal List State";
+        case FUDGE_INTERNAL_PAYLOAD:       return "Internal Type Payload Is Invalid";
+        case FUDGE_REGISTRY_UNINITIALISED: return "Fudge Registry Not Initialised";
+        default:                           return "Unknown Status";
     }
 }
 
