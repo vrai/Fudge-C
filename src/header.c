@@ -102,14 +102,14 @@ FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fud
     prefix.ordinal = header->hasordinal;
     prefix.name = header->name != 0;
 
-    FudgeCodec_encodeFieldByte ( FudgePrefix_encodeFieldPrefix ( prefix ), writepos );
+    FudgeCodec_encodeByte ( FudgePrefix_encodeFieldPrefix ( prefix ), writepos );
 
     /* Encode the rest of the header */
-    FudgeCodec_encodeFieldByte ( header->type, writepos );
+    FudgeCodec_encodeByte ( header->type, writepos );
     if ( header->hasordinal )
-        FudgeCodec_encodeFieldI16 ( header->ordinal, writepos );
+        FudgeCodec_encodeI16 ( header->ordinal, writepos );
     if ( header->name )
-        FudgeCodec_encodeFieldOpaque ( ( const fudge_byte * ) header->name, strlen ( header->name ), writepos );
+        FudgeCodec_encodeByteArray ( ( const fudge_byte * ) header->name, strlen ( header->name ), FUDGE_FALSE, writepos );
 
     return FUDGE_OK;
 }

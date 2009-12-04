@@ -18,14 +18,37 @@
 
 #include "fudge/codec.h"
 
-extern void FudgeCodec_encodeFieldByte ( fudge_byte value, fudge_byte * * writepos );
-extern void FudgeCodec_encodeFieldI16  ( fudge_i16 value,  fudge_byte * * writepos );
-extern void FudgeCodec_encodeFieldI32  ( fudge_i32 value,  fudge_byte * * writepos );
-extern void FudgeCodec_encodeFieldI64  ( fudge_i64 value,  fudge_byte * * writepos );
-extern void FudgeCodec_encodeFieldF32  ( fudge_f32 value,  fudge_byte * * writepos );
-extern void FudgeCodec_encodeFieldF64  ( fudge_f64 value,  fudge_byte * * writepos );
+/* Field encoding functions */
+extern FudgeStatus FudgeCodec_encodeFieldIndicator ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldByte      ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldBool      ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldI16       ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldI32       ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldI64       ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldF32       ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldF64       ( const FudgeField * field, fudge_byte * * data );
 
-extern void FudgeCodec_encodeFieldOpaque ( const fudge_byte * bytes, fudge_i32 length, fudge_byte * * writepos );
+extern FudgeStatus FudgeCodec_encodeFieldByteArray ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldI16Array  ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldI32Array  ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldI64Array  ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldF32Array  ( const FudgeField * field, fudge_byte * * data );
+extern FudgeStatus FudgeCodec_encodeFieldF64Array  ( const FudgeField * field, fudge_byte * * data );
+
+extern FudgeStatus FudgeCodec_encodeFieldFudgeMsg  ( const FudgeField * field, fudge_byte * * data );
+
+/* Type encoding functions */
+extern void FudgeCodec_encodeByte ( const fudge_byte value, fudge_byte * * data );
+extern void FudgeCodec_encodeI16  ( const fudge_i16 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeI32  ( const fudge_i32 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeI64  ( const fudge_i64 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeF32  ( const fudge_f32 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeF64  ( const fudge_f64 value,  fudge_byte * * data );
+
+extern void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
+                                         const fudge_i32 width,
+                                         const fudge_bool fixedwidth,
+                                         fudge_byte * * data );
 
 #endif
 

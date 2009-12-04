@@ -26,6 +26,7 @@
 #define FUDGE_REGISTRY_SIZE 256
 
 typedef FudgeStatus ( *FudgeTypeDecoder ) ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+typedef FudgeStatus ( *FudgeTypeEncoder ) ( const FudgeField * field, fudge_byte * * data );
 
 typedef enum
 {
@@ -42,7 +43,7 @@ typedef struct
 
     /* Function pointers */
     FudgeTypeDecoder decoder;
-    /* TODO Encoder */
+    FudgeTypeEncoder encoder;
     /* TODO Type coercer */
 } FudgeTypeDesc;
 

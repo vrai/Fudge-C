@@ -38,7 +38,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     if ( width > numbytes )
         return FUDGE_OUT_OF_BYTES;
 
-    /* If available for this type, use the registered decoded. Failing that,
+    /* If available for this type, use the registered decoder. Failing that,
        treat it as an array of bytes. */
     decoder = typedesc->decoder ? typedesc->decoder
                                 : FudgeCodec_decodeFieldBytesArray;
