@@ -22,6 +22,10 @@
     extern "C" {
 #endif
 
+/* This initialises the Fudge-C library and prepares the type registry. It
+   MUST be called before any other Fudge-C functions are invoked. It is safe
+   to call Fudge_init more than once as later calls have no effected. However
+   it should NOT be called from multiple threads concurrently. */
 extern FudgeStatus Fudge_init ( );
 
 #ifdef __cplusplus

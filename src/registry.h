@@ -25,7 +25,12 @@
 
 #define FUDGE_REGISTRY_SIZE 256
 
+/* Prototype for bytes-to-FudgeField decoder function. */
 typedef FudgeStatus ( *FudgeTypeDecoder ) ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+
+/* Prototype for FudgeField-to-bytes encoder function. The implementation
+   must increment *data to one-byte past the end of the newly encoded field
+   (this avoids the need for calling code to know the width of each field. */
 typedef FudgeStatus ( *FudgeTypeEncoder ) ( const FudgeField * field, fudge_byte * * data );
 
 typedef enum
@@ -47,6 +52,8 @@ typedef struct
     /* TODO Type coercer */
 } FudgeTypeDesc;
 
+/* Initialises the type registry and populates it with the default types
+   (see types.h). */
 extern FudgeStatus FudgeRegistry_init ( );
 
 extern const FudgeTypeDesc * FudgeRegistry_getTypeDesc ( fudge_type_id type );

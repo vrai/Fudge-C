@@ -1,0 +1,49 @@
+The primary task is to fully implement v0.1 of the FudgeMsg specification and
+make the code ready for distribution.
+
+* When an integer value is added the smallest possibly type capable of hold it
+  should be used.
+
+* Add type coertion to the registry, so types can be retrieved as other types
+  (e.g. an I16 can be retrieved as an I16, I32, I64 or a string).
+
+* Allow user types (along with encoding/decoding logic) to be registred. Will
+  involve moving registry.h to the public include directory and (possibly)
+  exposing some of the type encoder/decoder functions.
+
+* Add an examples directory and populate with some example programs (complete
+  with minimal make file). Example required are:
+
+  + Initiaising Fudge-C and encoding/decoding a simple message.
+
+  + A FudgeMsg pretty printer.
+
+  + Custom type examples (both local values, e.g. an IP address, and a byte
+    array).
+
+
+Version 0.2 will follow and will require the following:
+
+* Implementation of the FudgeMsg date/time format (once this has been agreed
+  upon). Will require a FudgeDateTime container structure as the specification
+  exceeds the capabilities of time.h.
+
+-----
+
+Copyright (C) 2009
+Vrai Stacey <vrai.stacey@gmail.com>
+
+This file is part of Fudge-C.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+ 
+    http://www.apache.org/licenses/LICENSE-2.0
+     
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
