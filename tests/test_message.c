@@ -199,8 +199,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 12 ), FUDGE_OK );
     submessage = field.data.message;
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 7 );
-    for ( index = 0; index < FudgeMsg_numFields ( submessage ); ++index )
-        TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, submessage, index ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFields ( fields, sizeof ( fields ) / sizeof ( FudgeField ), submessage ), 7 );
 
     TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BYTE_ARRAY );
     TEST_EQUALS_INT( fields [ 0 ].numbytes, 0 );

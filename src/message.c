@@ -415,7 +415,7 @@ FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 128, FUDGE_TYPE_BYTE_ARRAY_128 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 256, FUDGE_TYPE_BYTE_ARRAY_256 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 512, FUDGE_TYPE_BYTE_ARRAY_512 )
 
-FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, unsigned long index )
+FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, const FudgeMsg message, unsigned long index )
 {
     FieldListNode * node;
 
@@ -437,7 +437,7 @@ FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, uns
         return FUDGE_INTERNAL_LIST_STATE;
 }
 
-FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const char * name )
+FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message, const char * name )
 {
     FieldListNode * node;
 
@@ -454,7 +454,7 @@ FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, cons
     return FUDGE_INVALID_NAME;
 }
 
-FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, FudgeMsg message, fudge_i16 ordinal )
+FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, const FudgeMsg message, fudge_i16 ordinal )
 {
     FieldListNode * node;
 
@@ -469,6 +469,20 @@ FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, FudgeMsg message, f
         }
 
     return FUDGE_INVALID_ORDINAL;
+}
+
+fudge_i32 FudgeMsg_getFields ( FudgeField * fields, fudge_i32 numfields, const FudgeMsg message )
+{
+    FieldListNode * node;
+    fudge_i32 index;
+
+    if ( ! ( fields && message && numfields >= 0 ) )
+        return -1;
+
+    for ( index = 0, node = message->fieldhead; index < numfields && node; ++index, node = node->next )
+        fields [ index ] = node->field;
+
+    return index;
 }
 
 FudgeStatus FudgeMsg_setWidth ( FudgeMsg message, fudge_i32 width )

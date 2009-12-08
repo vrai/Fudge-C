@@ -116,9 +116,9 @@ DEFINE_TEST( DecodeAllOrdinals )
     memset ( empty, 0, sizeof ( empty ) );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 17 );
+    TEST_EQUALS_INT( FudgeMsg_getFields ( fields, sizeof ( fields ) / sizeof ( FudgeField ), message ), 17 );
     for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
     {
-        TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, message, index ), FUDGE_OK );
         TEST_EQUALS_TRUE( ! ( fields [ index ].flags & FUDGE_FIELD_HAS_NAME ) );
         TEST_EQUALS_TRUE( fields [ index ].flags & FUDGE_FIELD_HAS_ORDINAL );
     }
@@ -250,9 +250,9 @@ DEFINE_TEST( DecodeDeepTree )
 
     /* Check the fixed byte array message */
     TEST_EQUALS_INT( FudgeMsg_numFields ( bytemessage ), 9 );
+    TEST_EQUALS_INT( FudgeMsg_getFields ( fields, FudgeMsg_numFields ( bytemessage ), bytemessage ), 9 );
     for ( index = 0; index < FudgeMsg_numFields ( bytemessage ); ++index )
     {
-        TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, bytemessage, index ), FUDGE_OK );
         TEST_EQUALS_TRUE( ! ( fields [ index ].flags & FUDGE_FIELD_HAS_NAME ) );
         TEST_EQUALS_TRUE( fields [ index ].flags & FUDGE_FIELD_HAS_ORDINAL );
     }
