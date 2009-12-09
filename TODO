@@ -1,9 +1,6 @@
 The primary task is to fully implement v0.1 of the FudgeMsg specification and
 make the code ready for distribution.
 
-* When an integer value is added the smallest possibly type capable of hold it
-  should be used.
-
 * Add type coertion to the registry, so types can be retrieved as other types
   (e.g. an I16 can be retrieved as an I16, I32, I64 or a string).
 
@@ -27,6 +24,13 @@ Version 0.2 will follow and will require the following:
 * Implementation of the FudgeMsg date/time format (once this has been agreed
   upon). Will require a FudgeDateTime container structure as the specification
   exceeds the capabilities of time.h.
+
+
+General improvements:
+
+* Speed up the FudgeMsg_getField methods. Index based lookups should be as
+  close to constant time as possible, rather than the linear implementation
+  currently in place.
 
 -----
 
