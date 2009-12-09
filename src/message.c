@@ -306,6 +306,55 @@ FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name, co
     return FudgeMsg_appendField ( &field, message, FUDGE_TYPE_INDICATOR, 0, name, ordinal );
 }
 
+fudge_type_id FudgeMsg_pickIntegerType ( const fudge_type_id type, const fudge_i64 value )
+{
+    if ( type == FUDGE_TYPE_BYTE || ( value <= INT8_MAX && value >= INT8_MIN ) )
+        return FUDGE_TYPE_BYTE;
+    if ( type == FUDGE_TYPE_SHORT || ( value <= INT16_MAX && value >= INT16_MIN ) )
+        return FUDGE_TYPE_SHORT;
+    if ( type == FUDGE_TYPE_INT || ( value <= INT32_MAX && value >= INT32_MIN ) )
+        return FUDGE_TYPE_INT;
+    return FUDGE_TYPE_LONG;
+}
+
+FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message, 
+                                       const char * name,
+                                       const fudge_i16 * ordinal,
+                                       fudge_type_id type,
+                                       const fudge_i64 value )
+{
+    FudgeStatus status;
+    FudgeField * field;
+
+    if ( ! message )
+        return FUDGE_NULL_POINTER;
+
+    type = FudgeMsg_pickIntegerType ( type, value );
+    if ( ( status = FudgeMsg_appendField ( &field, message, type, 0, name, ordinal ) ) != FUDGE_OK )
+        return status;
+
+    switch ( type )
+    {
+        case FUDGE_TYPE_LONG:   field->data.i64 = value; break;
+        case FUDGE_TYPE_INT:    field->data.i32 = ( fudge_i32 ) value; break;
+        case FUDGE_TYPE_SHORT:  field->data.i16 = ( fudge_i16 ) value; break;
+        case FUDGE_TYPE_BYTE:   field->data.byte = ( fudge_byte ) value; break;
+        default:
+            return FUDGE_INTERNAL_PAYLOAD;
+    }
+    return FUDGE_OK;
+}
+
+#define FUDGE_ADDINTEGERFIELD_IMPL( typename, type, typeid )                                                                \
+    FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, type value )  \
+    {                                                                                                                       \
+        return FudgeMsg_addFieldInteger ( message, name, ordinal, typeid, ( fudge_i64 ) value );                            \
+    }
+
+FUDGE_ADDINTEGERFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT )
+FUDGE_ADDINTEGERFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT )
+FUDGE_ADDINTEGERFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG )
+
 #define FUDGE_ADDPRIMITIVEFIELD_IMPL( typename, type, typeid, bucket )                                                      \
     FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, type value )  \
     {                                                                                                                       \
@@ -320,11 +369,8 @@ FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name, co
         return FUDGE_OK;                                                                                                    \
     }
 
-FUDGE_ADDPRIMITIVEFIELD_IMPL( Bool, fudge_bool, FUDGE_TYPE_BOOLEAN, boolean )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE,    byte )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT,   i16 )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT,     i32 )
-FUDGE_ADDPRIMITIVEFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG,    i64 )
+FUDGE_ADDPRIMITIVEFIELD_IMPL( Bool, fudge_bool, FUDGE_TYPE_BOOLEAN, boolean )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT,   f32 )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE,  f64 )
 

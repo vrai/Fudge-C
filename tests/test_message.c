@@ -240,7 +240,43 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
 
+DEFINE_TEST( IntegerFieldDowncasting )
+    FudgeMsg message;
+    FudgeField fields [ 32 ];
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+
+    /* Add the test fields */
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, 0, -127 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, 0, 0, -127 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, 0, 0, 32767 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, 0, -127 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, 0, 32767 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, 0, -2147483648l ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, 0, -127 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, 0, 32767 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, 0, -2147483648l ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, 0, 2147483648ll ), FUDGE_OK );
+
+    /* Check the test fields */
+    TEST_EQUALS_INT( FudgeMsg_getFields ( fields, sizeof ( fields ) / sizeof ( FudgeField ), message ), 10 );
+
+    TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_BYTE );      TEST_EQUALS_INT( fields [ 0 ].data.byte, -127 );
+    TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_BYTE );      TEST_EQUALS_INT( fields [ 1 ].data.byte, -127 );
+    TEST_EQUALS_INT( fields [ 2 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_INT( fields [ 2 ].data.i16, 32767 );
+    TEST_EQUALS_INT( fields [ 3 ].type, FUDGE_TYPE_BYTE );      TEST_EQUALS_INT( fields [ 3 ].data.byte, -127 );
+    TEST_EQUALS_INT( fields [ 4 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_INT( fields [ 4 ].data.i16, 32767 );
+    TEST_EQUALS_INT( fields [ 5 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_INT( fields [ 5 ].data.i32, -2147483648l );
+    TEST_EQUALS_INT( fields [ 6 ].type, FUDGE_TYPE_BYTE );      TEST_EQUALS_INT( fields [ 6 ].data.byte, -127 );
+    TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_SHORT );     TEST_EQUALS_INT( fields [ 7 ].data.i16, 32767 );
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_INT );       TEST_EQUALS_INT( fields [ 8 ].data.i32, -2147483648l );
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_LONG );      TEST_EQUALS_INT( fields [ 9 ].data.i64, 2147483648ll );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+END_TEST
+
 DEFINE_TEST_SUITE( Message )
     REGISTER_TEST( FieldFunctions )
+    REGISTER_TEST( IntegerFieldDowncasting )
 END_TEST_SUITE
 
