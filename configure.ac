@@ -58,6 +58,7 @@ AC_CHECK_HEADERS_ONCE(time.h)
 
 ### Check for the presence of key functions missing (or renamed) in some compilers
 AC_CHECK_FUNC(dup, AC_DEFINE(HAS_DUP, 1, [Define to 1 if dup is available.]))
+AC_CHECK_FUNC(isnan, AC_DEFINE(HAS_ISNAN, 1, [Define to 1 if isnan is available.]))
 AC_CHECK_FUNC(getpid, AC_DEFINE(HAS_GETPID, 1, [Define to 1 if getpid is available.]))
 AC_CHECK_FUNC(gmtime_r, AC_DEFINE(HAS_GMTIME_R, 1, [Define to 1 if gmtime_r is available.]))
 AC_CHECK_FUNC(_gmtime_s, AC_DEFINE(HAS__GMTIME_S, 1, [Define to 1 if _gmtime_s is available.]))
