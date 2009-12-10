@@ -138,11 +138,11 @@ typedef struct
 
 /* Returns true if the type is fixed width, unknown types are always of
    variable width. */
-extern fudge_bool FudgeType_typeIsFixedWidth ( fudge_type_id type );
+FUDGEAPI fudge_bool FudgeType_typeIsFixedWidth ( fudge_type_id type );
 
 /* Returns the width of the type (in bytes), if it is fixed width. Otherwise
    returns -1. */
-extern fudge_i32 FudgeType_getFixedWidth ( fudge_type_id type );
+FUDGEAPI fudge_i32 FudgeType_getFixedWidth ( fudge_type_id type );
 
 #ifdef __cplusplus
     }

@@ -28,5 +28,6 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        reference.c      \
                        registry.c       \
                        status.c         \
+                       strdup.c         \
                        types.c
 

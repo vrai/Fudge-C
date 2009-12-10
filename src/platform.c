@@ -1,6 +1,11 @@
 #include "fudge/platform.h"
 #include <assert.h>
+#ifdef FUDGE_HAVE_MATH_H
 #include <math.h>
+#endif /* ifdef FUDGE_HAVE_MATH_H */
+#ifdef FUDGE_HAVE_FLOAT_H
+#include <float.h>
+#endif /* ifdef FUDGE_HAVE_FLOAT_H */
 
 #ifdef _BIG_ENDIAN
 
@@ -39,8 +44,12 @@ int64_t htoni64 ( int64_t value )
 #define JAVA_FLOAT_NAN  ( int32_t ) 0x7fc00000
 #define JAVA_DOUBLE_NAN ( int64_t ) 0x7ff8000000000000ll
 
+#if !defined(FUDGE_HAS_ISNAN) && !defined(isnan)
+#define isnan _isnan
+#endif /* if !defined(FUDGE_HAS_ISNAN) && !defined(isnan) */
 
-inline float convertBytesToFloat ( int32_t bytes )
+/* inline suppressed for MSVC compatibility. Do we need this? Won't modern compilers spot this? */
+/* inline */ float convertBytesToFloat ( int32_t bytes )
 {
 #ifdef NAN
     if ( bytes == JAVA_FLOAT_NAN )
@@ -100,24 +109,6 @@ int64_t ntohi64 ( int64_t value )
 int64_t htoni64 ( int64_t value )
 {
     return ntohi64 ( value );
-}
-
-#endif
-
-#ifndef FUDGE_HAS_STRDUP
-
-char * strdup ( const char * string )
-{
-    unsigned long length;
-    char * copy;
-
-    assert ( string );
-
-    length = strlen ( string );
-    copy = ( char * ) malloc ( length + 1 );
-    if ( copy )
-        memcpy ( copy, string, length + 1 );
-    return copy;
 }
 
 #endif

@@ -15,10 +15,20 @@
  */
 #include "simpletest.h"
 #include <stdlib.h>
+#ifdef FUDGE_HAVE_MATH_H
 #include <math.h>
-#include <unistd.h>     /* TODO Retrieve header through autoconf macros */
-#include <time.h>       /* TODO Retrieve header through autoconf macros */
-#include <stdarg.h>     /* TODO Retrieve header through autoconf macros */
+#endif /* ifdef FUDGE_HAVE_MATH_H */
+#ifdef FUDGE_HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* ifdef FUDGE_HAVE_UNISTD_H */
+#ifdef FUDGE_HAVE_TIME_H
+#include <time.h>
+#endif /* ifdef FUDGE_HAVE_TIME_H */
+#ifdef FUDGE_HAVE_STDARG_H
+#include <stdarg.h>
+#endif /* ifdef FUDGE_HAVE_STDARG_H */
+#include "snprintf.h"
+#include "ansi_compat.h"
 
 typedef struct TestFunctorList
 {
@@ -60,9 +70,15 @@ void SimpleTest_logHostAndPid ( )
 {
     char hostname [ 256 ];
     if ( gethostname ( hostname, sizeof ( hostname ) ) )
-        sprintf ( hostname, "UNKNOWN-HOST" );
+        snprintf ( hostname, sizeof ( hostname ), "UNKNOWN-HOST" );
 
-    SimpleTest_log ( "Running on host \"%s\" with PID %d", hostname, getpid ( ) );
+    SimpleTest_log ( "Running on host \"%s\" with PID %d", hostname,
+#ifdef FUDGE_HAS_GETPID
+        getpid ( )
+#else /* ifdef FUDGE_HAS_GETPID */
+        -1
+#endif /* ifdef FUDGE_HAS_GETPID */
+    );
 }
 
 void SimpleTest_initialiseSuite ( const char * name )
@@ -81,8 +97,13 @@ void SimpleTest_initialiseSuite ( const char * name )
     g_suiteName = name;
 
     /* Redirect stdout to a log file */
+#ifdef FUDGE_HAS_DUP
     fgetpos ( stdout, &g_filePosition );
     g_fileDescriptor = dup ( fileno ( stdout ) );
+#else /* ifdef FUDGE_HAS_DUP */
+    g_fileDescriptor = -1;
+    g_filePosition = -1;
+#endif /* ifdef FUDGE_HAS_DUP */
     snprintf ( filename, sizeof ( filename ), "test_%s.log", name );
     if ( ! freopen ( filename, "w", stdout ) )
     {
@@ -124,17 +145,22 @@ void SimpleTest_cleanupSuite ( )
 {
     /* Close the log file and restore stdout */
     fflush ( stdout );
+#ifdef FUDGE_HAS_DUP
     dup2 ( g_fileDescriptor, fileno ( stdout ) );
     close ( g_fileDescriptor );
     clearerr ( stdout );
     fsetpos ( stdout, &g_filePosition );
+#else /* ifdef FUDGE_HAS_DUP */
+    // Naughty assumption that we were writing to the console originally
+    freopen ("CON", "w", stdout);
+#endif /* ifdef FUDGE_HAS_DUP */
 
     /* Destroy the registed tests (makes it easier to spot true memory leaks in valgrind) */
     while ( g_testlist )
     {
         TestFunctorList * temp = g_testlist;
-        free ( temp );
         g_testlist = g_testlist->next;
+        free ( temp );
     }
 }
 

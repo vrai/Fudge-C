@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2009, OpenGamma.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INC_FUDGE_FUDGE_H
-#define INC_FUDGE_FUDGE_H
+#ifndef INC_FUDGE_FUDGEAPI_H
+#define INC_FUDGE_FUDGEAPI_H
 
-#include "fudge/status.h"
+/* To use the DLL version of Fudge with MSVC, use
+ *
+ * #define FUDGEAPI __declspec(dllimport)
+ *
+ * before including any of the Fudge header files.
+ */
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
+#ifndef FUDGEAPI
+#define FUDGEAPI extern
+#endif /* ifndef FUDGEAPI */
 
-/* This initialises the Fudge-C library and prepares the type registry. It
-   MUST be called before any other Fudge-C functions are invoked. It is safe
-   to call Fudge_init more than once as later calls have no effected. However
-   it should NOT be called from multiple threads concurrently. */
-FUDGEAPI FudgeStatus Fudge_init ( );
-
-#ifdef __cplusplus
-    }
-#endif
-
-#endif
-
+#endif /* ifndef INC_FUDGE_FUDGEAPI_H */

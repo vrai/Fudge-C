@@ -660,7 +660,7 @@ void loadFile ( fudge_byte * * target, fudge_i32 * targetSize, const char * file
     FILE * file;
     fudge_byte buffer [ 1024 ];
 
-    TEST_EQUALS_TRUE( ( file = fopen ( filename, "r" ) ) != 0 );
+    TEST_EQUALS_TRUE( ( file = fopen ( filename, "rb" ) ) != 0 );
     *targetSize = 0;
     while ( ! feof ( file ) )
     {

@@ -39,11 +39,11 @@ extern FudgeStatus FudgeCodec_encodeFieldFudgeMsg  ( const FudgeField * field, f
 
 /* Type encoding functions */
 extern void FudgeCodec_encodeByte ( const fudge_byte value, fudge_byte * * data );
-extern void FudgeCodec_encodeI16  ( const fudge_i16 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeI32  ( const fudge_i32 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeI64  ( const fudge_i64 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeF32  ( const fudge_f32 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeF64  ( const fudge_f64 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeI16  ( fudge_i16 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeI32  ( fudge_i32 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeI64  ( fudge_i64 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeF32  ( fudge_f32 value,  fudge_byte * * data );
+extern void FudgeCodec_encodeF64  ( fudge_f64 value,  fudge_byte * * data );
 
 extern void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
                                          const fudge_i32 width,

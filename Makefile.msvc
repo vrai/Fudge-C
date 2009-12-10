@@ -1,0 +1,101 @@
+#
+# Copyright (C) 2009 - 2009, OpenGamma.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+#     
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+all:	obj \
+	include\fudge\config.h \
+	libfudgec_cmt.lib \
+	libfudgec_cmtd.lib \
+	libfudgec_crt.lib \
+	libfudgec_crtd.lib \
+	libfudgec.lib \
+	libfudgecd.lib
+
+clean:
+	rd /s/q obj
+	del libfudgec*.dll
+	del libfudgec*.lib
+	del libfudgec*.ilk
+	del libfudgec*.exp
+	del libfudgec*.dll.manifest
+	del libfudgec*.pdb
+	del tests\runtest.bat
+	del tests\*.log
+	del tests\*.exe
+	del tests\*.exe.manifest
+
+check:	all \
+	test_cmt \
+	test_cmtd \
+	test_crt \
+	test_crtd \
+	test \
+	testd
+
+obj:
+	mkdir obj
+
+include\fudge\config.h: include\fudge\config.msvc
+	copy include\fudge\config.msvc include\fudge\config.h
+
+tests\runtest.bat:
+	echo @echo off > tests\runtest.bat
+	echo set local >> tests\runtest.bat
+        echo @cd tests >> tests\runtest.bat
+	echo set path=..;%path% >> tests\runtest.bat
+        echo @%1 >> tests\runtest.bat
+
+CL_OPTS=/nologo /Iinclude /W3
+LIB_OPTS=/nologo
+LINK_OPTS=/nologo
+
+CL_LINK_OPT=/MT
+SUFFIX=_cmt
+!include "src\Makefile.msvc"
+!include "tests\Makefile.msvc"
+
+CL_LINK_OPT=/MD
+SUFFIX=_crt
+!include "src\Makefile.msvc"
+!include "tests\Makefile.msvc"
+
+CL_LINK_OPT=/MD /DFUDGEAPI=__declspec(dllexport)
+SUFFIX=
+BUILD_DLL=YES
+!include "src\Makefile.msvc"
+CL_LINK_OPT=/MD /DFUDGEAPI=__declspec(dllimport) /DEXTERNAL_TESTS_ONLY
+!include "tests\Makefile.msvc"
+BUILD_DLL=
+
+LINK_OPTS=$(LINK_OPTS) /debug
+
+CL_LINK_OPT=/MTd
+SUFFIX=_cmtd
+!include "src\Makefile.msvc"
+!include "tests\Makefile.msvc"
+
+CL_LINK_OPT=/MDd
+SUFFIX=_crtd
+!include "src\Makefile.msvc"
+!include "tests\Makefile.msvc"
+
+CL_LINK_OPT=/MDd /DFUDGEAPI=__declspec(dllexport)
+SUFFIX=d
+BUILD_DLL=YES
+!include "src\Makefile.msvc"
+CL_LINK_OPT=/MDd /DFUDGEAPI=__declspec(dllimport) /DEXTERNAL_TESTS_ONLY
+!include "tests\Makefile.msvc"
+BUILD_DLL=
+

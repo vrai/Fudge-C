@@ -1,0 +1,106 @@
+#
+# Copyright (C) 2009 - 2009, OpenGamma.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+#     
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+OBJ_DIR=obj
+
+OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
+	$(OBJ_DIR)\codec_encode$(SUFFIX).obj \
+	$(OBJ_DIR)\fudge$(SUFFIX).obj \
+	$(OBJ_DIR)\header$(SUFFIX).obj \
+	$(OBJ_DIR)\message$(SUFFIX).obj \
+	$(OBJ_DIR)\platform$(SUFFIX).obj \
+	$(OBJ_DIR)\prefix$(SUFFIX).obj \
+	$(OBJ_DIR)\reference$(SUFFIX).obj \
+	$(OBJ_DIR)\registry$(SUFFIX).obj \
+	$(OBJ_DIR)\status$(SUFFIX).obj \
+	$(OBJ_DIR)\types$(SUFFIX).obj
+#NOTE: strdup is not needed because MSVC has _strdup in its core libraries
+
+#TODO: we don't have proper header dependancies, but this should at least catch everything!
+HEADERS=	include\fudge\codec.h \
+		include\fudge\config.h \
+		include\fudge\fudgeapi.h \
+		include\fudge\message.h \
+		include\fudge\platform.h \
+		include\fudge\status.h \
+		include\fudge\types.h \
+		src\codec_decode.h \
+		src\codec_encode.h \
+		src\header.h \
+		src\message_internal.h \
+		src\prefix.h \
+		src\pstdint.h \
+		src\reference.h \
+		src\registry.h \
+		src\strdup.h
+
+!if "$(BUILD_DLL)" != ""
+libfudgec$(SUFFIX).lib:	libfudgec$(SUFFIX).dll
+
+!else
+libfudgec$(SUFFIX).lib:	$(OBJS)
+	lib $(LIB_OPTS) /out:libfudgec$(SUFFIX).lib $(OBJS)
+!endif
+
+libfudgec$(SUFFIX).dll:	$(OBJS)
+	link $(LINK_OPTS) /dll /implib:libfudgec$(SUFFIX).lib /out:libfudgec$(SUFFIX).dll $(OBJS) wsock32.lib
+
+CL=cl $(CL_OPTS) /c $(CL_LINK_OPT)
+
+$(OBJ_DIR)\codec_decode$(SUFFIX).obj:	src\codec_decode.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\codec_decode$(SUFFIX).obj src\codec_decode.c
+
+$(OBJ_DIR)\codec_encode$(SUFFIX).obj:	src\codec_encode.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\codec_encode$(SUFFIX).obj src\codec_encode.c
+
+$(OBJ_DIR)\fudge$(SUFFIX).obj:	src\fudge.c \
+				$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\fudge$(SUFFIX).obj src\fudge.c
+
+$(OBJ_DIR)\header$(SUFFIX).obj:	src\header.c \
+				$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\header$(SUFFIX).obj	src\header.c
+
+$(OBJ_DIR)\message$(SUFFIX).obj:	src\message.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\message$(SUFFIX).obj src\message.c
+
+$(OBJ_DIR)\platform$(SUFFIX).obj:	src\platform.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\platform$(SUFFIX).obj src\platform.c
+
+$(OBJ_DIR)\prefix$(SUFFIX).obj:	src\prefix.c \
+				$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\prefix$(SUFFIX).obj	src\prefix.c
+
+$(OBJ_DIR)\reference$(SUFFIX).obj:	src\reference.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\reference$(SUFFIX).obj src\reference.c
+
+$(OBJ_DIR)\registry$(SUFFIX).obj:	src\registry.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\registry$(SUFFIX).obj src\registry.c
+
+$(OBJ_DIR)\status$(SUFFIX).obj:	src\status.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\status$(SUFFIX).obj	src\status.c
+
+$(OBJ_DIR)\types$(SUFFIX).obj:	src\types.c \
+				$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\types$(SUFFIX).obj src\types.c
+

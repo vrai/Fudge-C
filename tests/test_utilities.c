@@ -16,6 +16,7 @@
 #include "reference.h"
 #include "simpletest.h"
 
+#ifndef EXTERNAL_TESTS_ONLY
 DEFINE_TEST( ReferenceCount )
     int index;
     FudgeRefCount refcount1, refcount2;
@@ -56,7 +57,7 @@ DEFINE_TEST( ReferenceCount )
     TEST_EQUALS_INT( FudgeRefCount_decrementAndReturn ( refcount2 ), 32767 ); 
     TEST_EQUALS_INT( FudgeRefCount_destroy ( refcount2 ), FUDGE_OK );
 END_TEST
-
+#endif /* ifndef EXTERNAL_TESTS_ONLY */
 
 void testFloatConversion ( float input );
 void testDoubleConversion ( double input );
@@ -84,7 +85,9 @@ END_TEST
 
 
 DEFINE_TEST_SUITE( Utilities )
+#ifndef EXTERNAL_TESTS_ONLY
     REGISTER_TEST( ReferenceCount )
+#endif /* ifndef EXTERNAL_TESTS_ONLY */
     REGISTER_TEST( EndianConversion )
 END_TEST_SUITE
 

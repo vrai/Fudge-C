@@ -19,10 +19,18 @@
 #include "fudge/fudge.h"
 #include "fudge/platform.h"
 #include <stdio.h>
-#include <setjmp.h>     /* TODO Retrieve header through autoconf macros */
+#ifdef FUDGE_HAVE_SETJMP_H
+#include <setjmp.h>
+#endif /* ifdef FUDGE_HAVE_SETJMP_H */
 
 /* Used by the error handlers to jump out the test */
 extern jmp_buf g_simpleTest_jmpBuffer;
+
+/* Test macros - perform the actual test validations */
+#define TEST_EQUALS_TRUE( x ) SimpleTest_equalsTrue ( __FILE__, __LINE__, #x, x )
+#define TEST_EQUALS_INT( x, y ) SimpleTest_equalsInt ( __FILE__, __LINE__, #x, #y, x, y )
+#define TEST_EQUALS_FLOAT( x, y, epsilon ) SimpleTest_equalsFloat ( __FILE__, __LINE__, #x, #y, x, y, epsilon )
+#define TEST_EQUALS_MEMORY( x, sx, y, sy ) SimpleTest_equalsMemory ( __FILE__, __LINE__, #x, #y, x, sx, y, sy )
 
 /* Helper macros - the test framework should be accessed using these */
 #define DEFINE_TEST_SUITE( name )                               \
@@ -43,22 +51,18 @@ extern jmp_buf g_simpleTest_jmpBuffer;
             return _jmpReturnValue;                             \
         else                                                    \
         {                                                       \
-            TEST_EQUALS_INT( Fudge_init ( ), FUDGE_OK );
+            TEST_EQUALS_INT( Fudge_init ( ), FUDGE_OK );        \
+            {
 
 
 #define END_TEST                                                \
+            }                                                   \
         }                                                       \
         return 0;                                               \
     }
 
 #define REGISTER_TEST( name )                                   \
     SimpleTest_registerTest ( #name, SimpleTest_test_##name );
-
-/* Test macros - perform the actual test validations */
-#define TEST_EQUALS_TRUE( x ) SimpleTest_equalsTrue ( __FILE__, __LINE__, #x, x )
-#define TEST_EQUALS_INT( x, y ) SimpleTest_equalsInt ( __FILE__, __LINE__, #x, #y, x, y )
-#define TEST_EQUALS_FLOAT( x, y, epsilon ) SimpleTest_equalsFloat ( __FILE__, __LINE__, #x, #y, x, y, epsilon )
-#define TEST_EQUALS_MEMORY( x, sx, y, sy ) SimpleTest_equalsMemory ( __FILE__, __LINE__, #x, #y, x, sx, y, sy )
 
 /* Test frame implementation - don't call these directly, use the macros */
 extern void SimpleTest_initialiseSuite ( const char * name );

@@ -44,55 +44,55 @@
    Sub messages (message fields) have their reference count increased by one
    when added to another message and decreased by one if the parent message is
    destroyed. */
-extern FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr );
-extern FudgeStatus FudgeMsg_retain ( FudgeMsg message );
-extern FudgeStatus FudgeMsg_release ( FudgeMsg message );
+FUDGEAPI FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr );
+FUDGEAPI FudgeStatus FudgeMsg_retain ( FudgeMsg message );
+FUDGEAPI FudgeStatus FudgeMsg_release ( FudgeMsg message );
 
 /* Returns the number of fields within the message, zero if the message is
    a NULL pointer. */
-extern unsigned long FudgeMsg_numFields ( FudgeMsg message );
+FUDGEAPI unsigned long FudgeMsg_numFields ( FudgeMsg message );
 
 /* The add field functions are all similar. The messagem, value (if
    applicable) and value size/number if elements (for variable size types) are
    mandatory. The name is optional and can either be a zero terminated char
    array or a NULL pointer. The ordinal is also optional and should be a
    pointer to the ordinal value or NULL. */
-extern FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name, const fudge_i16 * ordinal );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name, const fudge_i16 * ordinal );
 
-extern FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_bool value );
-extern FudgeStatus FudgeMsg_addFieldByte ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_byte value );
-extern FudgeStatus FudgeMsg_addFieldI16  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i16 value );
-extern FudgeStatus FudgeMsg_addFieldI32  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i32 value );
-extern FudgeStatus FudgeMsg_addFieldI64  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i64 value );
-extern FudgeStatus FudgeMsg_addFieldF32  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_f32 value );
-extern FudgeStatus FudgeMsg_addFieldF64  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_f64 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_bool value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldByte ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_byte value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI16  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i16 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI32  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i32 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI64  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i64 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF32  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_f32 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF64  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_f64 value );
 
 /* As stated above, adding the message will increase its reference count. */
-extern FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, FudgeMsg value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, FudgeMsg value );
 
-extern FudgeStatus FudgeMsg_addFieldByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes,  fudge_i32 numbytes );
-extern FudgeStatus FudgeMsg_addFieldI16Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i16 * ints,    fudge_i32 numints );
-extern FudgeStatus FudgeMsg_addFieldI32Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i32 * ints,    fudge_i32 numints );
-extern FudgeStatus FudgeMsg_addFieldI64Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i64 * ints,    fudge_i32 numints );
-extern FudgeStatus FudgeMsg_addFieldF32Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_f32 * floats,  fudge_i32 numfloats );
-extern FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_f64 * doubles, fudge_i32 numdoubles );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes,  fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI16Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i16 * ints,    fudge_i32 numints );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI32Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i32 * ints,    fudge_i32 numints );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI64Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i64 * ints,    fudge_i32 numints );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF32Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_f32 * floats,  fudge_i32 numfloats );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_f64 * doubles, fudge_i32 numdoubles );
 
-extern FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const char * string, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const char * string, fudge_i32 numbytes );
 
-extern FudgeStatus FudgeMsg_addField4ByteArray   ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField8ByteArray   ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField16ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField20ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField32ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField64ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-extern FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField4ByteArray   ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField8ByteArray   ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField16ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField20ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField32ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField64ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
 
 /* Used to add arbitary types to a message. The data is stored and encoded as
    a simple array of bytes. No endian conversion will be applied to the
    contents. */
-extern FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
+FUDGEAPI FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
                                              fudge_type_id type,
                                              const char * name,
                                              const fudge_i16 * ordinal,
@@ -106,7 +106,7 @@ extern FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
    destroyed. The FudgeMsg will destroy the memory when it is released.
    The same applies to submessage fields: the message's reference count will
    not be increased, but it will be decreased when the parent is destroyed. */
-extern FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
+FUDGEAPI FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
                                            fudge_type_id type,
                                            const char * name,
                                            const fudge_i16 * ordinal,
@@ -118,18 +118,18 @@ extern FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
    and remained owned by the parent message (do not release the message until
    the fields contents are no longer required).
    Linear time operation. */
-extern FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, const FudgeMsg message, unsigned long index );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, unsigned long index );
 
 /* As above, but retrieves the first field with the name provided (which must
    be a valid, null terminated char array). Returns FUDGE_INVALID_NAME if no
    field in the message has the name.
    Linear time operation. */
-extern FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message, const char * name );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const char * name );
 
 /* As above, but retrieves the first field with the ordinal provided. Returns
    FUDGE_INVALID_ORDINAL if not field in the message has the ordinal.
    Linear time operation. */
-extern FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, const FudgeMsg message, fudge_i16 ordinal );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, FudgeMsg message, fudge_i16 ordinal );
 
 /* Bulk field retrieval. Retrieves the fields in index order up to the end of
    the message or until "numfields" is reached. Returns the number of fields
@@ -137,7 +137,7 @@ extern FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, const FudgeM
    provided must be large enough to hold "numfields" fields. As with other
    field retrieval functions, the field contents remain owned by the message.
    Linear time operation. */
-extern fudge_i32 FudgeMsg_getFields ( FudgeField * fields, fudge_i32 numfields, const FudgeMsg message );
+FUDGEAPI fudge_i32 FudgeMsg_getFields ( FudgeField * fields, fudge_i32 numfields, const FudgeMsg message );
 
 #ifdef __cplusplus
     }

@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
- * 
+ * Copyright (C) 2009 - 2009, OpenGamma.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INC_FUDGE_FUDGE_H
-#define INC_FUDGE_FUDGE_H
 
-#include "fudge/status.h"
+#include "strdup.h"
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
+#ifdef FUDGE_STRDUP_IMPL
 
-/* This initialises the Fudge-C library and prepares the type registry. It
-   MUST be called before any other Fudge-C functions are invoked. It is safe
-   to call Fudge_init more than once as later calls have no effected. However
-   it should NOT be called from multiple threads concurrently. */
-FUDGEAPI FudgeStatus Fudge_init ( );
+/* True C99 implementations don't have a strdup implementation, so we define one here
+ */
+char * fudge_strdup ( const char * string )
+{
+    unsigned long length;
+    char * copy;
 
-#ifdef __cplusplus
-    }
-#endif
+    assert ( string );
 
-#endif
+    length = strlen ( string );
+    copy = ( char * ) malloc ( length + 1 );
+    if ( copy )
+        memcpy ( copy, string, length + 1 );
+    return copy;
+}
 
+#endif /* ifdef FUDGE_STRDUP_IMPL */

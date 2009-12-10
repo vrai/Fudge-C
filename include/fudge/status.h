@@ -16,6 +16,8 @@
 #ifndef INC_FUDGE_STATUS_H
 #define INC_FUDGE_STATUS_H
 
+#include "fudgeapi.h"
+
 #ifdef __cplusplus
     extern "C" {
 #endif
@@ -40,7 +42,7 @@ typedef enum
 /* Returns a reference to a constant static string containing the error
    message for the status provided. Returns a standard error if the status 
    is unknown. */
-extern const char * FudgeStatus_strerror ( FudgeStatus status );
+FUDGEAPI const char * FudgeStatus_strerror ( FudgeStatus status );
 
 #ifdef __cplusplus
     }

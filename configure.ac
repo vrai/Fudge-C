@@ -48,8 +48,23 @@ AC_TYPE_SIZE_T
 FM_TEST_SIZEOF(float,4)
 FM_TEST_SIZEOF(double,8)
 
-### Check for the presence of strdup (missing in C99 compatible compilers)
+### Check for the presence of key header files
+AC_CHECK_HEADERS_ONCE(arpa/inet.h)
+AC_CHECK_HEADERS_ONCE(float.h)
+AC_CHECK_HEADERS_ONCE(math.h)
+AC_CHECK_HEADERS_ONCE(setjmp.h)
+AC_CHECK_HEADERS_ONCE(stdarg.h)
+AC_CHECK_HEADERS_ONCE(time.h)
+
+### Check for the presence of key functions missing (or renamed) in some compilers
+AC_CHECK_FUNC(dup, AC_DEFINE(HAS_DUP, 1, [Define to 1 if dup is available.]))
+AC_CHECK_FUNC(getpid, AC_DEFINE(HAS_GETPID, 1, [Define to 1 if getpid is available.]))
+AC_CHECK_FUNC(gmtime_r, AC_DEFINE(HAS_GMTIME_R, 1, [Define to 1 if gmtime_r is available.]))
+AC_CHECK_FUNC(_gmtime_s, AC_DEFINE(HAS__GMTIME_S, 1, [Define to 1 if _gmtime_s is available.]))
+AC_CHECK_FUNC(snprintf, AC_DEFINE(HAS_SPRINTF, 1, [Define to 1 if snprintf is available.]))
+AC_CHECK_FUNC(sprintf_s, AC_DEFINE(HAS_SPRINTF_S, 1, [Define to 1 if sprintf_s is available.]))
 AC_CHECK_FUNC(strdup, AC_DEFINE(HAS_STRDUP, 1, [Define to 1 if strdup is available.]))
+AC_CHECK_FUNC(_strdup, AC_DEFINE(HAS__STRDUP, 1, [Define to 1 if _strdup is available.]))
 
 ### Crank the warnings up to maximum
 AX_CFLAGS_WARN_ALL

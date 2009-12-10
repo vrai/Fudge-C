@@ -34,13 +34,13 @@
    the results in a FudgeMsg instance. The "message" field of the
    FudgeMsgEnvelope provided is set to this new message instance. The message
    is decoded upfront, so any errors will be detected immediately. */
-extern FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte * bytes, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte * bytes, fudge_i32 numbytes );
 
 /* Encodes the envelope provided (which must contain a valid FudgeMsg
    instance) in to a newly allocated block of memory. The bytes pointer is set
    to this new block and numbytes is set to its size. It is the responsibilty
    of the calling code to free the block when no longer needed. */
-extern FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * bytes, fudge_i32 * numbytes );
+FUDGEAPI FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * bytes, fudge_i32 * numbytes );
 
 #ifdef __cplusplus
     }

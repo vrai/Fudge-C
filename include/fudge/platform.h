@@ -16,9 +16,8 @@
 #ifndef INC_FUDGE_PLATFORM_H
 #define INC_FUDGE_PLATFORM_H
 
-#if HAVE_CONFIG_H
-#   include "fudge/config.h"
-#endif
+#include "fudgeapi.h"
+#include "config.h"
 
 /* Include the availale system headers. */
 #ifdef FUDGE_HAVE_SYS_TYPES_H
@@ -29,14 +28,22 @@
 #endif
 #ifdef FUDGE_HAVE_STDINT_H
 #   include <stdint.h>
-#endif
+#else /* ifdef FUDGE_HAVE_STDINT_H */
+#   include "../../src/pstdint.h"
+#endif /* ifdef FUDGE_HAVE_STDINT_H */
 #ifdef FUDGE_HAVE_STDLIB_H
 #   include <stdlib.h>
 #endif 
 #ifdef FUDGE_HAVE_STRING_H
 #   include <string.h>
 #endif
-#include <arpa/inet.h>
+#ifdef FUDGE_HAVE_ARPA_INET_H
+#   include <arpa/inet.h>
+#endif /* ifdef FUDGE_HAVE_ARPA_INET_H */
+#ifdef FUDGE_ARPA_INET_WINSOCK_HACK
+// This is a *really* temporary hack to get the library to build with MSVC
+#   include <winsock.h>
+#endif /* ifdef FUDGE_ARPA_INET_WINSOCK_HACK */
 
 #ifdef __cplusplus
     extern "C" {
@@ -44,24 +51,16 @@
 
 /* Convert floats (32 bit floating point values) between network and host byte
    ordering. These are no-ops on big-endian architectures. */
-extern float ntohf ( float value );
-extern float htonf ( float value );
+FUDGEAPI float ntohf ( float value );
+FUDGEAPI float htonf ( float value );
 
 /* As above, but for doubles (64 bit floating point values). */
-extern double ntohd ( double value );
-extern double htond ( double value );
+FUDGEAPI double ntohd ( double value );
+FUDGEAPI double htond ( double value );
 
 /* As above, but for 64 bit integers. */
-extern int64_t ntohi64 ( int64_t value );
-extern int64_t htoni64 ( int64_t value );
-
-#ifndef FUDGE_HAS_STRDUP
-
-/* True C99 implementations don't have an strdup implementation, so provide one here
-   if required. */
-extern char * strdup ( const char * string );
-
-#endif
+FUDGEAPI int64_t ntohi64 ( int64_t value );
+FUDGEAPI int64_t htoni64 ( int64_t value );
 
 #ifdef __cplusplus
     }

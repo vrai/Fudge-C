@@ -18,6 +18,7 @@
 #include "message_internal.h"
 #include "prefix.h"
 #include "registry.h"
+#include "strdup.h"
 #include <assert.h>
 
 /* TODO Rearrange this */
@@ -113,8 +114,8 @@ void FudgeCodec_encodeFieldLength ( const fudge_i32 length, fudge_byte * * data 
     switch ( FudgeCodec_calculateBytesToHoldSize ( length ) )
     {
         case 0:                                            break;
-        case 1:  FudgeCodec_encodeByte ( length, data );   break;
-        case 2:  FudgeCodec_encodeI16 ( length, data );    break;   
+        case 1:  FudgeCodec_encodeByte ( (const fudge_byte) length, data );   break;
+        case 2:  FudgeCodec_encodeI16 ( (const fudge_i16) length, data );    break;   
         default: FudgeCodec_encodeI32 ( length, data );    break;
     }
 }
@@ -135,7 +136,7 @@ FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFiel
 
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
     {
-        if ( ! ( header->name = field->name ? strdup ( field->name ) : strdup ( "" ) ) )
+        if ( ! ( header->name = field->name ? _strdup ( field->name ) : _strdup ( "" ) ) )
             return FUDGE_OUT_OF_MEMORY;
     }
     else
