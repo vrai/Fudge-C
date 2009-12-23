@@ -1,9 +1,6 @@
 The primary task is to fully implement v0.1 of the FudgeMsg specification and
 make the code ready for distribution.
 
-* Add type coertion to the registry, so types can be retrieved as other types
-  (e.g. an I16 can be retrieved as an I16, I32, I64 or a string).
-
 * Allow user types (along with encoding/decoding logic) to be registred. Will
   involve moving registry.h to the public include directory and (possibly)
   exposing some of the type encoder/decoder functions.

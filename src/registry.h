@@ -33,6 +33,12 @@ typedef FudgeStatus ( *FudgeTypeDecoder ) ( const fudge_byte * bytes, const fudg
    (this avoids the need for calling code to know the width of each field. */
 typedef FudgeStatus ( *FudgeTypeEncoder ) ( const FudgeField * field, fudge_byte * * data );
 
+/* Prototype for FudgeField type coercion. The function should populate the
+   (non-null target and numbytes) depending on the target type. Any byte array
+   types should have their contents copied, it is the job of calling code to
+   release this memory. */
+typedef FudgeStatus ( *FudgeTypeCoercer ) ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+
 typedef enum
 {
     FUDGE_TYPE_PAYLOAD_LOCAL    = 0x0,  /* Data is stored in a local type */
@@ -49,7 +55,7 @@ typedef struct
     /* Function pointers */
     FudgeTypeDecoder decoder;
     FudgeTypeEncoder encoder;
-    /* TODO Type coercer */
+    FudgeTypeCoercer coercer;
 } FudgeTypeDesc;
 
 /* Initialises the type registry and populates it with the default types

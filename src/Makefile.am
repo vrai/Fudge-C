@@ -20,9 +20,11 @@ noinst_HEADERS = header.h reference.h
 
 libfudgec_la_SOURCES = codec_decode.c   \
                        codec_encode.c   \
+                       coerce.c         \
                        fudge.c          \
                        header.c         \
                        message.c        \
+                       message_ex.c     \
                        platform.c       \
                        prefix.c         \
                        reference.c      \

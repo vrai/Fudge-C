@@ -16,8 +16,7 @@
 #ifndef INC_FUDGE_MESSAGE_H
 #define INC_FUDGE_MESSAGE_H
 
-#include "fudge/status.h"
-#include "fudge/types.h"
+#include "fudge/message_ex.h"
 
 #ifdef __cplusplus
     extern "C" {
