@@ -603,6 +603,7 @@ DEFINE_TEST( EncodeDeepTree )
 
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Null Message", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     envelope.directives = 0;
     envelope.schemaversion = 0;
