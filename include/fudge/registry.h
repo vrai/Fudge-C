@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,23 +46,20 @@ typedef enum
     FUDGE_TYPE_PAYLOAD_SUBMSG   = 0x2   /* Data is stored as a FudgeMsg instance */
 } FudgeTypePayload;
 
-typedef struct
-{
-    fudge_type_id type;         /* The Id of the type */
-    fudge_i32 fixedwidth;       /* The width of the type if fixed, otherwise -1 */
-    FudgeTypePayload payload;   /* How the type's data is stored */
-
-    /* Function pointers */
-    FudgeTypeDecoder decoder;
-    FudgeTypeEncoder encoder;
-    FudgeTypeCoercer coercer;
-} FudgeTypeDesc;
-
-/* Initialises the type registry and populates it with the default types
-   (see types.h). */
-extern FudgeStatus FudgeRegistry_init ( );
-
-extern const FudgeTypeDesc * FudgeRegistry_getTypeDesc ( fudge_type_id type );
+/* Registers a user defined type in the registry. Returns FUDGE_OK if the type
+   information is registered, FUDGE_NULL_POINTER if any of the function
+   pointers are NULL, FUDGE_INVALID_USER_TYPE if the new type's payload is not
+   one of FUDGE_TYPE_PAYLOAD_BYTES or FUDGE_TYPE_PAYLOAD_SUBMSG.
+   
+   Note that there is no thread protection around the registry;
+   multiple reader threads is fine, but the calling code must ensure that one
+   and only one thread is accessing the registry during a write operation such
+   as this. */
+FUDGEAPI FudgeStatus FudgeRegistry_registerType ( fudge_type_id type,
+                                                  FudgeTypePayload payload,
+                                                  FudgeTypeDecoder decoder,
+                                                  FudgeTypeEncoder encoder,
+                                                  FudgeTypeCoercer coercer );
 
 #ifdef __cplusplus
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "fudge/message_ex.h"
-#include "registry.h"
+#include "registry_internal.h"
 
 #define FUDGEMSG_GETFIELDASPRIMITIVETYPE_IMPL( typestring, typetype, typeid, bucket )               \
     FudgeStatus FudgeMsg_getFieldAs##typestring ( const FudgeField * field, typetype * target )     \
@@ -44,4 +44,32 @@ FUDGEMSG_GETFIELDASPRIMITIVETYPE_IMPL( I32,     fudge_i32,  FUDGE_TYPE_INT,     
 FUDGEMSG_GETFIELDASPRIMITIVETYPE_IMPL( I64,     fudge_i64,  FUDGE_TYPE_LONG,    i64 )
 FUDGEMSG_GETFIELDASPRIMITIVETYPE_IMPL( F32,     fudge_f32,  FUDGE_TYPE_FLOAT,   f32 )
 FUDGEMSG_GETFIELDASPRIMITIVETYPE_IMPL( F64,     fudge_f64,  FUDGE_TYPE_DOUBLE,  f64 )
+
+FudgeStatus FudgeMsg_getFieldAs ( const FudgeField * field,
+                                  const fudge_type_id type,
+                                  FudgeFieldData * target,
+                                  FudgeTypePayload * payload,
+                                  fudge_i32 * numbytes )
+{
+    if ( ! ( field && target && payload && numbytes ) )
+        return FUDGE_NULL_POINTER;
+    if ( field->type == type )
+        return FUDGE_COERCION_NOT_REQUIRED;
+
+    const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( field->type );
+
+    if ( typedesc && typedesc->coercer )
+    {
+        FudgeStatus status;
+        
+        if ( ( status = typedesc->coercer ( field, type, target, numbytes ) ) == FUDGE_OK )
+        {
+            *payload = typedesc->payload;
+        }
+
+        return status;
+    }
+    else
+        return FUDGE_INVALID_TYPE_COERCION;
+}
 

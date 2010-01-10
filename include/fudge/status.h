@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ typedef enum
 
     FUDGE_INVALID_TYPE_COERCION  = 0x0020,
     FUDGE_COERCION_NOT_REQUIRED  = 0x0021,
+
+    FUDGE_INVALID_USER_TYPE      = 0x0030,
 
     FUDGE_OUT_OF_BYTES           = 0x0100,
     FUDGE_UNKNOWN_FIELD_WIDTH    = 0x0101,

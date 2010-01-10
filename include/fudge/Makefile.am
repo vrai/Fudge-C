@@ -1,4 +1,4 @@
-# Copyright (C) 2009 - 2009, Vrai Stacey.
+# Copyright (C) 2009 - 2010, Vrai Stacey.
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 libfudgec_includedir = $(includedir)/fudge
 
 libfudgec_include_HEADERS = codec.h         \
+                            codec_field.h   \
                             config.h        \
                             fudge.h         \
                             message.h       \
                             message_ex.h    \
                             platform.h      \
+                            registry.h      \
                             status.h        \
                             types.h
 

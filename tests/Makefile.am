@@ -1,4 +1,4 @@
-#  Copyright (C) 2009 - 2009, Vrai Stacey.
+#  Copyright (C) 2009 - 2010, Vrai Stacey.
 #  
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
 
 TESTS = test_utilities  \
         test_message    \
-        test_codec
+        test_codec      \
+        test_user_types
 
 check_PROGRAMS = $(TESTS)
 
@@ -32,6 +33,9 @@ test_message_LDADD = $(top_builddir)/src/libfudgec.la
 
 test_codec_SOURCES = test_codec.c $(FRAMEWORK_SOURCE)
 test_codec_LDADD = $(top_builddir)/src/libfudgec.la
+
+test_user_types_SOURCES = test_user_types.c $(FRAMEWORK_SOURCE)
+test_user_types_LDADD = $(top_builddir)/src/libfudgec.la
 
 clean-local:
 	$(RM) -f *.log

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "codec_encode.h"
+#include "fudge/codec_field.h"
 #include "header.h"
 #include "message_internal.h"
 #include "prefix.h"
-#include "registry.h"
+#include "registry_internal.h"
 #include "strdup.h"
 #include <assert.h>
 
@@ -26,6 +26,9 @@
 FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * numbytes );
 FudgeStatus FudgeCodec_encodeMsgFields ( const FudgeMsg message, fudge_byte * * writepos );
 
+/******************************************************************************
+ * Privately accessible functions
+ */
 
 fudge_byte FudgeCodec_calculateBytesToHoldSize ( fudge_i32 size )
 {
@@ -109,17 +112,6 @@ FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * nu
     return FUDGE_OK;
 }
 
-void FudgeCodec_encodeFieldLength ( const fudge_i32 length, fudge_byte * * data )
-{
-    switch ( FudgeCodec_calculateBytesToHoldSize ( length ) )
-    {
-        case 0:                                            break;
-        case 1:  FudgeCodec_encodeByte ( (const fudge_byte) length, data );   break;
-        case 2:  FudgeCodec_encodeI16 ( (const fudge_i16) length, data );    break;   
-        default: FudgeCodec_encodeI32 ( length, data );    break;
-    }
-}
-
 FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFieldHeader * header )
 {
     if ( ! ( field && header ) )
@@ -191,8 +183,19 @@ FudgeStatus FudgeCodec_encodeMsgFields ( const FudgeMsg message, fudge_byte * * 
 }
 
 /******************************************************************************
- * Privately accessible functions
+ * Externally accessible functions
  */
+
+void FudgeCodec_encodeFieldLength ( const fudge_i32 length, fudge_byte * * data )
+{
+    switch ( FudgeCodec_calculateBytesToHoldSize ( length ) )
+    {
+        case 0:                                            break;
+        case 1:  FudgeCodec_encodeByte ( (const fudge_byte) length, data );   break;
+        case 2:  FudgeCodec_encodeI16 ( (const fudge_i16) length, data );    break;   
+        default: FudgeCodec_encodeI32 ( length, data );    break;
+    }
+}
 
 FudgeStatus FudgeCodec_encodeFieldIndicator ( const FudgeField * field, fudge_byte * * data )
 {
@@ -292,10 +295,6 @@ FudgeStatus FudgeCodec_encodeFieldFudgeMsg ( const FudgeField * field, fudge_byt
     FudgeCodec_encodeFieldLength ( numbytes, data );
     return FudgeCodec_encodeMsgFields ( field->data.message, data );
 }
-
-/******************************************************************************
- * Externally accessible functions
- */
 
 FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * bytes, fudge_i32 * numbytes )
 {

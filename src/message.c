@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 #include "fudge/message.h"
 #include "fudge/platform.h"
 #include "message_internal.h"
-#include "registry.h"
 #include "header.h"
 #include "reference.h"
+#include "registry_internal.h"
 #include <assert.h>
 
 typedef struct FieldListNode

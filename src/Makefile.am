@@ -1,4 +1,4 @@
-# Copyright (C) 2009 - 2009, Vrai Stacey.
+# Copyright (C) 2009 - 2010, Vrai Stacey.
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,14 @@ lib_LTLIBRARIES = libfudgec.la
 
 INCLUDES = -I$(top_srcdir)/include
 
-noinst_HEADERS = header.h reference.h
+noinst_HEADERS = coerce.h               \
+                 header.h               \
+                 message_internal.h     \
+                 prefix.h               \
+                 pstdint.h              \
+                 reference.h            \
+                 registry_internal.h    \
+                 strdup.h
 
 libfudgec_la_SOURCES = codec_decode.c   \
                        codec_encode.c   \

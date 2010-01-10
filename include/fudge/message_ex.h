@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 #ifndef INC_FUDGE_MESSAGE_EX_H
 #define INC_FUDGE_MESSAGE_EX_H
 
-#include "fudge/status.h"
-#include "fudge/types.h"
+#include "fudge/registry.h"
 
 #ifdef __cplusplus
     extern "C" {
@@ -37,6 +36,27 @@ FUDGEAPI FudgeStatus FudgeMsg_getFieldAsI32     ( const FudgeField * field, fudg
 FUDGEAPI FudgeStatus FudgeMsg_getFieldAsI64     ( const FudgeField * field, fudge_i64 * target );
 FUDGEAPI FudgeStatus FudgeMsg_getFieldAsF32     ( const FudgeField * field, fudge_f32 * target );
 FUDGEAPI FudgeStatus FudgeMsg_getFieldAsF64     ( const FudgeField * field, fudge_f64 * target );
+
+/* General type conversion function. Will attempt to coerce the source field's
+   contents in to the target field data structure. Returns one of:
+     - FUDGE_COERCION_NOT_REQUIRED if the source field is already the correct
+       type (the output variables are left untouched in this case).
+     - FUDGE_INVALID_TYPE_COERCION if the conversion is not valid.
+     - FUDGE_OK if the field was successfully converted. The target structure
+       will contain the converted data and the payload type will be set. If
+       the target payload type is FUDGE_TYPE_PAYLOAD_BYTES (it's stored in an
+       allocated array) the numbytes array will contain the size of the data
+       (in bytes).
+     - FUDGE_NULL_POINTER if the arguments provided are NULL.
+
+  Note that if the conversion is successful and the data is stored in an
+  allocated array, it is the responsibility of the calling code to free this
+  memory. */
+FUDGEAPI FudgeStatus FudgeMsg_getFieldAs ( const FudgeField * field,
+                                           const fudge_type_id type,
+                                           FudgeFieldData * target,
+                                           FudgeTypePayload * payload,
+                                           fudge_i32 * numbytes );
 
 #ifdef __cplusplus
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "fudge/types.h"
-#include "registry.h"
+#include "registry_internal.h"
 
 fudge_bool FudgeType_typeIsFixedWidth ( fudge_type_id type )
 {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 20010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_NAME_TOO_LONG:          return "Name Too Long";
         case FUDGE_INVALID_TYPE_COERCION:  return "Invaild Type Coercion";
         case FUDGE_COERCION_NOT_REQUIRED:  return "Coercion Not Required";
+        case FUDGE_INVALID_USER_TYPE:      return "Invalid User Type";
         case FUDGE_OUT_OF_BYTES:           return "Out of Bytes";
         case FUDGE_UNKNOWN_FIELD_WIDTH:    return "Unknown Field Width";
         case FUDGE_INTERNAL_LIST_STATE:    return "Internal List State";
