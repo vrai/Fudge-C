@@ -15,7 +15,7 @@
  */
 #include "simpletest.h"
 #include "fudge/message.h"
-#include "fudge/codec_field.h"
+#include "fudge/codec_ex.h"
 
 /* Example user types */
 
@@ -126,7 +126,7 @@ FudgeStatus FudgeCodec_decodeFieldExampleTick ( const fudge_byte * bytes, const 
 {
     FudgeStatus status;
 
-    if ( ( status = FudgeCodec_decodeFieldBytesArray ( bytes, width, data ) ) == FUDGE_OK )
+    if ( ( status = FudgeCodec_decodeFieldByteArray ( bytes, width, data ) ) == FUDGE_OK )
     {
         ExampleTickStruct * tick = ( ExampleTickStruct * ) data->bytes;
 
@@ -188,20 +188,20 @@ DEFINE_TEST( UserTypeHandling )
     /* Fail to register user types */
     TEST_EQUALS_INT( FudgeRegistry_registerType ( FUDGE_TYPE_EXAMPLEIP4,
                                                   FUDGE_TYPE_PAYLOAD_LOCAL,
-                                                  FudgeCodec_decodeFieldBytesArray,
+                                                  FudgeCodec_decodeFieldByteArray,
                                                   FudgeCodec_encodeFieldByteArray,
                                                   FudgeType_coerceExampleIp4 ), FUDGE_INVALID_USER_TYPE );
 
     TEST_EQUALS_INT( FudgeRegistry_registerType ( FUDGE_TYPE_EXAMPLEIP4,
                                                   FUDGE_TYPE_PAYLOAD_BYTES,
-                                                  FudgeCodec_decodeFieldBytesArray,
+                                                  FudgeCodec_decodeFieldByteArray,
                                                   0,
                                                   FudgeType_coerceExampleIp4 ), FUDGE_NULL_POINTER );
 
     /* Register user types */
     TEST_EQUALS_INT( FudgeRegistry_registerType ( FUDGE_TYPE_EXAMPLEIP4,
                                                   FUDGE_TYPE_PAYLOAD_BYTES,
-                                                  FudgeCodec_decodeFieldBytesArray,
+                                                  FudgeCodec_decodeFieldByteArray,
                                                   FudgeCodec_encodeFieldByteArray,
                                                   FudgeType_coerceExampleIp4 ), FUDGE_OK );
 

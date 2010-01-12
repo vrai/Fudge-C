@@ -16,7 +16,9 @@ lib_LTLIBRARIES = libfudgec.la
 
 INCLUDES = -I$(top_srcdir)/include
 
-noinst_HEADERS = coerce.h               \
+noinst_HEADERS = codec_decode.h         \
+                 codec_encode.h         \
+                 coerce.h               \
                  header.h               \
                  message_internal.h     \
                  prefix.h               \

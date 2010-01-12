@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fudge/codec_field.h"
+#include "fudge/codec_ex.h"
 #include "header.h"
 #include "prefix.h"
 

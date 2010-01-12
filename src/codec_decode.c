@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fudge/codec_field.h"
+#include "codec_decode.h"
 #include "header.h"
 #include "registry_internal.h"
 #include <assert.h>
-
-FudgeStatus FudgeCodec_decodeMsgFields ( FudgeMsg message, const fudge_byte * bytes, fudge_i32 numbytes );
 
 fudge_i32 FudgeCodec_getNumBytes ( const FudgeTypeDesc * typedesc, fudge_i32 width )
 {
@@ -41,7 +39,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     /* If available for this type, use the registered decoder. Failing that,
        treat it as an array of bytes. */
     decoder = typedesc->decoder ? typedesc->decoder
-                                : FudgeCodec_decodeFieldBytesArray;
+                                : FudgeCodec_decodeFieldByteArray;
 
     memset ( &data, 0, sizeof ( data ) );
 
@@ -95,10 +93,6 @@ release_fieldheader_and_fail:
     return status;
 }
 
-/******************************************************************************
- * Privately accessible functions
- */
-
 FudgeStatus FudgeCodec_decodeFieldIndicator ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
     return FUDGE_OK;
@@ -128,23 +122,6 @@ FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i32, Int,    i32, ntohl )
 FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i64, Long,   i64, ntohi64 )
 FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f32, Float,  f32, ntohf )
 FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f64, Double, f64, ntohd )
-
-FudgeStatus FudgeCodec_decodeFieldBytesArray ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
-{
-    fudge_byte * target;
-
-    if ( width )
-    {
-        if ( ! ( target = ( fudge_byte * ) malloc ( width ) ) )
-            return FUDGE_OUT_OF_MEMORY;
-        memcpy ( target, bytes, width );
-    }
-    else
-        target = 0;
-
-    data->bytes = target;
-    return FUDGE_OK;
-}
 
 #define FUDGECODEC_DECODE_ARRAY_FIELD_IMPL( type, typename, swapper )                                                               \
     FudgeStatus FudgeCodec_decodeField##typename##Array ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )  \
@@ -192,8 +169,8 @@ FudgeStatus FudgeCodec_decodeFieldFudgeMsg ( const fudge_byte * bytes, const fud
     return FUDGE_OK;
 }
 
-/******************************************************************************
- * Externally accessible functions
+/*****************************************************************************
+ * Functions from fudge/codec.h
  */
 
 FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte * bytes, fudge_i32 numbytes )
@@ -230,5 +207,31 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte
     }
 
     return status;
+}
+
+/*****************************************************************************
+ * Functions from fudge/codec_ex.h
+ */
+
+FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data, const fudge_i32 width, fudge_byte * * bytes )
+{
+    if ( ! ( data && bytes ) )
+        return FUDGE_NULL_POINTER;
+
+    if ( width )
+    {
+        if ( ! ( *bytes = ( fudge_byte * ) malloc ( width ) ) )
+            return FUDGE_OUT_OF_MEMORY;
+        memcpy ( *bytes, data, width );
+    }
+    else
+        *bytes = 0;
+
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeCodec_decodeFieldByteArray ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
+{
+    return FudgeCodec_decodeByteArray ( bytes, width, ( fudge_byte * * ) &( data->bytes ) );
 }
 

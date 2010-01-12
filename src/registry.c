@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "fudge/codec_field.h"
+#include "codec_encode.h"
+#include "codec_decode.h"
 #include "coerce.h"
 #include "registry_internal.h"
 
@@ -57,18 +58,18 @@ FudgeStatus FudgeRegistry_init ( )
     FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_FLOAT,            4, FUDGE_TYPE_PAYLOAD_LOCAL,  FudgeCodec_decodeFieldFloat,      FudgeCodec_encodeFieldF32,       FudgeType_coerceFloat );
     FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_DOUBLE,           8, FUDGE_TYPE_PAYLOAD_LOCAL,  FudgeCodec_decodeFieldDouble,     FudgeCodec_encodeFieldF64,       FudgeType_coerceDouble );
 
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_4,     4, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_8,     8, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_16,   16, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_20,   20, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_32,   32, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_64,   64, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_128, 128, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_256, 256, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_512, 512, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_4,     4, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_8,     8, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_16,   16, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_20,   20, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_32,   32, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_64,   64, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_128, 128, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_256, 256, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY_512, 512, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
     
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_STRING,          -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
-    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY,      -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldBytesArray, FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_STRING,          -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_BYTE_ARRAY,      -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldByteArray,  FudgeCodec_encodeFieldByteArray, FudgeType_coerceDefault );
     FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_SHORT_ARRAY,     -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldI16Array,   FudgeCodec_encodeFieldI16Array,  FudgeType_coerceDefault );
     FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_INT_ARRAY,       -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldI32Array,   FudgeCodec_encodeFieldI32Array,  FudgeType_coerceDefault );
     FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_LONG_ARRAY,      -1, FUDGE_TYPE_PAYLOAD_BYTES,  FudgeCodec_decodeFieldI64Array,   FudgeCodec_encodeFieldI64Array,  FudgeType_coerceDefault );

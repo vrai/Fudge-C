@@ -9,6 +9,9 @@ make the code ready for distribution.
 
   This might be easier/cleaner with a simple FudgeString structure.
 
+* Added primitive type decoding functions (see include/fudge/codec_ex.h),
+  matching the encoding functions already in place. Update the user type unit
+  test to use these.
 
 * Add an examples directory and populate with some example programs (complete
   with minimal make file). Example required are:
