@@ -23,11 +23,11 @@
 FUDGEAPI FudgeStatus FudgeCodec_decodeFieldIndicator  ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 FUDGEAPI FudgeStatus FudgeCodec_decodeFieldBool       ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 FUDGEAPI FudgeStatus FudgeCodec_decodeFieldByte       ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
-FUDGEAPI FudgeStatus FudgeCodec_decodeFieldShort      ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
-FUDGEAPI FudgeStatus FudgeCodec_decodeFieldInt        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
-FUDGEAPI FudgeStatus FudgeCodec_decodeFieldLong       ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
-FUDGEAPI FudgeStatus FudgeCodec_decodeFieldFloat      ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
-FUDGEAPI FudgeStatus FudgeCodec_decodeFieldDouble     ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FUDGEAPI FudgeStatus FudgeCodec_decodeFieldI16        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FUDGEAPI FudgeStatus FudgeCodec_decodeFieldI32        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FUDGEAPI FudgeStatus FudgeCodec_decodeFieldI64        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FUDGEAPI FudgeStatus FudgeCodec_decodeFieldF32        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FUDGEAPI FudgeStatus FudgeCodec_decodeFieldF64        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 
 FUDGEAPI FudgeStatus FudgeCodec_decodeFieldI16Array   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 FUDGEAPI FudgeStatus FudgeCodec_decodeFieldI32Array   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );

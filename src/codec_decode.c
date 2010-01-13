@@ -93,6 +93,55 @@ release_fieldheader_and_fail:
     return status;
 }
 
+/*****************************************************************************
+ * Functions from fudge/codec_ex.h
+ */
+
+inline fudge_bool FudgeCodec_decodeBool ( const fudge_byte * bytes )
+{
+    return *bytes != 0;
+}
+
+inline fudge_byte FudgeCodec_decodeByte ( const fudge_byte * bytes )
+{
+    return *bytes;
+}
+
+#define FUDGECODEC_DECODE_PRIMITIVE_IMPL( type, typename, field, swapper )      \
+    inline type FudgeCodec_decode##typename ( const fudge_byte * bytes )        \
+    {                                                                           \
+        return swapper ( *( ( type * ) bytes ) );                               \
+    }
+
+FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_i16, I16, i16, ntohs )
+FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_i32, I32, i32, ntohl )
+FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_i64, I64, i64, ntohi64 )
+FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_f32, F32, f32, ntohf )
+FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_f64, F64, f64, ntohd )
+
+inline FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data, const fudge_i32 width, fudge_byte * * bytes )
+{
+    if ( ! ( data && bytes ) )
+        return FUDGE_NULL_POINTER;
+
+    if ( width )
+    {
+        if ( ! ( *bytes = ( fudge_byte * ) malloc ( width ) ) )
+            return FUDGE_OUT_OF_MEMORY;
+        memcpy ( *bytes, data, width );
+    }
+    else
+        *bytes = 0;
+
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeCodec_decodeFieldByteArray ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
+{
+    return FudgeCodec_decodeByteArray ( bytes, width, ( fudge_byte * * ) &( data->bytes ) );
+}
+
+
 FudgeStatus FudgeCodec_decodeFieldIndicator ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
     return FUDGE_OK;
@@ -100,28 +149,32 @@ FudgeStatus FudgeCodec_decodeFieldIndicator ( const fudge_byte * bytes, const fu
 
 FudgeStatus FudgeCodec_decodeFieldBool ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
-    data->boolean = ( *bytes != 0 );
+    data->boolean = FudgeCodec_decodeBool ( bytes );
     return FUDGE_OK;
 }
 
 FudgeStatus FudgeCodec_decodeFieldByte ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
-    data->byte = *bytes;
+    data->byte = FudgeCodec_decodeByte ( bytes );
     return FUDGE_OK;
 }
 
-#define FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( type, typename, field, swapper )                                            \
+/*****************************************************************************
+ * Functions from ./codec_decode.h
+ */
+
+#define FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( type, typename, field )                                                     \
     FudgeStatus FudgeCodec_decodeField##typename ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data ) \
     {                                                                                                                       \
-        data->field = swapper ( *( ( type * ) bytes ) );                                                                    \
+        data->field = FudgeCodec_decode##typename ( bytes );                                                                \
         return FUDGE_OK;                                                                                                    \
     }
 
-FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i16, Short,  i16, ntohs )
-FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i32, Int,    i32, ntohl )
-FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i64, Long,   i64, ntohi64 )
-FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f32, Float,  f32, ntohf )
-FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f64, Double, f64, ntohd )
+FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i16, I16, i16 )
+FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i32, I32, i32 )
+FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_i64, I64, i64 )
+FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f32, F32, f32 )
+FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f64, F64, f64 )
 
 #define FUDGECODEC_DECODE_ARRAY_FIELD_IMPL( type, typename, swapper )                                                               \
     FudgeStatus FudgeCodec_decodeField##typename##Array ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )  \
@@ -207,31 +260,5 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte
     }
 
     return status;
-}
-
-/*****************************************************************************
- * Functions from fudge/codec_ex.h
- */
-
-FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data, const fudge_i32 width, fudge_byte * * bytes )
-{
-    if ( ! ( data && bytes ) )
-        return FUDGE_NULL_POINTER;
-
-    if ( width )
-    {
-        if ( ! ( *bytes = ( fudge_byte * ) malloc ( width ) ) )
-            return FUDGE_OUT_OF_MEMORY;
-        memcpy ( *bytes, data, width );
-    }
-    else
-        *bytes = 0;
-
-    return FUDGE_OK;
-}
-
-FudgeStatus FudgeCodec_decodeFieldByteArray ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
-{
-    return FudgeCodec_decodeByteArray ( bytes, width, ( fudge_byte * * ) &( data->bytes ) );
 }
 

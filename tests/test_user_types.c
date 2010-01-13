@@ -125,18 +125,27 @@ FudgeStatus FudgeCodec_encodeFieldExampleTick ( const FudgeField * field, fudge_
 FudgeStatus FudgeCodec_decodeFieldExampleTick ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
     FudgeStatus status;
+    ExampleTickStruct * tick;
 
-    if ( ( status = FudgeCodec_decodeFieldByteArray ( bytes, width, data ) ) == FUDGE_OK )
-    {
-        ExampleTickStruct * tick = ( ExampleTickStruct * ) data->bytes;
+    /* Make sure that the width in the header matches that of the target structure */
+    if ( width != sizeof ( ExampleTickStruct ) )
+        return FUDGE_OUT_OF_BYTES;
 
-        /* Perform the required endian conversion, in place, on the float and
-           integer values. */
-        tick->bid = ntohf ( tick->bid );
-        tick->ask = ntohf ( tick->ask );
-        tick->time = ntohl ( tick->time );
-    }
-    return status;
+    /* Allocate the target structure and point the data structure's bytes pointer at it */
+    if ( ! ( tick = ( ExampleTickStruct * ) malloc ( width ) ) )
+        return FUDGE_OUT_OF_MEMORY;
+    data->bytes = ( const fudge_byte * ) tick;
+
+    /* Copy in the string component and advance the source bytes pointer */
+    memcpy ( tick->ric, bytes, 16 );
+    bytes += 16;
+
+    /* Copy in the float/integer values, advancing the bytes pointer after each one */
+    tick->bid = FudgeCodec_decodeF32 ( bytes );     bytes += sizeof ( fudge_f32 );
+    tick->ask = FudgeCodec_decodeF32 ( bytes );     bytes += sizeof ( fudge_f32 );
+    tick->time = FudgeCodec_decodeI32 ( bytes );    bytes += sizeof ( fudge_f32 );
+
+    return FUDGE_OK;
 }
 
 FudgeStatus FudgeType_coerceExampleTick ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes )

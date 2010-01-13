@@ -39,6 +39,15 @@ FUDGEAPI void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
                                            fudge_byte * * data );
 
 /* Field data decoding functions: reads only the data */
+FUDGEAPI fudge_bool FudgeCodec_decodeBool ( const fudge_byte * bytes );
+FUDGEAPI fudge_byte FudgeCodec_decodeByte ( const fudge_byte * bytes );
+FUDGEAPI fudge_i16  FudgeCodec_decodeI16  ( const fudge_byte * bytes );
+FUDGEAPI fudge_i32  FudgeCodec_decodeI32  ( const fudge_byte * bytes );
+FUDGEAPI fudge_i64  FudgeCodec_decodeI64  ( const fudge_byte * bytes );
+FUDGEAPI fudge_f32  FudgeCodec_decodeF32  ( const fudge_byte * bytes );
+FUDGEAPI fudge_f64  FudgeCodec_decodeF64  ( const fudge_byte * bytes );
+
+/* Field data decoding functions: reads only the data */
 
 /* Creates a copy of the bytes required and points *bytes at it. If the width
    is zero, no memory is allocated and *bytes is set to zero. */
