@@ -24,8 +24,7 @@ noinst_HEADERS = codec_decode.h         \
                  prefix.h               \
                  pstdint.h              \
                  reference.h            \
-                 registry_internal.h    \
-                 strdup.h
+                 registry_internal.h
 
 libfudgec_la_SOURCES = codec_decode.c   \
                        codec_encode.c   \
@@ -39,6 +38,5 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        reference.c      \
                        registry.c       \
                        status.c         \
-                       strdup.c         \
                        types.c
 

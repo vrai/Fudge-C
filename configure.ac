@@ -34,11 +34,13 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-### Make sure the inline keyword is present
+### Make sure the required C keywords are present
+AC_C_CONST
 AC_C_INLINE
 
 ### Check for fixed width integer types
 AC_TYPE_INT8_T
+AC_TYPE_UINT8_T
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T
@@ -64,8 +66,6 @@ AC_CHECK_FUNC(gmtime_r, AC_DEFINE(HAS_GMTIME_R, 1, [Define to 1 if gmtime_r is a
 AC_CHECK_FUNC(_gmtime_s, AC_DEFINE(HAS__GMTIME_S, 1, [Define to 1 if _gmtime_s is available.]))
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAS_SPRINTF, 1, [Define to 1 if snprintf is available.]))
 AC_CHECK_FUNC(sprintf_s, AC_DEFINE(HAS_SPRINTF_S, 1, [Define to 1 if sprintf_s is available.]))
-AC_CHECK_FUNC(strdup, AC_DEFINE(HAS_STRDUP, 1, [Define to 1 if strdup is available.]))
-AC_CHECK_FUNC(_strdup, AC_DEFINE(HAS__STRDUP, 1, [Define to 1 if _strdup is available.]))
 
 ### Crank the warnings up to maximum
 AX_CFLAGS_WARN_ALL

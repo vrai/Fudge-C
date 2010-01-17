@@ -316,30 +316,30 @@ DEFINE_TEST( EncodeAllNames )
     memset ( empty, 0, sizeof ( empty ) );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, "boolean", 0, FUDGE_TRUE ),       FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, "Boolean", 0, FUDGE_FALSE ),      FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, "byte",    0, 5 ),                FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, "Byte",    0, 5 ),                FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, "short",   0, 127 + 5 ),          FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, "Short",   0, 127 + 5 ),          FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, "int",     0, 32767 + 5 ),        FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, "Integer", 0, 32767 + 5 ),        FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, "long",    0, 2147483647ll + 5 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, "Long",    0, 2147483647ll + 5 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, "float",   0, 0.5 ),              FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, "Float",   0, 0.5 ),              FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, "double",  0, 0.27362 ),          FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, "Double",  0, 0.27362 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, ( const fudge_byte * ) "boolean", 7, 0, FUDGE_TRUE ),       FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, ( const fudge_byte * ) "Boolean", 7, 0, FUDGE_FALSE ),      FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, ( const fudge_byte * ) "byte",    4, 0, 5 ),                FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, ( const fudge_byte * ) "Byte",    4, 0, 5 ),                FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, ( const fudge_byte * ) "short",   5, 0, 127 + 5 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, ( const fudge_byte * ) "Short",   5, 0, 127 + 5 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, ( const fudge_byte * ) "int",     3, 0, 32767 + 5 ),        FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, ( const fudge_byte * ) "Integer", 7, 0, 32767 + 5 ),        FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, ( const fudge_byte * ) "long",    4, 0, 2147483647ll + 5 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, ( const fudge_byte * ) "Long",    4, 0, 2147483647ll + 5 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, ( const fudge_byte * ) "float",   5, 0, 0.5 ),              FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, ( const fudge_byte * ) "Float",   5, 0, 0.5 ),              FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, ( const fudge_byte * ) "double",  6, 0, 0.27362 ),          FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, ( const fudge_byte * ) "Double",  6, 0, 0.27362 ),          FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "String", 0, "Kirk Wylie", 10 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, "Kirk Wylie", 10 ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, "float array",  0, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, "double array", 0, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( message, "short array",  0, ( fudge_i16 * ) empty, 32 ),  FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( message, "int array",    0, ( fudge_i32 * ) empty, 83 ),  FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( message, "long array",   0, ( fudge_i64 * ) empty, 837 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, ( const fudge_byte * ) "float array",  11, 0, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, ( const fudge_byte * ) "double array", 12, 0, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( message, ( const fudge_byte * ) "short array",  11, 0, ( fudge_i16 * ) empty, 32 ),  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( message, ( const fudge_byte * ) "int array",     9, 0, ( fudge_i32 * ) empty, 83 ),  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( message, ( const fudge_byte * ) "long array",   10, 0, ( fudge_i64 * ) empty, 837 ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, "indicator", 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, ( const fudge_byte * ) "indicator", 9, 0 ), FUDGE_OK );
 
     envelope.directives = 0;
     envelope.schemaversion = 0;
@@ -368,17 +368,17 @@ DEFINE_TEST( EncodeFixedWidths )
         bytes [ index ] = ( fudge_byte ) index;
 
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField4ByteArray   ( message, "byte[4]",   0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField8ByteArray   ( message, "byte[8]",   0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray  ( message, "byte[16]",  0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField20ByteArray  ( message, "byte[20]",  0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField32ByteArray  ( message, "byte[32]",  0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField64ByteArray  ( message, "byte[64]",  0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( message, "byte[128]", 0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( message, "byte[256]", 0, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( message, "byte[512]", 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField4ByteArray   ( message, ( const fudge_byte * ) "byte[4]",   7, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField8ByteArray   ( message, ( const fudge_byte * ) "byte[8]",   7, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray  ( message, ( const fudge_byte * ) "byte[16]",  8, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField20ByteArray  ( message, ( const fudge_byte * ) "byte[20]",  8, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField32ByteArray  ( message, ( const fudge_byte * ) "byte[32]",  8, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField64ByteArray  ( message, ( const fudge_byte * ) "byte[64]",  8, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( message, ( const fudge_byte * ) "byte[128]", 9, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( message, ( const fudge_byte * ) "byte[256]", 9, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( message, ( const fudge_byte * ) "byte[512]", 9, 0, bytes ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "byte[28]", 0, bytes, 28 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, ( const fudge_byte * ) "byte[28]", 8, 0, bytes, 28 ), FUDGE_OK );
 
     envelope.directives = 0;
     envelope.schemaversion = 0;
@@ -406,25 +406,25 @@ DEFINE_TEST( EncodeAllOrdinals )
     memset ( empty, 0, sizeof ( empty ) );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
-    ordinal = 1;    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, 0, &ordinal, FUDGE_TRUE ),       FUDGE_OK );
-    ordinal = 2;    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, 0, &ordinal, FUDGE_FALSE ),      FUDGE_OK );
-    ordinal = 3;    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, &ordinal, 5 ),                FUDGE_OK );
-    ordinal = 4;    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, &ordinal, 5 ),                FUDGE_OK );
-    ordinal = 5;    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, 0, &ordinal, 127 + 5 ),          FUDGE_OK );
-    ordinal = 6;    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, 0, &ordinal, 127 + 5 ),          FUDGE_OK );
-    ordinal = 7;    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, &ordinal, 32767 + 5 ),        FUDGE_OK );
-    ordinal = 8;    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, &ordinal, 32767 + 5 ),        FUDGE_OK );
-    ordinal = 9;    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, &ordinal, 2147483647ll + 5 ), FUDGE_OK );
-    ordinal = 10;   TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, &ordinal, 2147483647ll + 5 ), FUDGE_OK );
-    ordinal = 11;   TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, 0, &ordinal, 0.5 ),              FUDGE_OK );
-    ordinal = 12;   TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, 0, &ordinal, 0.5 ),              FUDGE_OK );
-    ordinal = 13;   TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, 0, &ordinal, 0.27362 ),          FUDGE_OK );
-    ordinal = 14;   TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, 0, &ordinal, 0.27362 ),          FUDGE_OK );
+    ordinal = 1;    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, 0, 0, &ordinal, FUDGE_TRUE ),       FUDGE_OK );
+    ordinal = 2;    TEST_EQUALS_INT( FudgeMsg_addFieldBool ( message, 0, 0, &ordinal, FUDGE_FALSE ),      FUDGE_OK );
+    ordinal = 3;    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, 0, &ordinal, 5 ),                FUDGE_OK );
+    ordinal = 4;    TEST_EQUALS_INT( FudgeMsg_addFieldByte ( message, 0, 0, &ordinal, 5 ),                FUDGE_OK );
+    ordinal = 5;    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, 0, 0, &ordinal, 127 + 5 ),          FUDGE_OK );
+    ordinal = 6;    TEST_EQUALS_INT( FudgeMsg_addFieldI16  ( message, 0, 0, &ordinal, 127 + 5 ),          FUDGE_OK );
+    ordinal = 7;    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, 0, &ordinal, 32767 + 5 ),        FUDGE_OK );
+    ordinal = 8;    TEST_EQUALS_INT( FudgeMsg_addFieldI32  ( message, 0, 0, &ordinal, 32767 + 5 ),        FUDGE_OK );
+    ordinal = 9;    TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, 0, &ordinal, 2147483647ll + 5 ), FUDGE_OK );
+    ordinal = 10;   TEST_EQUALS_INT( FudgeMsg_addFieldI64  ( message, 0, 0, &ordinal, 2147483647ll + 5 ), FUDGE_OK );
+    ordinal = 11;   TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, 0, 0, &ordinal, 0.5 ),              FUDGE_OK );
+    ordinal = 12;   TEST_EQUALS_INT( FudgeMsg_addFieldF32  ( message, 0, 0, &ordinal, 0.5 ),              FUDGE_OK );
+    ordinal = 13;   TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, 0, 0, &ordinal, 0.27362 ),          FUDGE_OK );
+    ordinal = 14;   TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, 0, 0, &ordinal, 0.27362 ),          FUDGE_OK );
 
-    ordinal = 15;   TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, 0, &ordinal, "Kirk Wylie", 10 ), FUDGE_OK );
+    ordinal = 15;   TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, 0, 0, &ordinal, "Kirk Wylie", 10 ), FUDGE_OK );
     
-    ordinal = 16;   TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, 0, &ordinal, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
-    ordinal = 17;   TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, 0, &ordinal, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
+    ordinal = 16;   TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, 0, 0, &ordinal, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
+    ordinal = 17;   TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, 0, 0, &ordinal, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
 
     envelope.directives = 0;
     envelope.schemaversion = 0;
@@ -451,7 +451,7 @@ DEFINE_TEST( EncodeUnknown )
     memset ( empty, 0, sizeof ( empty ) );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldOpaque ( message, 200, "unknown", 0, empty, 10 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldOpaque ( message, 200, ( const fudge_byte * ) "unknown", 7, 0, empty, 10 ), FUDGE_OK );
 
     envelope.directives = 0;
     envelope.schemaversion = 0;
@@ -479,18 +479,18 @@ DEFINE_TEST( EncodeSubMsgs )
 
     /* Create and add the first submessage */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, "bibble", 0, "fibble", 6 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, ( const fudge_byte * ) "bibble", 6, 0, "fibble", 6 ), FUDGE_OK );
     ordinal = 827;
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, 0, &ordinal, "Blibble", 7 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "sub1", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, 0, 0, &ordinal, "Blibble", 7 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "sub1", 4, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     /* Create and add the second submessage */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32 ( submessage, "bibble9", 0, 9837438 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32 ( submessage, ( const fudge_byte * ) "bibble9", 7, 0, 9837438 ), FUDGE_OK );
     ordinal = 828;
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32 ( submessage, 0, &ordinal, 82.77f ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "sub2", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32 ( submessage, 0, 0, &ordinal, 82.77f ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "sub2", 4, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     envelope.directives = 0;
@@ -518,9 +518,9 @@ DEFINE_TEST( EncodeVariableWidths )
     memset ( empty, 0, sizeof ( empty ) );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "100", 0, empty, 100 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "1000", 0, empty, 1000 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, "10000", 0, empty, 100000 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, ( const fudge_byte * ) "100", 3, 0, empty, 100 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, ( const fudge_byte * ) "1000", 4, 0, empty, 1000 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, ( const fudge_byte * ) "10000", 5, 0, empty, 100000 ), FUDGE_OK );
 
     envelope.directives = 0;
     envelope.schemaversion = 0;
@@ -553,56 +553,56 @@ DEFINE_TEST( EncodeDeepTree )
     for ( index = 0; index < sizeof ( shorts ) / sizeof ( fudge_i16 ); ++index ) shorts [ index ] = index;
 
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, "Indicator", 0 ),                        FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldBool      ( message, "Boolean",   0, FUDGE_TRUE ),            FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByte      ( message, "Byte",      0, -128 ),                  FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16       ( message, "Short",     0, -32768 ),                FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32       ( message, "Int",       0, 2147483647 ),            FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64       ( message, "Long",      0, 9223372036854775807ll ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32       ( message, "Float",     0, 1.23456 ),               FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64       ( message, "Double",    0, 1.2345678 ),             FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, ( const fudge_byte * ) "Indicator", 9, 0 ),                        FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldBool      ( message, ( const fudge_byte * ) "Boolean",   7, 0, FUDGE_TRUE ),            FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByte      ( message, ( const fudge_byte * ) "Byte",      4, 0, -128 ),                  FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16       ( message, ( const fudge_byte * ) "Short",     5, 0, -32768 ),                FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32       ( message, ( const fudge_byte * ) "Int",       3, 0, 2147483647 ),            FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64       ( message, ( const fudge_byte * ) "Long",      4, 0, 9223372036854775807ll ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32       ( message, ( const fudge_byte * ) "Float",     5, 0, 1.23456 ),               FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64       ( message, ( const fudge_byte * ) "Double",    6, 0, 1.2345678 ),             FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    ordinal =   4; TEST_EQUALS_INT( FudgeMsg_addField4ByteArray   ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal =   8; TEST_EQUALS_INT( FudgeMsg_addField8ByteArray   ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal =  16; TEST_EQUALS_INT( FudgeMsg_addField16ByteArray  ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal =  20; TEST_EQUALS_INT( FudgeMsg_addField20ByteArray  ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal =  32; TEST_EQUALS_INT( FudgeMsg_addField32ByteArray  ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal =  64; TEST_EQUALS_INT( FudgeMsg_addField64ByteArray  ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal = 128; TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal = 256; TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    ordinal = 512; TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( submessage, 0, &ordinal, bytes ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "ByteArrays", 0, submessage ), FUDGE_OK );
+    ordinal =   4; TEST_EQUALS_INT( FudgeMsg_addField4ByteArray   ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal =   8; TEST_EQUALS_INT( FudgeMsg_addField8ByteArray   ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal =  16; TEST_EQUALS_INT( FudgeMsg_addField16ByteArray  ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal =  20; TEST_EQUALS_INT( FudgeMsg_addField20ByteArray  ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal =  32; TEST_EQUALS_INT( FudgeMsg_addField32ByteArray  ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal =  64; TEST_EQUALS_INT( FudgeMsg_addField64ByteArray  ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal = 128; TEST_EQUALS_INT( FudgeMsg_addField128ByteArray ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal = 256; TEST_EQUALS_INT( FudgeMsg_addField256ByteArray ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    ordinal = 512; TEST_EQUALS_INT( FudgeMsg_addField512ByteArray ( submessage, 0, 0, &ordinal, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "ByteArrays", 10, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "Empty String", 0, "",                   0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, "String",       0, "This is a string.", 17 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty String", 12, 0, "",                   0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String",        6, 0, "This is a string.", 17 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, "Byte[0]",  0, bytes,  0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, "Byte[15]", 0, bytes, 15 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, ( const fudge_byte * ) "Byte[0]",  7, 0, bytes,  0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, ( const fudge_byte * ) "Byte[15]", 8, 0, bytes, 15 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &subsubmessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( subsubmessage, "Float[0]",   0, ( fudge_f32 * ) empty,  0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( subsubmessage, "Float[15]",  0, ( fudge_f32 * ) empty, 15 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( subsubmessage, "Double[0]",  0, doubles,                0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( subsubmessage, "Double[15]", 0, doubles,               15 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( subsubmessage, ( const fudge_byte * ) "Float[0]",    8, 0, ( fudge_f32 * ) empty,  0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( subsubmessage, ( const fudge_byte * ) "Float[15]",   9, 0, ( fudge_f32 * ) empty, 15 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( subsubmessage, ( const fudge_byte * ) "Double[0]",   9, 0, doubles,                0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( subsubmessage, ( const fudge_byte * ) "Double[15]", 10, 0, doubles,               15 ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( submessage, "FP Arrays", 0, subsubmessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( submessage, ( const fudge_byte * ) "FP Arrays", 9, 0, subsubmessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( subsubmessage ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( submessage, "Short[0]",   0, ( fudge_i16 * ) empty,  0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( submessage, "Short[15]",  0, shorts,                15 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( submessage, "Int[0]",     0, ( fudge_i32 * ) empty,  0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( submessage, "Int[15]",    0, ( fudge_i32 * ) empty, 15 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( submessage, "Long[0]",    0, ( fudge_i64 * ) empty,  0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( submessage, "Long[15]",   0, ( fudge_i64 * ) empty, 15 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( submessage, ( const fudge_byte * ) "Short[0]",   8, 0, ( fudge_i16 * ) empty,  0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI16Array ( submessage, ( const fudge_byte * ) "Short[15]",  9, 0, shorts,                15 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( submessage, ( const fudge_byte * ) "Int[0]",     6, 0, ( fudge_i32 * ) empty,  0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI32Array ( submessage, ( const fudge_byte * ) "Int[15]",    7, 0, ( fudge_i32 * ) empty, 15 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( submessage, ( const fudge_byte * ) "Long[0]",    7, 0, ( fudge_i64 * ) empty,  0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64Array ( submessage, ( const fudge_byte * ) "Long[15]",   8, 0, ( fudge_i64 * ) empty, 15 ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Arrays", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "Arrays", 6, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, "Null Message", 0, submessage ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "Null Message", 12, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     envelope.directives = 0;

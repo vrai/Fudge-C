@@ -18,7 +18,6 @@
 #include "message_internal.h"
 #include "prefix.h"
 #include "registry_internal.h"
-#include "strdup.h"
 #include <assert.h>
 
 /* The recursive nature of FudgeMsg encoding means these have to be forward
@@ -67,7 +66,7 @@ fudge_i32 FudgeCodec_getFieldLength ( const FudgeField * field )
 
     /* Add the optional field header elements */
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
-        numbytes += ( field->name ? strlen ( field->name ) : 0 ) + 1;  /* 1 byte used for length */
+        numbytes += ( field->name ? field->namelen : 0 ) + 1;  /* 1 byte used for length */
     if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
         numbytes += 2;
 
@@ -124,11 +123,32 @@ FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFiel
 
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
     {
-        if ( ! ( header->name = field->name ? _strdup ( field->name ) : _strdup ( "" ) ) )
+        /* Allocate the space for the field name: as a NULL pointer indicates
+           no name, allocate a single byte if the field name is NULL (used to
+           indicate a field with a name of zero bytes in length). */
+        if ( ! ( header->name = ( fudge_byte * ) malloc ( field->name ? field->namelen : 1 ) ) )
             return FUDGE_OUT_OF_MEMORY;
+
+        if ( field->name )
+        {
+            /* Field name is non-null, copy it across in to the header */
+            memcpy ( header->name, field->name, field->namelen );
+            header->namelen = field->namelen;
+        }
+        else
+        {
+            /* Field name is null, set the placeholder byte to be NULL and
+               indicate the true length of the name in the length field */
+            *( header->name ) = 0;
+            header->namelen = 0;
+        }
     }
     else
+    {
+        /* No name: zero the fields to indicate this */
         header->name = 0;
+        header->namelen = 0;
+    }
 
     return FUDGE_OK;
 }

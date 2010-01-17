@@ -44,7 +44,7 @@ void ExampleIp4_init ( ExampleIp4Struct * ip4, uint8_t first, uint8_t second, ui
     ip4->quads [ 3 ] = fourth;
 }
 
-FudgeStatus FudgeMsg_addFieldExampleIp4 ( FudgeMsg message, const char * name, const ExampleIp4Struct * ip )
+FudgeStatus FudgeMsg_addFieldExampleIp4 ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const ExampleIp4Struct * ip )
 {
     if ( ! ( message && ip ) )
         return FUDGE_NULL_POINTER;
@@ -52,6 +52,7 @@ FudgeStatus FudgeMsg_addFieldExampleIp4 ( FudgeMsg message, const char * name, c
     return FudgeMsg_addFieldOpaque ( message,
                                      FUDGE_TYPE_EXAMPLEIP4,
                                      name,
+                                     namelen,
                                      0,
                                      ( const fudge_byte * ) ip,
                                      sizeof ( ExampleIp4Struct ) );
@@ -91,7 +92,7 @@ void ExampleTick_init ( ExampleTickStruct * tick, const char * ric, fudge_i32 ri
     tick->time = time;
 }
 
-FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const char * name, const ExampleTickStruct * tick )
+FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const ExampleTickStruct * tick )
 {
     if ( ! ( message && tick ) )
         return FUDGE_NULL_POINTER;
@@ -99,6 +100,7 @@ FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const char * name, 
     return FudgeMsg_addFieldOpaque ( message,
                                      FUDGE_TYPE_EXAMPLETICK,
                                      name,
+                                     namelen,
                                      0,
                                      ( const fudge_byte * ) tick,
                                      sizeof ( ExampleTickStruct ) );
@@ -124,7 +126,6 @@ FudgeStatus FudgeCodec_encodeFieldExampleTick ( const FudgeField * field, fudge_
 
 FudgeStatus FudgeCodec_decodeFieldExampleTick ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
-    FudgeStatus status;
     ExampleTickStruct * tick;
 
     /* Make sure that the width in the header matches that of the target structure */
@@ -223,11 +224,11 @@ DEFINE_TEST( UserTypeHandling )
     /* Construct a test message with user and built-in types */
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64 ( message, "bigint", 0, bigint ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, "localhost", &localhost ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, "opendns", &opendns ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldExampleTick ( message, "tick", &tick ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( message, "byte[16]", 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64 ( message, ( const fudge_byte * ) "bigint", 6, 0, bigint ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, ( const fudge_byte * ) "localhost", 9, &localhost ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, ( const fudge_byte * ) "opendns", 7, &opendns ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldExampleTick ( message, ( const fudge_byte * ) "tick", 4, &tick ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( message, ( const fudge_byte * ) "byte[16]", 8, 0, bytes ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 5 );
 
@@ -250,12 +251,12 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 5 );
 
     /* Retrieve the decoded fields */
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "bigint" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "bigint", 6 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_LONG );             TEST_EQUALS_INT( field.data.i64, bigint );
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "byte[16]" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "byte[16]", 8 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_BYTE_ARRAY_16 );    TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, bytes, sizeof ( bytes ) );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "localhost" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "localhost", 9 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLEIP4 );       TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &localhost, sizeof ( ExampleIp4Struct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_EXAMPLEIP4, &fielddata, &payload, &fieldsize ), FUDGE_COERCION_NOT_REQUIRED );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_FUDGE_MSG, &fielddata, &payload, &fieldsize ), FUDGE_INVALID_TYPE_COERCION );
@@ -263,13 +264,13 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_BYTES );       TEST_EQUALS_MEMORY( fielddata.bytes, fieldsize, "127.000.000.001", 16 );
     free ( ( fudge_byte * ) fielddata.bytes );
     
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "opendns" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "opendns", 7 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLEIP4 );       TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &opendns, sizeof ( ExampleIp4Struct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_BYTES );       TEST_EQUALS_MEMORY( fielddata.bytes, fieldsize, "208.067.222.222", 16 );
     free ( ( fudge_byte * ) fielddata.bytes );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, "tick" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "tick", 4 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLETICK );      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &tick, sizeof ( ExampleTickStruct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_BYTES );       TEST_EQUALS_MEMORY( fielddata.bytes, fieldsize, "            GBP= 1.605000 1.607000       1263138018", 52 );

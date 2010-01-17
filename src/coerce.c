@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 #include "coerce.h"
-#include "strdup.h"
-#include <stdio.h>
 
 #define BYTE_BUFFER_FORMAT "%d"
 #define BYTE_BUFFER_LENGTH 8

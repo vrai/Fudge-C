@@ -49,6 +49,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     return FudgeMsg_addFieldData ( message,
                                    header.type,
                                    header.name,
+                                   header.namelen,
                                    FudgeHeader_getOrdinal ( &header ),
                                    &data,
                                    FudgeCodec_getNumBytes ( typedesc, width ) );

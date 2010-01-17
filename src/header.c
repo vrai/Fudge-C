@@ -76,14 +76,18 @@ FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32
 
         if ( index + length > numbytes )
             return FUDGE_OUT_OF_BYTES;
-        if ( ! ( header->name = ( const char * ) malloc ( length + 1 ) ) )
+        if ( ! ( header->name = ( fudge_byte * ) malloc ( length ) ) )
             return FUDGE_OUT_OF_MEMORY;
-        memcpy ( ( char * ) header->name, bytes + index, length );
+        memcpy ( header->name, bytes + index, length );
         index += length;
-        ( ( char * ) header->name ) [ length ] = 0;
+
+        header->namelen = length;
     }
     else
+    {
         header->name = 0;
+        header->namelen = 0;
+    }
 
     *consumed = index;
     return FUDGE_OK;
@@ -109,14 +113,14 @@ FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fud
     if ( header->hasordinal )
         FudgeCodec_encodeI16 ( header->ordinal, writepos );
     if ( header->name )
-        FudgeCodec_encodeByteArray ( ( const fudge_byte * ) header->name, strlen ( header->name ), FUDGE_FALSE, writepos );
+        FudgeCodec_encodeByteArray ( ( const fudge_byte * ) header->name, header->namelen, FUDGE_FALSE, writepos );
 
     return FUDGE_OK;
 }
 
 FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header )
 {
-    free ( ( char * ) header.name );
+    free ( header.name );
     return FUDGE_OK;
 }
 
