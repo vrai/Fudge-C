@@ -331,7 +331,7 @@ DEFINE_TEST( EncodeAllNames )
     TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, ( const fudge_byte * ) "double",  6, 0, 0.27362 ),          FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, ( const fudge_byte * ) "Double",  6, 0, 0.27362 ),          FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, "Kirk Wylie", 10 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, ( const fudge_byte * ) "Kirk Wylie", 10 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, ( const fudge_byte * ) "float array",  11, 0, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, ( const fudge_byte * ) "double array", 12, 0, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
@@ -421,7 +421,7 @@ DEFINE_TEST( EncodeAllOrdinals )
     ordinal = 13;   TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, 0, 0, &ordinal, 0.27362 ),          FUDGE_OK );
     ordinal = 14;   TEST_EQUALS_INT( FudgeMsg_addFieldF64  ( message, 0, 0, &ordinal, 0.27362 ),          FUDGE_OK );
 
-    ordinal = 15;   TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, 0, 0, &ordinal, "Kirk Wylie", 10 ), FUDGE_OK );
+    ordinal = 15;   TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, 0, 0, &ordinal, ( const fudge_byte * ) "Kirk Wylie", 10 ), FUDGE_OK );
     
     ordinal = 16;   TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, 0, 0, &ordinal, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
     ordinal = 17;   TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, 0, 0, &ordinal, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
@@ -479,9 +479,9 @@ DEFINE_TEST( EncodeSubMsgs )
 
     /* Create and add the first submessage */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, ( const fudge_byte * ) "bibble", 6, 0, "fibble", 6 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, ( const fudge_byte * ) "bibble", 6, 0, ( const fudge_byte * ) "fibble", 6 ), FUDGE_OK );
     ordinal = 827;
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, 0, 0, &ordinal, "Blibble", 7 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( submessage, 0, 0, &ordinal, ( const fudge_byte * ) "Blibble", 7 ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "sub1", 4, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
@@ -575,8 +575,8 @@ DEFINE_TEST( EncodeDeepTree )
     TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "ByteArrays", 10, 0, submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty String", 12, 0, "",                   0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String",        6, 0, "This is a string.", 17 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty String", 12, 0, ( const fudge_byte * ) "",                   0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String",        6, 0, ( const fudge_byte * ) "This is a string.", 17 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( submessage, ( const fudge_byte * ) "Byte[0]",  7, 0, bytes,  0 ), FUDGE_OK );

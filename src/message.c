@@ -354,9 +354,9 @@ FUDGE_ADDARRAYFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG_ARRAY )
 FUDGE_ADDARRAYFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT_ARRAY )
 FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY )
 
-FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const char * string, fudge_i32 numbytes )
+FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * string, fudge_i32 numbytes )
 {
-    return FudgeMsg_addFieldOpaque ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, ( const fudge_byte * ) string, numbytes );
+    return FudgeMsg_addFieldOpaque ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, string, numbytes );
 }
 
 #define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                           \

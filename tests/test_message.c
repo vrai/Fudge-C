@@ -82,8 +82,8 @@ DEFINE_TEST( FieldFunctions )
 
     /* Add null, empty and populated strings */
     TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Null string", 11, 0, 0, 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty string", 12, 0, "", 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, "This is a string", 16 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty string", 12, 0, ( const fudge_byte * ) "", 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, ( const fudge_byte * ) "This is a string", 16 ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 12 );
 
