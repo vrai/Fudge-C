@@ -659,9 +659,20 @@ FudgeMsg loadFudgeMsg ( const char * filename )
 void loadFile ( fudge_byte * * target, fudge_i32 * targetSize, const char * filename )
 {
     FILE * file;
+    char fullfilename [ FILENAME_MAX ];
     fudge_byte buffer [ 1024 ];
+    char * srcdir;
 
-    TEST_EQUALS_TRUE( ( file = fopen ( filename, "rb" ) ) != 0 );
+    /* When running "make distcheck" the tests will be triggered from the
+       binary directory, which makes the filenames invalid. Helpfully automake
+       sets the "srcdir" env var which contains the location of the source
+       code directory. */
+    if ( ( srcdir = getenv ( "srcdir" ) ) )
+        snprintf ( fullfilename, sizeof ( fullfilename ), "%s/%s", srcdir, filename );
+    else
+        snprintf ( fullfilename, sizeof ( fullfilename ), "%s", filename );
+
+    TEST_EQUALS_TRUE( ( file = fopen ( fullfilename, "rb" ) ) != 0 );
     *targetSize = 0;
     while ( ! feof ( file ) )
     {

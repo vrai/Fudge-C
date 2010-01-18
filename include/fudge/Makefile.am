@@ -18,6 +18,7 @@ libfudgec_include_HEADERS = codec.h         \
                             codec_ex.h      \
                             config.h        \
                             fudge.h         \
+                            fudgeapi.h      \
                             message.h       \
                             message_ex.h    \
                             platform.h      \
