@@ -40,3 +40,5 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        status.c         \
                        types.c
 
+libfudgec_la_LDFLAGS = -no-undefined -version-info @API_VERSION@
+

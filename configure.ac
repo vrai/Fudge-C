@@ -15,7 +15,7 @@
 ### Need modern autoconf, only 2.60+ has the AC_TYPE_INT*_T macros
 AC_PREREQ([2.60])
 
-AC_INIT([Fudge-C], [0.1], [vrai.stacey@gmail.com])
+AC_INIT([Fudge-C], [0.1.0], [vrai.stacey@gmail.com])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER(include/config.h)
@@ -24,7 +24,16 @@ AC_CONFIG_FILES([Makefile \
                  include/Makefile \
                  include/fudge/Makefile
                  tests/Makefile])
-AM_INIT_AUTOMAKE(fudge-c,0.1)
+AM_INIT_AUTOMAKE
+
+### Define the API version, of the format CURRENT:REVISION:AGE. Changes to
+### the version number should be applied as follows:
+###
+### API changed, backwards compatible:      +1 :  0 : +1
+### API changed, not backwards compatible:  +1 :  0 :  0
+### API unchanged, internals updated:        ? : +1 :  ?
+API_VERSION="0:0:0"
+AC_SUBST(API_VERSION)
 
 ### Make sure we're in the right directory
 AC_CONFIG_SRCDIR(./src/message.c)
