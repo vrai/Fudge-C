@@ -1,16 +1,7 @@
 The primary task is to fully implement v0.1 of the FudgeMsg specification and
 make the code ready for distribution.
 
-* Add an examples directory and populate with some example programs (complete
-  with minimal make file). Example required are:
-
-  + Initiaising Fudge-C and encoding/decoding a simple message.
-
-  + A FudgeMsg pretty printer.
-
-  + Custom type examples (both local values, e.g. an IP address, and a byte
-    array).
-
+* Updating the version numbers and disting the distribution under Windows.
 
 Version 0.2 will follow and will require the following:
 
@@ -24,6 +15,13 @@ General improvements:
 * Speed up the FudgeMsg_getField methods. Index based lookups should be as
   close to constant time as possible, rather than the linear implementation
   currently in place.
+
+* Provide more sophisticated handling of strings, especially where conversion
+  in to UTF-8 is required.
+
+* Improve public field data decoding functions. Need non-copying byte array
+  retrieval and all such functions should advance the source pointer after
+  decoding.
 
 -----
 

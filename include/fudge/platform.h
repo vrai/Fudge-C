@@ -41,7 +41,7 @@
 #   include <arpa/inet.h>
 #endif /* ifdef FUDGE_HAVE_ARPA_INET_H */
 #ifdef FUDGE_ARPA_INET_WINSOCK_HACK
-// This is a *really* temporary hack to get the library to build with MSVC
+/* This is a *really* temporary hack to get the library to build with MSVC */
 #   include <winsock.h>
 #endif /* ifdef FUDGE_ARPA_INET_WINSOCK_HACK */
 

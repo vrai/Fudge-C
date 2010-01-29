@@ -16,7 +16,7 @@
 #ifndef INC_CODEC_EX_H
 #define INC_CODEC_EX_H
 
-#include "fudge/codec.h"
+#include "fudge/message.h"
 
 /* Field length encoding function: writes the length using the minimum number
    of bytes required. */

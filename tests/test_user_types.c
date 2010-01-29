@@ -15,7 +15,7 @@
  */
 #include "simpletest.h"
 #include "fudge/message.h"
-#include "fudge/codec_ex.h"
+#include "fudge/codec.h"
 
 /* Example user types */
 

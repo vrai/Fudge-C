@@ -1,4 +1,4 @@
-# Copyright (C) 2009 - 2009, Vrai Stacey.
+# Copyright (C) 2010 - 2010, Vrai Stacey.
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,27 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
  
-ACLOCAL_AMFLAGS = -I m4
+# By default assume that Fudge-C has been installed in the standard system
+# location. If the headers and library are installed in directories that the
+# compiler will not be able to find by default, add the relevant -I / -L
+# arguments here.
+INCLUDES=
+LIBS=-lfudgec
 
-EXTRA_DIST = reconf configure examples
-SUBDIRS = src include tests
+TARGETS=simple prettyprint usertypes
 
-DIST_SUBDIRS = src include tests
+.PHONY: all clean
 
-distclean-local: CleanExamples
-	$(RM) -f _configs.sed
+all: $(TARGETS)
 
-dist-hook: GenChangeLog
+clean:
+	$(RM) $(TARGETS)
+	$(RM) -r *.dSYM
 
-.PHONY: CleanExamples GenChangeLog
-
-CleanExamples:
-	if test -d examples; then \
-        cd examples && make clean && cd -; \
-    fi
-
-GenChangeLog:
-	if test -d .git; then \
-        $(top_srcdir)/scripts/git2changelog.py > $(distdir)/ChangeLog; \
-    fi
-
+$(TARGETS):
+	$(CC) $(CFLAGS) -Wall -pedantic $(INCLUDES) $(LIBS) -o $@ $@.c
