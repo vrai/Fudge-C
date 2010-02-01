@@ -15,6 +15,7 @@
  */
 #include "fudge/codec.h"
 #include "simpletest.h"
+#include "snprintf.h"
 
 #define ALLNAMES_FILENAME       "test_data/allNames.dat"
 #define FIXED_WIDTH_FILENAME    "test_data/fixedWidthByteArrays.dat"
@@ -69,7 +70,7 @@ DEFINE_TEST( DecodeAllNames )
     TEST_EQUALS_INT( fields [ 18 ].type, FUDGE_TYPE_INT_ARRAY );     TEST_EQUALS_MEMORY( fields [ 18 ].name, 9, "int array", 9 );       TEST_EQUALS_MEMORY( fields [ 18 ].data.bytes, fields [ 18 ].numbytes, empty, 83 * sizeof ( fudge_i32 ) );
     TEST_EQUALS_INT( fields [ 19 ].type, FUDGE_TYPE_LONG_ARRAY );    TEST_EQUALS_MEMORY( fields [ 19 ].name, 10, "long array", 10 );    TEST_EQUALS_MEMORY( fields [ 19 ].data.bytes, fields [ 19 ].numbytes, empty, 837 * sizeof ( fudge_i64 ) );
 
-    TEST_EQUALS_INT( fields [ 20 ].type, FUDGE_TYPE_INDICATOR );    TEST_EQUALS_MEMORY( fields [ 20 ].name, 10, "indicator", 10 );
+    TEST_EQUALS_INT( fields [ 20 ].type, FUDGE_TYPE_INDICATOR );    TEST_EQUALS_MEMORY( fields [ 20 ].name, 9, "indicator", 9 );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST

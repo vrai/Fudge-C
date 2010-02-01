@@ -21,7 +21,7 @@ DEFINE_TEST( FieldFunctions )
     static const fudge_i16 rawShorts [ 10 ] = { -32767, 32767, 0, 1, -1, 100, -100, 0, 16385 };
     static const fudge_i32 rawInts [ 4 ] = { 2147483647, 0, -2147483647, 0 };
     static const fudge_i64 rawLongs [ 12 ] = { ( fudge_i64 ) -9223372036854775807ll, 0, ( fudge_i64 ) 9223372036854775807ll, -1, 2, -3, 5, -8, 13, -21, 34, -55 };
-    static const fudge_f32 rawFloats [ 8 ] = { 0.0f, 2147483647.0f, 214748364.7f, 21474836.47f, 2147483.647, 2.147483647f, 21.47483647f, 214.7483647f };
+    static const fudge_f32 rawFloats [ 8 ] = { 0.0f, 2147483647.0f, 214748364.7f, 21474836.47f, 2147483.647f, 2.147483647f, 21.47483647f, 214.7483647f };
     static const fudge_f64 rawDoubles [ 5 ] = { 9223372036854775807.0, 0.0, 0.0000000123456, 1234560000000.0, -9223372036854775807.0 };
 
     fudge_byte largeByteArray [ 512 ];   /* Will need a large byte array for the fix array testing */

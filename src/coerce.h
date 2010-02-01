@@ -19,15 +19,15 @@
 #include "fudge/status.h"
 #include "fudge/types.h"
 
-extern FudgeStatus FudgeType_coerceDefault   ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceDefault   ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
 
-extern FudgeStatus FudgeType_coerceBoolean   ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
-extern FudgeStatus FudgeType_coerceByte      ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
-extern FudgeStatus FudgeType_coerceShort     ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
-extern FudgeStatus FudgeType_coerceInt       ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
-extern FudgeStatus FudgeType_coerceLong      ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
-extern FudgeStatus FudgeType_coerceFloat     ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
-extern FudgeStatus FudgeType_coerceDouble    ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceBoolean   ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceByte      ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceShort     ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceInt       ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceLong      ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceFloat     ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
+FudgeStatus FudgeType_coerceDouble    ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes );
 
 #endif
 

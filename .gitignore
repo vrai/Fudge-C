@@ -1,5 +1,14 @@
 .libs
 *.o
+*.obj
+*.exe
+*.lib
+*.dll
+*.exp
+*.manifest
+runtest.bat
+*.pdb
+*.ilk
 *.swp
 test
 *.deps

@@ -32,11 +32,11 @@ typedef struct
 
 /* Initialises the type registry and populates it with the default types
    (see types.h). Usually only called from fudge.c. */
-extern FudgeStatus FudgeRegistry_init ( );
+FudgeStatus FudgeRegistry_init ( );
 
 /* Retrieves a const pointer to the type description structure for a given
    type, or NULL if there is no type with the given Id. */
-extern const FudgeTypeDesc * FudgeRegistry_getTypeDesc ( fudge_type_id type );
+const FudgeTypeDesc * FudgeRegistry_getTypeDesc ( fudge_type_id type );
 
 #endif
 

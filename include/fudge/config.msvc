@@ -23,4 +23,6 @@
 
 #define FUDGE_ARPA_INET_WINSOCK_HACK
 
+#define inline __declspec(inline)
+
 #endif /* ifndef _INCLUDE_FUDGE_CONFIG_H */

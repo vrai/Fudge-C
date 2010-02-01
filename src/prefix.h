@@ -27,8 +27,8 @@ typedef struct
     fudge_bool name;            /* Field has a name */
 } FudgeFieldPrefix;
 
-extern FudgeStatus FudgePrefix_decodeFieldPrefix ( FudgeFieldPrefix * prefix, fudge_byte byte );
+FudgeStatus FudgePrefix_decodeFieldPrefix ( FudgeFieldPrefix * prefix, fudge_byte byte );
 
-extern fudge_byte FudgePrefix_encodeFieldPrefix ( const FudgeFieldPrefix prefix );
+fudge_byte FudgePrefix_encodeFieldPrefix ( const FudgeFieldPrefix prefix );
 
 #endif

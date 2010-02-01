@@ -52,10 +52,10 @@ include\fudge\config.h: include\fudge\config.msvc
 
 tests\runtest.bat:
 	echo @echo off > tests\runtest.bat
-	echo set local >> tests\runtest.bat
-        echo @cd tests >> tests\runtest.bat
+	echo setlocal >> tests\runtest.bat
+        echo cd tests >> tests\runtest.bat
 	echo set path=..;%path% >> tests\runtest.bat
-        echo @%1 >> tests\runtest.bat
+        echo %1 >> tests\runtest.bat
 
 CL_OPTS=/nologo /Iinclude /W3
 LIB_OPTS=/nologo

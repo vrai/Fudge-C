@@ -51,12 +51,14 @@ FudgeStatus FudgeMsg_getFieldAs ( const FudgeField * field,
                                   FudgeTypePayload * payload,
                                   fudge_i32 * numbytes )
 {
+    const FudgeTypeDesc * typedesc;
+
     if ( ! ( field && target && payload && numbytes ) )
         return FUDGE_NULL_POINTER;
     if ( field->type == type )
         return FUDGE_COERCION_NOT_REQUIRED;
 
-    const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( field->type );
+    typedesc = FudgeRegistry_getTypeDesc ( field->type );
 
     if ( typedesc && typedesc->coercer )
     {
