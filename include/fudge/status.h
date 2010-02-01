@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,22 @@ typedef enum
     FUDGE_OK                     = 0x0000,
     FUDGE_OUT_OF_MEMORY          = 0x0001,
     FUDGE_NULL_POINTER           = 0x0002,
+
     FUDGE_INVALID_INDEX          = 0x0010,
     FUDGE_INVALID_NAME           = 0x0011,
     FUDGE_INVALID_ORDINAL        = 0x0012,
     FUDGE_NAME_TOO_LONG          = 0x0013,
+
+    FUDGE_INVALID_TYPE_COERCION  = 0x0020,
+    FUDGE_COERCION_NOT_REQUIRED  = 0x0021,
+
+    FUDGE_INVALID_USER_TYPE      = 0x0030,
+
     FUDGE_OUT_OF_BYTES           = 0x0100,
     FUDGE_UNKNOWN_FIELD_WIDTH    = 0x0101,
     FUDGE_INTERNAL_LIST_STATE    = 0x1000,
     FUDGE_INTERNAL_PAYLOAD       = 0x1001,
+
     FUDGE_REGISTRY_UNINITIALISED = 0x2000
 
 } FudgeStatus;

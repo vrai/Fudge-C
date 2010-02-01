@@ -2,3 +2,4 @@ test_*.log
 test_codec
 test_message
 test_utilities
+test_user_types

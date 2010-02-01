@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,37 +18,24 @@
 
 #include "fudge/codec.h"
 
-/* Field encoding functions */
-extern FudgeStatus FudgeCodec_encodeFieldIndicator ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldByte      ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldBool      ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldI16       ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldI32       ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldI64       ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldF32       ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldF64       ( const FudgeField * field, fudge_byte * * data );
+/* Registry compatible field data encoding functions: writes only the data,
+   not the field header */
+FudgeStatus FudgeCodec_encodeFieldIndicator ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldByte      ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldBool      ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldI16       ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldI32       ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldI64       ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldF32       ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldF64       ( const FudgeField * field, fudge_byte * * data );
 
-extern FudgeStatus FudgeCodec_encodeFieldByteArray ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldI16Array  ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldI32Array  ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldI64Array  ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldF32Array  ( const FudgeField * field, fudge_byte * * data );
-extern FudgeStatus FudgeCodec_encodeFieldF64Array  ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldI16Array  ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldI32Array  ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldI64Array  ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldF32Array  ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldF64Array  ( const FudgeField * field, fudge_byte * * data );
 
-extern FudgeStatus FudgeCodec_encodeFieldFudgeMsg  ( const FudgeField * field, fudge_byte * * data );
-
-/* Type encoding functions */
-extern void FudgeCodec_encodeByte ( const fudge_byte value, fudge_byte * * data );
-extern void FudgeCodec_encodeI16  ( fudge_i16 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeI32  ( fudge_i32 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeI64  ( fudge_i64 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeF32  ( fudge_f32 value,  fudge_byte * * data );
-extern void FudgeCodec_encodeF64  ( fudge_f64 value,  fudge_byte * * data );
-
-extern void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
-                                         const fudge_i32 width,
-                                         const fudge_bool fixedwidth,
-                                         fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldFudgeMsg  ( const FudgeField * field, fudge_byte * * data );
 
 #endif
 

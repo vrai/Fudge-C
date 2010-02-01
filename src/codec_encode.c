@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,13 @@
 #include "header.h"
 #include "message_internal.h"
 #include "prefix.h"
-#include "registry.h"
-#include "strdup.h"
+#include "registry_internal.h"
 #include <assert.h>
 
-/* TODO Rearrange this */
-
+/* The recursive nature of FudgeMsg encoding means these have to be forward
+   declared. */
 FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * numbytes );
 FudgeStatus FudgeCodec_encodeMsgFields ( const FudgeMsg message, fudge_byte * * writepos );
-
 
 fudge_byte FudgeCodec_calculateBytesToHoldSize ( fudge_i32 size )
 {
@@ -68,7 +66,7 @@ fudge_i32 FudgeCodec_getFieldLength ( const FudgeField * field )
 
     /* Add the optional field header elements */
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
-        numbytes += ( field->name ? strlen ( field->name ) : 0 ) + 1;  /* 1 byte used for length */
+        numbytes += ( field->name ? field->namelen : 0 ) + 1;  /* 1 byte used for length */
     if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
         numbytes += 2;
 
@@ -109,17 +107,6 @@ FudgeStatus FudgeCodec_getMessageLength ( const FudgeMsg message, fudge_i32 * nu
     return FUDGE_OK;
 }
 
-void FudgeCodec_encodeFieldLength ( const fudge_i32 length, fudge_byte * * data )
-{
-    switch ( FudgeCodec_calculateBytesToHoldSize ( length ) )
-    {
-        case 0:                                            break;
-        case 1:  FudgeCodec_encodeByte ( (const fudge_byte) length, data );   break;
-        case 2:  FudgeCodec_encodeI16 ( (const fudge_i16) length, data );    break;   
-        default: FudgeCodec_encodeI32 ( length, data );    break;
-    }
-}
-
 FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFieldHeader * header )
 {
     if ( ! ( field && header ) )
@@ -136,11 +123,32 @@ FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFiel
 
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
     {
-        if ( ! ( header->name = field->name ? _strdup ( field->name ) : _strdup ( "" ) ) )
+        /* Allocate the space for the field name: as a NULL pointer indicates
+           no name, allocate a single byte if the field name is NULL (used to
+           indicate a field with a name of zero bytes in length). */
+        if ( ! ( header->name = ( fudge_byte * ) malloc ( field->name ? field->namelen : 1 ) ) )
             return FUDGE_OUT_OF_MEMORY;
+
+        if ( field->name )
+        {
+            /* Field name is non-null, copy it across in to the header */
+            memcpy ( header->name, field->name, field->namelen );
+            header->namelen = field->namelen;
+        }
+        else
+        {
+            /* Field name is null, set the placeholder byte to be NULL and
+               indicate the true length of the name in the length field */
+            *( header->name ) = 0;
+            header->namelen = 0;
+        }
     }
     else
+    {
+        /* No name: zero the fields to indicate this */
         header->name = 0;
+        header->namelen = 0;
+    }
 
     return FUDGE_OK;
 }
@@ -190,10 +198,6 @@ FudgeStatus FudgeCodec_encodeMsgFields ( const FudgeMsg message, fudge_byte * * 
     return FUDGE_OK;
 }
 
-/******************************************************************************
- * Privately accessible functions
- */
-
 FudgeStatus FudgeCodec_encodeFieldIndicator ( const FudgeField * field, fudge_byte * * data )
 {
     return FUDGE_OK;
@@ -218,50 +222,6 @@ FUDGECODEC_ENCODE_FIELD_IMPL( I32,  i32 )
 FUDGECODEC_ENCODE_FIELD_IMPL( I64,  i64 )
 FUDGECODEC_ENCODE_FIELD_IMPL( F32,  f32 )
 FUDGECODEC_ENCODE_FIELD_IMPL( F64,  f64 )
-
-void FudgeCodec_encodeByte ( const fudge_byte byte, fudge_byte * * data )
-{
-    **data = byte;
-    ( *data ) += 1;
-}
-
-#define FUDGECODEC_ENCODE_TYPE_IMPL( typename, type, swapper )                 \
-    void FudgeCodec_encode##typename ( type value, fudge_byte * * writepos )   \
-    {                                                                          \
-        value = swapper ( value );                                             \
-        memcpy ( *writepos, &value, sizeof ( type ) );                         \
-        *writepos += sizeof ( type );                                          \
-    }
-
-FUDGECODEC_ENCODE_TYPE_IMPL( I16, fudge_i16, htons )
-FUDGECODEC_ENCODE_TYPE_IMPL( I32, fudge_i32, htonl )
-FUDGECODEC_ENCODE_TYPE_IMPL( I64, fudge_i64, htoni64 )
-FUDGECODEC_ENCODE_TYPE_IMPL( F32, fudge_f32, htonf )
-FUDGECODEC_ENCODE_TYPE_IMPL( F64, fudge_f64, htond )
-
-void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
-                                  const fudge_i32 width,
-                                  const fudge_bool fixedwidth,
-                                  fudge_byte * * data )
-{
-    if ( ! fixedwidth )
-        FudgeCodec_encodeFieldLength ( width, data );
-
-    if ( bytes && data > 0 )
-        memcpy ( *data, bytes, width );
-    ( *data ) += width;
-}
-
-FudgeStatus FudgeCodec_encodeFieldByteArray ( const FudgeField * field, fudge_byte * * data )
-{
-    const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( field->type );
-
-    FudgeCodec_encodeByteArray ( field->data.bytes,
-                                 field->numbytes,
-                                 typedesc->fixedwidth >= 0,
-                                 data );
-    return FUDGE_OK;
-}
 
 #define FUDGECODEC_ENCODE_ARRAY_IMPL( typename, type )                                                      \
     FudgeStatus FudgeCodec_encodeField##typename##Array ( const FudgeField * field, fudge_byte * * data )   \
@@ -293,8 +253,8 @@ FudgeStatus FudgeCodec_encodeFieldFudgeMsg ( const FudgeField * field, fudge_byt
     return FudgeCodec_encodeMsgFields ( field->data.message, data );
 }
 
-/******************************************************************************
- * Externally accessible functions
+/*****************************************************************************
+ * Functions from fudge/codec.h
  */
 
 FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * bytes, fudge_i32 * numbytes )
@@ -337,5 +297,65 @@ FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * byt
 release_bytes_and_fail:
     free ( *bytes );
     return status;
+}
+
+/*****************************************************************************
+ * Functions from fudge/codec_ex.h
+ */
+
+void FudgeCodec_encodeFieldLength ( const fudge_i32 length, fudge_byte * * data )
+{
+    switch ( FudgeCodec_calculateBytesToHoldSize ( length ) )
+    {
+        case 0:                                            break;
+        case 1:  FudgeCodec_encodeByte ( (const fudge_byte) length, data );   break;
+        case 2:  FudgeCodec_encodeI16 ( (const fudge_i16) length, data );    break;   
+        default: FudgeCodec_encodeI32 ( length, data );    break;
+    }
+}
+
+void FudgeCodec_encodeByte ( const fudge_byte byte, fudge_byte * * data )
+{
+    **data = byte;
+    ( *data ) += 1;
+}
+
+#define FUDGECODEC_ENCODE_TYPE_IMPL( typename, type, swapper )                 \
+    void FudgeCodec_encode##typename ( type value, fudge_byte * * writepos )   \
+    {                                                                          \
+        value = swapper ( value );                                             \
+        memcpy ( *writepos, &value, sizeof ( type ) );                         \
+        *writepos += sizeof ( type );                                          \
+    }
+
+FUDGECODEC_ENCODE_TYPE_IMPL( I16, fudge_i16, htons )
+FUDGECODEC_ENCODE_TYPE_IMPL( I32, fudge_i32, htonl )
+FUDGECODEC_ENCODE_TYPE_IMPL( I64, fudge_i64, htoni64 )
+FUDGECODEC_ENCODE_TYPE_IMPL( F32, fudge_f32, htonf )
+FUDGECODEC_ENCODE_TYPE_IMPL( F64, fudge_f64, htond )
+
+
+void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
+                                  const fudge_i32 width,
+                                  const fudge_bool fixedwidth,
+                                  fudge_byte * * data )
+{
+    if ( ! fixedwidth )
+        FudgeCodec_encodeFieldLength ( width, data );
+
+    if ( bytes && data > 0 )
+        memcpy ( *data, bytes, width );
+    ( *data ) += width;
+}
+
+FudgeStatus FudgeCodec_encodeFieldByteArray ( const FudgeField * field, fudge_byte * * data )
+{
+    const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( field->type );
+
+    FudgeCodec_encodeByteArray ( field->data.bytes,
+                                 field->numbytes,
+                                 typedesc->fixedwidth >= 0,
+                                 data );
+    return FUDGE_OK;
 }
 

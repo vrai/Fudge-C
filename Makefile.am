@@ -14,17 +14,23 @@
  
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = reconf configure
+EXTRA_DIST = reconf configure examples
 SUBDIRS = src include tests
 
 DIST_SUBDIRS = src include tests
 
-distclean-local:
+distclean-local: CleanExamples
 	$(RM) -f _configs.sed
 
 dist-hook: GenChangeLog
 
-.PHONY: GenChangeLog
+.PHONY: CleanExamples GenChangeLog
+
+CleanExamples:
+	if test -d examples; then \
+        cd examples && make clean && cd -; \
+    fi
+
 GenChangeLog:
 	if test -d .git; then \
         $(top_srcdir)/scripts/git2changelog.py > $(distdir)/ChangeLog; \

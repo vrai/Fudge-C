@@ -93,7 +93,8 @@ typedef struct
     fudge_i32 numbytes;     /* The size of the bytes array in the data union */
     FudgeFieldData data;    /* Union holding the field data */
     FudgeFieldFlags flags;  /* Indicates the presence of optional values */
-    const char * name;      /* The name of the field, can be null */
+    fudge_byte * name;      /* The name of the field, can be null */
+    fudge_i32 namelen;      /* Number of bytes in the name, zero if name is null */
     fudge_i16 ordinal;      /* The field ordinal, or zero if unset */
 } FudgeField;
 

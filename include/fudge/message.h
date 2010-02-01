@@ -16,8 +16,7 @@
 #ifndef INC_FUDGE_MESSAGE_H
 #define INC_FUDGE_MESSAGE_H
 
-#include "fudge/status.h"
-#include "fudge/types.h"
+#include "fudge/message_ex.h"
 
 #ifdef __cplusplus
     extern "C" {
@@ -57,44 +56,45 @@ FUDGEAPI unsigned long FudgeMsg_numFields ( FudgeMsg message );
    mandatory. The name is optional and can either be a zero terminated char
    array or a NULL pointer. The ordinal is also optional and should be a
    pointer to the ordinal value or NULL. */
-FUDGEAPI FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const char * name, const fudge_i16 * ordinal );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal );
 
-FUDGEAPI FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_bool value );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldByte ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_byte value );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldI16  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i16 value );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldI32  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i32 value );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldI64  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_i64 value );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldF32  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_f32 value );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldF64  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, fudge_f64 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldBool ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_bool value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldByte ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_byte value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI16  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_i16 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI32  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_i32 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI64  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_i64 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF32  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_f32 value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF64  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, fudge_f64 value );
 
 /* As stated above, adding the message will increase its reference count. */
-FUDGEAPI FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, FudgeMsg value );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, FudgeMsg value );
 
-FUDGEAPI FudgeStatus FudgeMsg_addFieldByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes,  fudge_i32 numbytes );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldI16Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i16 * ints,    fudge_i32 numints );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldI32Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i32 * ints,    fudge_i32 numints );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldI64Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_i64 * ints,    fudge_i32 numints );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldF32Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_f32 * floats,  fudge_i32 numfloats );
-FUDGEAPI FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_f64 * doubles, fudge_i32 numdoubles );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldByteArray ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes,  fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI16Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_i16 * ints,    fudge_i32 numints );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI32Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_i32 * ints,    fudge_i32 numints );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldI64Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_i64 * ints,    fudge_i32 numints );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF32Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_f32 * floats,  fudge_i32 numfloats );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_f64 * doubles, fudge_i32 numdoubles );
 
-FUDGEAPI FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const char * string, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * string, fudge_i32 numbytes );
 
-FUDGEAPI FudgeStatus FudgeMsg_addField4ByteArray   ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField8ByteArray   ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField16ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField20ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField32ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField64ByteArray  ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
-FUDGEAPI FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const char * name, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField4ByteArray   ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField8ByteArray   ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField16ByteArray  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField20ByteArray  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField32ByteArray  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField64ByteArray  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
+FUDGEAPI FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
 
 /* Used to add arbitary types to a message. The data is stored and encoded as
    a simple array of bytes. No endian conversion will be applied to the
    contents. */
 FUDGEAPI FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
                                              fudge_type_id type,
-                                             const char * name,
+                                             const fudge_byte * name,
+                                             fudge_i32 namelen,
                                              const fudge_i16 * ordinal,
                                              const fudge_byte * bytes,
                                              fudge_i32 numbytes );
@@ -108,7 +108,8 @@ FUDGEAPI FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
    not be increased, but it will be decreased when the parent is destroyed. */
 FUDGEAPI FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
                                            fudge_type_id type,
-                                           const char * name,
+                                           const fudge_byte * name,
+                                           fudge_i32 namelen,
                                            const fudge_i16 * ordinal,
                                            FudgeFieldData * data,
                                            fudge_i32 numbytes );
@@ -124,7 +125,7 @@ FUDGEAPI FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg mes
    be a valid, null terminated char array). Returns FUDGE_INVALID_NAME if no
    field in the message has the name.
    Linear time operation. */
-FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const char * name );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const fudge_byte * name, fudge_i32 namelen );
 
 /* As above, but retrieves the first field with the ordinal provided. Returns
    FUDGE_INVALID_ORDINAL if not field in the message has the ordinal.

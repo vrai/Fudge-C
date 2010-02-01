@@ -1,5 +1,14 @@
 .libs
 *.o
+*.obj
+*.exe
+*.lib
+*.dll
+*.exp
+*.manifest
+runtest.bat
+*.pdb
+*.ilk
 *.swp
 test
 *.deps
@@ -12,7 +21,3 @@ libtool
 config.log
 config.status
 configure
-include/config.h
-include/config.h.in*
-include/stamp-h1
-include/fudge/config.h

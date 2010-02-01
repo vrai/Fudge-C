@@ -18,16 +18,17 @@ OBJ_DIR=obj
 
 OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
 	$(OBJ_DIR)\codec_encode$(SUFFIX).obj \
+	$(OBJ_DIR)\coerce$(SUFFIX).obj \
 	$(OBJ_DIR)\fudge$(SUFFIX).obj \
 	$(OBJ_DIR)\header$(SUFFIX).obj \
 	$(OBJ_DIR)\message$(SUFFIX).obj \
+	$(OBJ_DIR)\message_ex$(SUFFIX).obj \
 	$(OBJ_DIR)\platform$(SUFFIX).obj \
 	$(OBJ_DIR)\prefix$(SUFFIX).obj \
 	$(OBJ_DIR)\reference$(SUFFIX).obj \
 	$(OBJ_DIR)\registry$(SUFFIX).obj \
 	$(OBJ_DIR)\status$(SUFFIX).obj \
 	$(OBJ_DIR)\types$(SUFFIX).obj
-#NOTE: strdup is not needed because MSVC has _strdup in its core libraries
 
 #TODO: we don't have proper header dependancies, but this should at least catch everything!
 HEADERS=	include\fudge\codec.h \
@@ -44,8 +45,7 @@ HEADERS=	include\fudge\codec.h \
 		src\prefix.h \
 		src\pstdint.h \
 		src\reference.h \
-		src\registry.h \
-		src\strdup.h
+		src\registry_internal.h
 
 !if "$(BUILD_DLL)" != ""
 libfudgec$(SUFFIX).lib:	libfudgec$(SUFFIX).dll
@@ -68,6 +68,10 @@ $(OBJ_DIR)\codec_encode$(SUFFIX).obj:	src\codec_encode.c \
 					$(HEADERS)
 	$(CL) /Fo$(OBJ_DIR)\codec_encode$(SUFFIX).obj src\codec_encode.c
 
+$(OBJ_DIR)\coerce$(SUFFIX).obj:	src\coerce.c \
+				$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\coerce$(SUFFIX).obj src\coerce.c
+
 $(OBJ_DIR)\fudge$(SUFFIX).obj:	src\fudge.c \
 				$(HEADERS)
 	$(CL) /Fo$(OBJ_DIR)\fudge$(SUFFIX).obj src\fudge.c
@@ -79,6 +83,10 @@ $(OBJ_DIR)\header$(SUFFIX).obj:	src\header.c \
 $(OBJ_DIR)\message$(SUFFIX).obj:	src\message.c \
 					$(HEADERS)
 	$(CL) /Fo$(OBJ_DIR)\message$(SUFFIX).obj src\message.c
+
+$(OBJ_DIR)\message_ex$(SUFFIX).obj:	src\message_ex.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\message_ex$(SUFFIX).obj src\message_ex.c
 
 $(OBJ_DIR)\platform$(SUFFIX).obj:	src\platform.c \
 					$(HEADERS)

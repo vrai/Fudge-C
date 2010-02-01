@@ -33,7 +33,8 @@ typedef struct
     fudge_byte widthofwidth;    /* Number of bytes used to hold field width, zero for fixed width */
     fudge_bool hasordinal;      /* If non-zero, then the ordinal field is populated */
     fudge_i16 ordinal;          /* Field ordinal, if hasordinal is non-zero  */
-    const char * name;          /* Field name or NULL if no name */
+    fudge_byte * name;          /* Field name or NULL if no name */
+    fudge_i32 namelen;
 } FudgeFieldHeader;
 
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes );

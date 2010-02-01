@@ -16,7 +16,7 @@
 #ifndef INC_FUDGE_CODEC_H
 #define INC_FUDGE_CODEC_H
 
-#include "fudge/message.h"
+#include "fudge/codec_ex.h"
 
 #ifdef __cplusplus
     extern "C" {

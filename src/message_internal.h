@@ -16,8 +16,8 @@
 #ifndef INC_FUDGE_MESSAGE_INTERNAL_H
 #define INC_FUDGE_MESSAGE_INTERNAL_H
 
-extern FudgeStatus FudgeMsg_setWidth ( FudgeMsg message, fudge_i32 width );
-extern fudge_i32 FudgeMsg_getWidth ( const FudgeMsg message );
+FudgeStatus FudgeMsg_setWidth ( FudgeMsg message, fudge_i32 width );
+fudge_i32 FudgeMsg_getWidth ( const FudgeMsg message );
 
 #endif
 

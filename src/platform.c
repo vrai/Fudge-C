@@ -48,8 +48,7 @@ int64_t htoni64 ( int64_t value )
 #define isnan _isnan
 #endif /* if !defined(FUDGE_HAS_ISNAN) && !defined(isnan) */
 
-/* inline suppressed for MSVC compatibility. Do we need this? Won't modern compilers spot this? */
-/* inline */ float convertBytesToFloat ( int32_t bytes )
+inline float convertBytesToFloat ( int32_t bytes )
 {
 #ifdef NAN
     if ( bytes == JAVA_FLOAT_NAN )
