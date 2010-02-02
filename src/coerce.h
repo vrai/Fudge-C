@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INC_COERCE_ENCODE_H
-#define INC_COERCE_ENCODE_H
+#ifndef INC_FUDGE_COERCE_ENCODE_H
+#define INC_FUDGE_COERCE_ENCODE_H
 
 #include "fudge/status.h"
 #include "fudge/types.h"

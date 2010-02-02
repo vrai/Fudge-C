@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INC_CODEC_ENCODE_H
-#define INC_CODEC_ENCODE_H
+#ifndef INC_FUDGE_CODEC_ENCODE_H
+#define INC_FUDGE_CODEC_ENCODE_H
 
-#include "fudge/codec_ex.h"
+#include "fudge/codec.h"
 
 /* Registry compatible field data encoding functions: writes only the data,
    not the field header */

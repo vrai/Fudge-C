@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef INC_CODEC_EX_H
-#define INC_CODEC_EX_H
+#ifndef INC_FUDGE_CODEC_EX_H
+#define INC_FUDGE_CODEC_EX_H
 
 #include "fudge/message.h"
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
 /* Field length encoding function: writes the length using the minimum number
    of bytes required. */
@@ -59,6 +63,10 @@ FUDGEAPI FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data,
    user types that can be represented as simple byte arrays. */
 FUDGEAPI FudgeStatus FudgeCodec_encodeFieldByteArray ( const FudgeField * field, fudge_byte * * data );
 FUDGEAPI FudgeStatus FudgeCodec_decodeFieldByteArray ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+
+#ifdef __cplusplus
+    }
+#endif
 
 #endif
 
