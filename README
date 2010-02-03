@@ -1,5 +1,6 @@
-This is Fudge-C, a C implementation of the Fudge message encoding system. Full
-details of Fudge, including the specification can be found at
+This is version 0.1 of Fudge-C, a C implementation of the Fudge message
+encoding system. Full details of Fudge, including the specification can be
+found at
 
     http://fudgemsg.org/
 
@@ -36,9 +37,14 @@ fully supports all transport types and opaque "blocks of bytes" for custom
 type instances. It has no external library dependencies and requires only a C
 compiler and a tool chain.
 
+Fudge-C is still very much at the alpha stage. What has been implemented is
+usable: it has been tested on multiple platforms and run though valgrind.
+However it is still well short of the final feature set and the API is open to
+change. For a list of pending changes please check the TODO file.
+
 -----
 
-Copyright (C) 2009
+Copyright (C) 2009 - 2010
 Vrai Stacey <vrai.stacey@gmail.com>
 
 This file is part of Fudge-C.
