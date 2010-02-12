@@ -86,10 +86,16 @@ FudgeStatus FudgeType_coerceExampleIp4 ( const FudgeField * source, const fudge_
 
 void ExampleTick_init ( ExampleTickStruct * tick, const char * ric, fudge_i32 riclen, fudge_f32 bid, fudge_f32 ask, fudge_i32 time )
 {
-    memcpy ( tick->ric, ric, riclen < sizeof ( ExampleTickStruct ) ? riclen : sizeof ( ExampleTickStruct ) );
+    memcpy ( tick->ric, ric, riclen < 16 ? riclen : 16 );
     tick->bid = bid;
     tick->ask = ask;
     tick->time = time;
+
+    /* This isn't required but ensure that the whole tick structure has been
+       initialised. Without it the simple memory comparsion used in the test
+       code would cause memory warnings in valgrind. */
+    if ( riclen < 16 )
+        memset ( tick->ric + riclen, 0, 16 - riclen );
 }
 
 FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const ExampleTickStruct * tick )
