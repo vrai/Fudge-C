@@ -24,6 +24,7 @@ libfudgec_include_HEADERS = codec.h         \
                             platform.h      \
                             registry.h      \
                             status.h        \
+                            string.h        \
                             types.h
 
 distclean-local:

@@ -3,3 +3,4 @@ test_codec
 test_message
 test_utilities
 test_user_types
+test_string

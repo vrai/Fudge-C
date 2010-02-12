@@ -60,6 +60,8 @@ typedef uint8_t fudge_type_id;
 
 typedef struct FudgeMsgImpl * FudgeMsg;
 
+typedef struct FudgeStringImpl * FudgeString;
+
 typedef struct
 {
     fudge_byte directives;      /* Processing directives, for future use */
