@@ -19,6 +19,7 @@ INCLUDES = -I$(top_srcdir)/include
 noinst_HEADERS = codec_decode.h         \
                  codec_encode.h         \
                  coerce.h               \
+                 convertutf.h           \
                  header.h               \
                  message_internal.h     \
                  prefix.h               \
@@ -29,6 +30,7 @@ noinst_HEADERS = codec_decode.h         \
 libfudgec_la_SOURCES = codec_decode.c   \
                        codec_encode.c   \
                        coerce.c         \
+                       convertutf.c     \
                        fudge.c          \
                        header.c         \
                        message.c        \
@@ -38,6 +40,7 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        reference.c      \
                        registry.c       \
                        status.c         \
+                       string.c         \
                        types.c
 
 libfudgec_la_LDFLAGS = -no-undefined -version-info @API_VERSION@
