@@ -24,7 +24,7 @@
 
 /* Note on thread safety:
  
-   The Fudge-C API is thread-safe but the data structures are no reentrant.
+   The Fudge-C API is thread-safe but the data structures are not reentrant.
    Multiple threads may use the API but any given object (a FudgeMsg instance
    for example) must only be used by one thread at a time.
 
@@ -76,7 +76,7 @@ FUDGEAPI FudgeStatus FudgeMsg_addFieldI64Array  ( FudgeMsg message, const fudge_
 FUDGEAPI FudgeStatus FudgeMsg_addFieldF32Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_f32 * floats,  fudge_i32 numfloats );
 FUDGEAPI FudgeStatus FudgeMsg_addFieldF64Array  ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_f64 * doubles, fudge_i32 numdoubles );
 
-FUDGEAPI FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * string, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, FudgeString string );
 
 FUDGEAPI FudgeStatus FudgeMsg_addField4ByteArray   ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );
 FUDGEAPI FudgeStatus FudgeMsg_addField8ByteArray   ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * bytes );

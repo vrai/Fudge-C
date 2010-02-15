@@ -15,6 +15,7 @@
  */
 #include "fudge/message.h"
 #include "fudge/platform.h"
+#include "fudge/string.h"
 #include "message_internal.h"
 #include "header.h"
 #include "reference.h"
@@ -354,9 +355,12 @@ FUDGE_ADDARRAYFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG_ARRAY )
 FUDGE_ADDARRAYFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT_ARRAY )
 FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY )
 
-FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, const fudge_byte * string, fudge_i32 numbytes )
+FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, FudgeString string )
 {
-    return FudgeMsg_addFieldOpaque ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, string, numbytes );
+    if ( ! string )
+        return FUDGE_NULL_POINTER;
+    else
+        return FudgeMsg_addFieldOpaque ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, FudgeString_getData ( string ), FudgeString_getSize ( string ) );
 }
 
 #define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                           \

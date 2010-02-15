@@ -23,6 +23,38 @@
     extern "C" {
 #endif
 
+/* The FudgeString provides a thread-safe (but not reentrant), reference
+   counted, immutable string implementation. A FudgeString can be created from
+   a number of different source data types, but the string is always stored as
+   (non-modified) UTF8. For valid unicode sequences the conversion process  is
+   loss-less. For example: creating an instance from UTF32 data and then
+   retrieving the data as a UTF32 string will yield the data as the source.
+   This applies to all unicode creation and conversion functions.
+
+   Due to limitations of the format, converting to ASCII will only be loss-
+   less if the source data was also ASCII. If the source was unicode data,
+   non-ASCII characters will be rendered as question marks.
+
+   The string comparison logic is a simple bytes comparison, with one
+   exception: byte-order markers are skipped. The return value follows the
+   same rules as strcmp.
+
+   All strings are created with a reference count of one. To release the
+   memory held by a string it must be released. To avoid memory leaks or
+   segmentation faults the number of release operations per string must
+   be equal to one more than the number of retain operations.
+
+   Thread safety:
+
+   The FudgeString API is thread safe: multiple threads can create, retain,
+   convert, compare and release strings concurrently. As the FudgeString
+   instances are immutable, multiple threads can get, convert and compare
+   a single FudgeString instance. However, multiple threads must NOT retain
+   or release a single thread instance in parallel. The reference counting
+   logic/state is not reentrant and external locking should be used to
+   protect these operations if the string is to be used in this way.
+*/
+
 FUDGEAPI FudgeStatus FudgeString_createFromASCII ( FudgeString * string, const char * chars, size_t numchars );
 FUDGEAPI FudgeStatus FudgeString_createFromASCIIZ ( FudgeString * string, const char * chars );
 FUDGEAPI FudgeStatus FudgeString_createFromUTF8 ( FudgeString * string, const fudge_byte * bytes, size_t numbytes );

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "fudge/message.h"
+#include "fudge/string.h"
 #include "simpletest.h"
 
 DEFINE_TEST( FieldFunctions )
@@ -27,6 +28,7 @@ DEFINE_TEST( FieldFunctions )
     fudge_byte largeByteArray [ 512 ];   /* Will need a large byte array for the fix array testing */
     
     FudgeMsg message, submessage;
+    FudgeString string;
     FudgeField field;
     FudgeField fields [ 32 ];            /* Needs to be big enough to hold the largest field in the test */
     int index;
@@ -43,7 +45,7 @@ DEFINE_TEST( FieldFunctions )
     /* Test some failure cases */
     TEST_EQUALS_INT( FudgeMsg_addFieldBool ( 0, 0, 0, 0, FUDGE_FALSE ), FUDGE_NULL_POINTER );
     TEST_EQUALS_INT( FudgeMsg_addFieldMsg ( message, ( const fudge_byte * ) "Null message", 12, 0, 0 ), FUDGE_NULL_POINTER );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Null, non zero-length string", 28, 0, 0, 1 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Null string pointer", 19, 0, 0 ), FUDGE_NULL_POINTER );
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 0 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( 0, message, 0 ), FUDGE_NULL_POINTER );
     TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields, message, 0 ), FUDGE_INVALID_INDEX );
@@ -81,9 +83,15 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
     /* Add null, empty and populated strings */
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Null string", 11, 0, 0, 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty string", 12, 0, ( const fudge_byte * ) "", 0 ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, ( const fudge_byte * ) "This is a string", 16 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_createFromASCIIZ ( &string, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Null string", 11, 0, string ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_release ( string ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_createFromASCIIZ ( &string, "" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "Empty string", 12, 0, string ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_release ( string ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_createFromASCIIZ ( &string, "This is a string" ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, ( const fudge_byte * ) "String", 6, 0, string ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_release ( string ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 12 );
 
