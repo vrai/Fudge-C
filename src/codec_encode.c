@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fudge/string.h"
 #include "codec_encode.h"
 #include "header.h"
 #include "message_internal.h"
@@ -216,12 +217,13 @@ FudgeStatus FudgeCodec_encodeFieldBool ( const FudgeField * field, fudge_byte * 
         return FUDGE_OK;                                                                            \
     }
 
-FUDGECODEC_ENCODE_FIELD_IMPL( Byte, byte )
-FUDGECODEC_ENCODE_FIELD_IMPL( I16,  i16 )
-FUDGECODEC_ENCODE_FIELD_IMPL( I32,  i32 )
-FUDGECODEC_ENCODE_FIELD_IMPL( I64,  i64 )
-FUDGECODEC_ENCODE_FIELD_IMPL( F32,  f32 )
-FUDGECODEC_ENCODE_FIELD_IMPL( F64,  f64 )
+FUDGECODEC_ENCODE_FIELD_IMPL( Byte,   byte )
+FUDGECODEC_ENCODE_FIELD_IMPL( I16,    i16 )
+FUDGECODEC_ENCODE_FIELD_IMPL( I32,    i32 )
+FUDGECODEC_ENCODE_FIELD_IMPL( I64,    i64 )
+FUDGECODEC_ENCODE_FIELD_IMPL( F32,    f32 )
+FUDGECODEC_ENCODE_FIELD_IMPL( F64,    f64 )
+FUDGECODEC_ENCODE_FIELD_IMPL( String, string )
 
 #define FUDGECODEC_ENCODE_ARRAY_IMPL( typename, type )                                                      \
     FudgeStatus FudgeCodec_encodeField##typename##Array ( const FudgeField * field, fudge_byte * * data )   \
@@ -334,6 +336,16 @@ FUDGECODEC_ENCODE_TYPE_IMPL( I64, fudge_i64, htoni64 )
 FUDGECODEC_ENCODE_TYPE_IMPL( F32, fudge_f32, htonf )
 FUDGECODEC_ENCODE_TYPE_IMPL( F64, fudge_f64, htond )
 
+void FudgeCodec_encodeString ( const FudgeString string, fudge_byte * * data )
+{
+    const size_t size = FudgeString_getSize ( string );
+    const fudge_byte * bytes = FudgeString_getData ( string );
+
+    FudgeCodec_encodeFieldLength ( size, data );
+    if ( bytes && size )
+        memcpy ( *data, bytes, size );
+    ( *data ) += size;
+}
 
 void FudgeCodec_encodeByteArray ( const fudge_byte * bytes,
                                   const fudge_i32 width,

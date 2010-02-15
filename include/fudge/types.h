@@ -84,6 +84,9 @@ typedef union
     /* Embedded message */
     FudgeMsg message;
 
+    /* UTF8 string */
+    FudgeString string;
+
     /* Other data types */
     const fudge_byte * bytes;
 

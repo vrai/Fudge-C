@@ -35,6 +35,8 @@ FudgeStatus FudgeCodec_encodeFieldI64Array  ( const FudgeField * field, fudge_by
 FudgeStatus FudgeCodec_encodeFieldF32Array  ( const FudgeField * field, fudge_byte * * data );
 FudgeStatus FudgeCodec_encodeFieldF64Array  ( const FudgeField * field, fudge_byte * * data );
 
+FudgeStatus FudgeCodec_encodeFieldString    ( const FudgeField * field, fudge_byte * * data );
+
 FudgeStatus FudgeCodec_encodeFieldFudgeMsg  ( const FudgeField * field, fudge_byte * * data );
 
 #endif

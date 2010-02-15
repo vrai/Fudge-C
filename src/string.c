@@ -116,13 +116,17 @@ FudgeStatus FudgeString_createFromUTF8 ( FudgeString * string, const fudge_byte 
     if ( ( ! bytes ) && numbytes )
         return FUDGE_NULL_POINTER;
 
-    if ( ! isLegalUTF8Sequence ( ( const UTF8 * ) bytes, ( const UTF8 * ) bytes + numbytes ) )
+    if ( numbytes && ! isLegalUTF8Sequence ( ( const UTF8 * ) bytes, ( const UTF8 * ) bytes + numbytes ) )
         return FUDGE_STRING_INVALID_UNICODE;
 
     if ( ( status = FudgeString_allocate ( string, numbytes ) ) != FUDGE_OK )
         return status;
 
-    memcpy ( ( *string )->bytes, bytes, numbytes );
+    if ( numbytes )
+        memcpy ( ( *string )->bytes, bytes, numbytes );
+    else
+        ( *string )->bytes = 0;
+
     ( *string )->numbytes = numbytes;
     return FUDGE_OK;
 }

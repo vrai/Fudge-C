@@ -43,7 +43,8 @@ typedef enum
 {
     FUDGE_TYPE_PAYLOAD_LOCAL    = 0x0,  /* Data is stored in a local type */
     FUDGE_TYPE_PAYLOAD_BYTES    = 0x1,  /* Data is stored as an array of bytes */
-    FUDGE_TYPE_PAYLOAD_SUBMSG   = 0x2   /* Data is stored as a FudgeMsg instance */
+    FUDGE_TYPE_PAYLOAD_SUBMSG   = 0x2,  /* Data is stored as a FudgeMsg instance */
+    FUDGE_TYPE_PAYLOAD_STRING   = 0x3   /* Data is stored as a FudgeString instance */
 } FudgeTypePayload;
 
 /* Registers a user defined type in the registry. Returns FUDGE_OK if the type

@@ -140,11 +140,11 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_FUDGE_MSG );
     TEST_EQUALS_TRUE( fields [ 8 ].data.message != 0 );
     TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_MEMORY( fields [ 9 ].data.bytes, 0, 0, 0 );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 9 ].data.string ), FudgeString_getSize ( fields [ 9 ].data.string ), 0, 0 );
     TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_MEMORY( fields [ 10 ].data.bytes, 0, 0, 0 );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 10 ].data.string ), FudgeString_getSize ( fields [ 10 ].data.string ), 0, 0 );
     TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_MEMORY( fields [ 11 ].data.bytes, 16, "This is a string", 16 );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 11 ].data.string ), FudgeString_getSize ( fields [ 11 ].data.string ), "This is a string", 16 );
     TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_FUDGE_MSG );
     TEST_EQUALS_TRUE( fields [ 12 ].data.message != 0 );
     TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_FUDGE_MSG );

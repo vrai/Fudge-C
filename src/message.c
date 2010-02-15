@@ -100,6 +100,8 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     /* Copy across the data */
     if ( typedesc->payload == FUDGE_TYPE_PAYLOAD_SUBMSG && ! data->message )
         return FUDGE_NULL_POINTER;
+    else if ( typedesc->payload == FUDGE_TYPE_PAYLOAD_STRING && ! data->string )
+        return FUDGE_NULL_POINTER;
     node->field.data = *data;
 
     /* Set the field name (if required) */
@@ -357,10 +359,18 @@ FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY )
 
 FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, FudgeString string )
 {
-    if ( ! string )
+    FudgeStatus status;
+    FudgeFieldData data;
+
+    if ( ! ( message && string ) )
         return FUDGE_NULL_POINTER;
-    else
-        return FudgeMsg_addFieldOpaque ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, FudgeString_getData ( string ), FudgeString_getSize ( string ) );
+    if ( ( status = FudgeString_retain ( string ) ) != FUDGE_OK )
+        return status;
+    data.string = string;
+
+    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, &data, FudgeString_getSize ( string ) ) ) != FUDGE_OK )
+        FudgeString_release ( string );
+    return status;
 }
 
 #define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                           \

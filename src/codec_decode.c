@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fudge/string.h"
 #include "codec_decode.h"
 #include "header.h"
 #include "registry_internal.h"
@@ -137,11 +138,20 @@ inline FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data, const f
     return FUDGE_OK;
 }
 
+inline FudgeStatus FudgeCodec_decodeString ( const fudge_byte * bytes, const fudge_i32 width, FudgeString * string )
+{
+    return FudgeString_createFromUTF8 ( string, bytes, width );
+}
+
 FudgeStatus FudgeCodec_decodeFieldByteArray ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {
     return FudgeCodec_decodeByteArray ( bytes, width, ( fudge_byte * * ) &( data->bytes ) );
 }
 
+FudgeStatus FudgeCodec_decodeFieldString ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
+{
+    return FudgeCodec_decodeString ( bytes, width, &( data->string ) );
+}
 
 FudgeStatus FudgeCodec_decodeFieldIndicator ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
 {

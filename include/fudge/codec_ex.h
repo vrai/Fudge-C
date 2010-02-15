@@ -34,6 +34,11 @@ FUDGEAPI void FudgeCodec_encodeI64  ( fudge_i64 value,  fudge_byte * * data );
 FUDGEAPI void FudgeCodec_encodeF32  ( fudge_f32 value,  fudge_byte * * data );
 FUDGEAPI void FudgeCodec_encodeF64  ( fudge_f64 value,  fudge_byte * * data );
 
+/* Copies the contents of the string to the target data pointer. As strings
+   are of variable length this is prefixed by the string size; written using
+   FudgeCodec_encodeFieldLength (see above). */
+FUDGEAPI void FudgeCodec_encodeString ( const FudgeString string, fudge_byte * * data );
+
 /* Copies the contents of the byte array to the target data pointer. If the
    array is not fixed width, the contents are prefixed with the array width,
    written using FudgeCodec_encodeFieldLength (see above). */
@@ -52,6 +57,12 @@ FUDGEAPI fudge_f32  FudgeCodec_decodeF32  ( const fudge_byte * bytes );
 FUDGEAPI fudge_f64  FudgeCodec_decodeF64  ( const fudge_byte * bytes );
 
 /* Field data decoding functions: reads only the data */
+
+/* Creates a new FudgeString instance using the bytes provided. Data must be
+   valid UTF8. */
+FUDGEAPI FudgeStatus FudgeCodec_decodeString ( const fudge_byte * bytes,
+                                               const fudge_i32 width,
+                                               FudgeString * string );
 
 /* Creates a copy of the bytes required and points *bytes at it. If the width
    is zero, no memory is allocated and *bytes is set to zero. */
