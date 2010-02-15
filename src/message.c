@@ -40,6 +40,12 @@ void FieldListNode_destroy ( FieldListNode * node )
                 FudgeMsg_release ( node->field.data.message );
             break;
 
+        /* Fudge string type: free the string pointer */
+        case FUDGE_TYPE_STRING:
+            if ( node->field.data.string )
+                FudgeString_release ( node->field.data.string );
+            break;
+
         /* Primitive type: nothing needs freeing */
         case FUDGE_TYPE_INDICATOR:
         case FUDGE_TYPE_BOOLEAN:
