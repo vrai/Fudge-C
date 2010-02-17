@@ -1,0 +1,75 @@
+<project name="fudge-c" default="compile">
+
+	<property file="build.properties" />
+
+	<target name="reconf">
+		<exec executable="${basedir}/reconf" dir="${basedir}" />
+	</target>
+
+	<target name="configure" depends="reconf">
+		<exec executable="${basedir}/configure" dir="${basedir}" />
+	</target>
+
+	<target name="compile" depends="configure" description="--> compile the Fudge C library (*nix only)">
+		<exec executable="make" dir="${basedir}" />
+	</target>
+
+	<target name="dist-nix" description="--> create a TGZ source bundle for the library">
+		<exec executable="make" dir="${basedir}">
+			<arg value="distcheck" />
+		</exec>
+		<copy todir="${dist.dir}" file="${basedir}/${ant.project.name}-${version}.tar.gz" />
+	</target>
+
+	<target name="rpm" depends="dist-nix" description="--> create a (source) RPM for the library">
+                <copy file="${rpm.source.dir}/${ant.project.name}.spec" todir="${rpm.build.dir}/SPECS" />
+                <copy file="${dist.dir}/${ant.project.name}-${version}.tar.gz" todir="${rpm.build.dir}/SOURCES" />
+                <copy file="${basedir}/README" todir="${rpm.build.dir}/SOURCES" />
+                <copy todir="${rpm.build.dir}/SOURCES">
+                        <fileset dir="${rpm.source.dir}">
+                                <exclude name="**/*.spec" />
+                        </fileset>
+                </copy>
+                <exec executable="rpmbuild" dir="${rpm.build.dir}/SPECS">
+                        <arg value="-bs" />
+                        <arg value="${ant.project.name}.spec" />
+                </exec>
+        </target>
+
+	<target name="dist-msvc" description="--> create a ZIP file for a Microsoft Visual Studio project of the library">
+		<property name="msvc.dist.dir" value="${dist.dir}/${ant.project.name}-${version}" />
+		<mkdir dir="${msvc.dist.dir}" />
+		<copy todir="${msvc.dist.dir}">
+			<fileset dir="${basedir}">
+				<exclude name="*.tar.gz" />
+				<exclude name="aclocal.m4" />
+				<exclude name="autom4te.cache/" />
+				<exclude name="build.*" />
+				<exclude name="_configs.sed" />
+				<exclude name="config/" />
+				<exclude name="config*" />
+				<exclude name="dist/" />
+				<exclude name="include/config.h" />
+				<exclude name="include/fudge/config.h" />
+				<exclude name="libtool" />
+				<exclude name="m4/" />
+				<exclude name="**/Makefile" />
+				<exclude name="**/*.am" />
+				<exclude name="**/*.in" />
+				<exclude name="reconf" />
+				<exclude name="scripts/" />
+			</fileset>
+		</copy>
+		<zip destfile="${dist.dir}/${ant.project.name}-msvc-${version}.zip" basedir="${dist.dir}">
+			<include name="${ant.project.name}-${version}/**/*" />
+		</zip>
+	</target>
+
+	<target name="clean-dist">
+		<delete includeemptydirs="true" dir="${dist.dir}" />
+	</target>
+
+	<target name="dist" depends="clean-dist,dist-nix,dist-msvc">
+	</target>
+
+</project>

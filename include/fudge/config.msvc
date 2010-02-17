@@ -6,6 +6,13 @@
  * where autoconf is not available.
  */
 
+#define PACKAGE "fudge-c"
+#define PACKAGE_BUGREPORT "vrai.stacey@gmail.com"
+#define PACKAGE_NAME "Fudge-C"
+#define PACKAGE_STRING "Fudge-C 0.2"
+#define PACKAGE_TARNAME "fudge-c"
+#define PACKAGE_VERSION "0.2"
+
 #define FUDGE_HAS__GMTIME64_S
 #define FUDGE_HAS_SPRINTF_S
 #define FUDGE_HAS_STRDUP
