@@ -66,6 +66,7 @@ int main ( int argc, char * argv [ ] )
     loadFile ( &bytes, &numbytes, filename );
     if ( ( status = FudgeCodec_decodeMsg ( &envelope, bytes, numbytes ) ) )
         fatalFudgeError ( status, "Failed to decode file" );
+    free ( bytes );
 
     /* Output the file contents */
     outputEnvelope ( envelope );

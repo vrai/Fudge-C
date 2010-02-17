@@ -285,6 +285,7 @@ int main ( int argc, char * argv [ ] )
         FudgeString_convertToASCIIZ ( &ascii, data.string );
         printf ( "Field %d: %s\n", ordinal, ascii );
         free ( ascii );
+        FudgeString_release ( data.string );
     }
 
     /* Clean up */

@@ -271,19 +271,19 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_FUDGE_MSG, &fielddata, &payload, &fieldsize ), FUDGE_INVALID_TYPE_COERCION );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "127.000.000.001", 15 );
-    free ( ( fudge_byte * ) fielddata.bytes );
+    FudgeString_release ( fielddata.string );
     
     TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "opendns", 7 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLEIP4 );       TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &opendns, sizeof ( ExampleIp4Struct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "208.067.222.222", 15 );
-    free ( ( fudge_byte * ) fielddata.bytes );
+    FudgeString_release ( fielddata.string );
 
     TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "tick", 4 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLETICK );      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &tick, sizeof ( ExampleTickStruct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "            GBP= 1.605000 1.607000       1263138018", 51 );
-    free ( ( fudge_byte * ) fielddata.bytes );
+    FudgeString_release ( fielddata.string );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
