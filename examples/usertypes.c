@@ -16,6 +16,7 @@
 #include <fudge/fudge.h>
 #include <fudge/message.h>
 #include <fudge/codec.h>
+#include <fudge/string.h>
 #include <stdio.h>
 
 /* For more basic examples of Fudge-C use, see the "simple.c" and
@@ -160,30 +161,38 @@ FudgeStatus FudgeType_coerceAddressDetails ( const FudgeField * source,
             return FUDGE_COERCION_NOT_REQUIRED;
         case FUDGE_TYPE_STRING:
         {
+            FudgeStatus status;
+            char * tempstr;
             const AddressDetails * details = ( const AddressDetails * ) source->data.bytes;
+            int stringlen;
 
             /* Calculate how much space will be needed for the string and set
                the return value */
-            *numbytes = ADDRESSDETAILS_NAME_FIELD_LEN +
+            stringlen = ADDRESSDETAILS_NAME_FIELD_LEN +
                         ADDRESSDETAILS_CITY_FIELD_LEN +
                         ADDRESSDETAILS_POST_FIELD_LEN + 32;
 
-            /* Allocate string space in target field */
-            if ( ! ( target->bytes = ( fudge_byte * ) malloc ( *numbytes ) ) )
+            /* Allocate string space in temporary buffer */
+            if ( ! ( tempstr = ( char * ) malloc ( stringlen ) ) )
                 return FUDGE_OUT_OF_MEMORY;
 
             /* Encode string - yes snprintf is better, but it's not portable
                enough for the example code. */
             statusInt = ( size_t ) ( details->status >= 0 && details->status <= 3 ? details->status
                                                                                   : Status_Unknown );
-            sprintf ( ( char * ) target->bytes,
+            sprintf ( tempstr,
                       "[%s] %d %s, %s. %s.",
                       statusString [ statusInt ],
                       details->house_number,
                       details->street_name,
                       details->city,
                       details->postal_code );
-            return FUDGE_OK;
+
+            /* Use the temporary string to create the return value FudgeString */
+            status = FudgeString_createFromASCIIZ ( &( target->string ), tempstr );
+            free ( tempstr );
+            *numbytes = FudgeString_getSize ( target->string );
+            return status;
         }
         default:
             return FUDGE_INVALID_TYPE_COERCION;
@@ -256,6 +265,7 @@ int main ( int argc, char * argv [ ] )
         FudgeFieldData data;
         FudgeTypePayload payload;
         fudge_i32 datasize;
+        char * ascii;
 
         if ( ( status = FudgeMsg_getFieldByOrdinal ( &field, envelope.message, ordinal ) ) )
             fatalFudgeError ( status, "Failed to find field" );
@@ -265,14 +275,16 @@ int main ( int argc, char * argv [ ] )
             fatalFudgeError ( status, "Failed to convert field to string" );
 
         /* This is a bit paranoid, but it's checking that the string
-           conversion actually resulted in an array of bytes */
-        if ( payload != FUDGE_TYPE_PAYLOAD_BYTES )
+           conversion actually resulted in string payload */
+        if ( payload != FUDGE_TYPE_PAYLOAD_STRING )
         {
-            fprintf ( stderr, "FATAL ERROR: Field %d returned a non-bytes array string!", ordinal );
+            fprintf ( stderr, "FATAL ERROR: Retrieving field %d as a string returned a non-string!\n", ordinal );
             exit ( 1 );
         }
 
-        printf ( "Field %d: %s\n", ordinal, data.bytes );
+        FudgeString_convertToASCIIZ ( &ascii, data.string );
+        printf ( "Field %d: %s\n", ordinal, ascii );
+        free ( ascii );
     }
 
     /* Clean up */

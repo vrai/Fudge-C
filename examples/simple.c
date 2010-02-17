@@ -16,6 +16,7 @@
 #include <fudge/fudge.h>
 #include <fudge/message.h>
 #include <fudge/codec.h>
+#include <fudge/string.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -40,15 +41,9 @@ int logError ( const char * error );
    necessary as Fudge maintains field order. They are used in manner to allow
    their use to be shown while keeping the example as brief as possible.
 
-   For the same reason the example has very simplistic string handling. The
-   Fudge specification requires strings to be UTF-8. However C does not have
-   standardized support for UTF-8; instead using 8bit ASCII characters or
-   platform dependent "wide" characters. As such Fudge-C treats all strings as
-   simple arrays of bytes, with null bytes treated like any other. To keep the
-   example simple and portable, the strings used will be native ASCII character
-   arrays. Where the string is to be printed (i.e. string field values) the
-   trailing null required by stdio will be added to the field as part of the
-   string; otherwise it will omitted.
+   For the same reason the example only uses ASCII strings, albiet contained
+   within the proper UTF8 container. The FudgeString container can be
+   initialised with UTF8, UTF16 and UTF32 strings as well as ASCII.
 */
 int main ( int argc, char * argv [ ] )
 {
@@ -68,10 +63,12 @@ int main ( int argc, char * argv [ ] )
     /* Used to when building the example message */
     fudge_i16 index;
     const char * * stringListIterator;
+    FudgeString string;
 
     /* Used to hold the fields when examining/output the message contents. */
     FudgeField field;
     fudge_i64 i64value;
+    char * ascii;
 
     /* Source data for the example message */
     static const char * addressLines [ ] = { "123 Fake Street",
@@ -80,7 +77,7 @@ int main ( int argc, char * argv [ ] )
                                              "Country",
                                              0 };
     static const char * name = "Random Person";
-
+    
     /* The Fudge library must be initialised before it can be used */
     if ( ( status = Fudge_init ( ) ) )
         return logFudgeError ( status, "Failed to initialise library" );
@@ -98,22 +95,26 @@ int main ( int argc, char * argv [ ] )
     for ( stringListIterator = addressLines, index = 0;
           *stringListIterator;
           ++stringListIterator, ++index )
+    {
+        FudgeString_createFromASCIIZ ( &string, *stringListIterator );
         FudgeMsg_addFieldString ( addressMsg,
                                   0, 0,         /* No field name */
                                   &index,       /* Ordinal is the index */
-                                  ( const fudge_byte * ) *stringListIterator,
-                                  strlen ( *stringListIterator ) + 1 );
+                                  string );
+        FudgeString_release ( string );
+    }
 
     /* Now construct the outer message */
     if ( ( status = FudgeMsg_create ( &contactMsg ) ) )
         return logFudgeError ( status, "Failed to create contact message" );
 
     /* Add the details fields */
+    FudgeString_createFromASCIIZ ( &string, name );
     FudgeMsg_addFieldString ( contactMsg,
                               ( const fudge_byte * ) "name", 4,
                               0,
-                              ( const fudge_byte * ) name,
-                              strlen ( name ) + 1 );
+                              string );
+    FudgeString_release ( string );
 
     FudgeMsg_addFieldI64 ( contactMsg,
                            ( const fudge_byte * ) "dob", 3,
@@ -185,9 +186,9 @@ int main ( int argc, char * argv [ ] )
         return logFudgeError ( status, "Failed to retrieve field \"name\"" );
     if ( field.type != FUDGE_TYPE_STRING )
         return logError ( "Field \"name\" is not a string" );
-    printf ( "Name (%d bytes): \"%s\"\n",
-             field.numbytes,
-             ( const char * ) field.data.bytes );
+    FudgeString_convertToASCIIZ ( &ascii, field.data.string );
+    printf ( "Name (%d bytes): \"%s\"\n", field.numbytes, ascii );
+    free ( ascii );
 
     /* Retrieve and output the date-of-birth field. While this was added as
        a 64bit integer it should have been stored as a 32bit value (the
@@ -222,10 +223,9 @@ int main ( int argc, char * argv [ ] )
             return logFudgeError ( status, "Failed to retrieve address field" );
         if ( field.type != FUDGE_TYPE_STRING )
             return logError ( "Address field is not a string" );
-        printf ( "Address line %d: \"%s\" (%d bytes)\n",
-                 index,
-                 ( const char * ) field.data.bytes,
-                 field.numbytes );
+        FudgeString_convertToASCIIZ ( &ascii, field.data.string );
+        printf ( "Address line %d: \"%s\" (%d bytes)\n", index, ascii, field.numbytes );
+        free ( ascii );
     }
 
     /* Release the address message, this should leave no memory left allocated

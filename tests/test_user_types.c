@@ -16,6 +16,7 @@
 #include "simpletest.h"
 #include "fudge/message.h"
 #include "fudge/codec.h"
+#include "fudge/string.h"
 
 /* Example user types */
 
@@ -68,15 +69,16 @@ FudgeStatus FudgeType_coerceExampleIp4 ( const FudgeField * source, const fudge_
     /* For test purposes, only a string conversion is supported */
     if ( type == FUDGE_TYPE_STRING )
     {
+        FudgeStatus status;
         const ExampleIp4Struct * ip4 = ( const ExampleIp4Struct * ) source->data.bytes;
         char buffer [ 16 ];
 
         sprintf ( buffer, "%03d.%03d.%03d.%03d", ip4->quads [ 0 ], ip4->quads [ 1 ], ip4->quads [ 2 ], ip4->quads [ 3 ] );
-        if ( ! ( target->bytes = ( fudge_byte * ) malloc ( sizeof ( buffer ) ) ) )
-            return FUDGE_OUT_OF_MEMORY;
-        memcpy ( ( fudge_byte * ) target->bytes, buffer, sizeof ( buffer ) );
+        
+        if ( ( status = FudgeString_createFromASCIIZ ( &( target->string ), buffer ) ) != FUDGE_OK )
+            return status;
 
-        *numbytes = sizeof ( buffer );
+        *numbytes = FudgeString_getSize ( target->string );
         return FUDGE_OK;
     }
     return FUDGE_INVALID_TYPE_COERCION;
@@ -165,15 +167,16 @@ FudgeStatus FudgeType_coerceExampleTick ( const FudgeField * source, const fudge
     /* For test purposes, only a string conversion is supported */
     if ( type == FUDGE_TYPE_STRING )
     {
+        FudgeStatus status;
         const ExampleTickStruct * tick = ( const ExampleTickStruct * ) source->data.bytes;
         char buffer [ 52 ];
 
         sprintf ( buffer, "%16s %8f %8f %16d", tick->ric, tick->bid, tick->ask, tick->time );
-        if ( ! ( target->bytes = ( fudge_byte * ) malloc ( sizeof ( buffer ) ) ) )
-            return FUDGE_OUT_OF_MEMORY;
-        memcpy ( ( fudge_byte * ) target->bytes, buffer, sizeof ( buffer ) );
 
-        *numbytes = sizeof ( buffer );
+        if ( ( status = FudgeString_createFromASCIIZ ( &( target->string ), buffer ) ) != FUDGE_OK )
+            return status;
+
+        *numbytes = FudgeString_getSize ( target->string );
         return FUDGE_OK;
     }
     return FUDGE_INVALID_TYPE_COERCION;
@@ -267,19 +270,19 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_EXAMPLEIP4, &fielddata, &payload, &fieldsize ), FUDGE_COERCION_NOT_REQUIRED );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_FUDGE_MSG, &fielddata, &payload, &fieldsize ), FUDGE_INVALID_TYPE_COERCION );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
-    TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_BYTES );       TEST_EQUALS_MEMORY( fielddata.bytes, fieldsize, "127.000.000.001", 16 );
+    TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "127.000.000.001", 15 );
     free ( ( fudge_byte * ) fielddata.bytes );
     
     TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "opendns", 7 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLEIP4 );       TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &opendns, sizeof ( ExampleIp4Struct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
-    TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_BYTES );       TEST_EQUALS_MEMORY( fielddata.bytes, fieldsize, "208.067.222.222", 16 );
+    TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "208.067.222.222", 15 );
     free ( ( fudge_byte * ) fielddata.bytes );
 
     TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "tick", 4 ), FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLETICK );      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &tick, sizeof ( ExampleTickStruct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
-    TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_BYTES );       TEST_EQUALS_MEMORY( fielddata.bytes, fieldsize, "            GBP= 1.605000 1.607000       1263138018", 52 );
+    TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "            GBP= 1.605000 1.607000       1263138018", 51 );
     free ( ( fudge_byte * ) fielddata.bytes );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );

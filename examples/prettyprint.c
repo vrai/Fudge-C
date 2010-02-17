@@ -16,13 +16,14 @@
 #include <fudge/fudge.h>
 #include <fudge/message.h>
 #include <fudge/codec.h>
+#include <fudge/string.h>
 #include <stdio.h>
 
 /* Output functions */
 void outputEnvelope ( FudgeMsgEnvelope envelope );
 void outputMessage ( FudgeMsg message, unsigned int indent );
 void outputField ( FudgeField * field, unsigned int indent );
-void outputString ( const fudge_byte * byte, fudge_i32 numbytes );
+void outputString ( const FudgeString string );
 void outputArray ( const fudge_byte * byte, fudge_i32 numbytes, const char * format, fudge_i32 width, fudge_i32 truncate );
 void outputType ( fudge_type_id type );
 void outputIndent ( unsigned int indent );
@@ -41,14 +42,8 @@ void appendBytes ( fudge_byte * * target, fudge_i32 * targetsize, const fudge_by
    takes the filename of the message to display and dumps the contents, in
    human readable form, to the standard output.
 
-    Note on string handling:
-
-    As covered in the simple.c comments, Fudge requires strings to be in UTF-8
-    format. For purposes of clarity and portability the string handling in
-    this example is very simple: every byte in the string is dumped to
-    standard output in turn. This is fine for strings that are essentially
-    7-bit ASCII but will not produce true representations of more complex
-    strings.
+   Rather than assume a Unicode compatible console, all strings are
+   converted in to 7bit ASCII before being output.
 */
 int main ( int argc, char * argv [ ] )
 {
@@ -116,8 +111,13 @@ void outputField ( FudgeField * field, unsigned int indent )
     outputType ( field->type );
     printf ( " " );
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
-    {
-        outputString ( field->name, field->namelen );
+    {   
+        /* TODO Replace when field names become FudgeString */
+        FudgeString temp;
+        FudgeString_createFromUTF8 ( &temp, field->name, field->namelen );
+        outputString ( temp );
+        FudgeString_release ( temp );
+
         if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
             printf ( "/" );
     }
@@ -141,7 +141,7 @@ void outputField ( FudgeField * field, unsigned int indent )
         case FUDGE_TYPE_LONG_ARRAY:     outputArray ( field->data.bytes, field->numbytes, "%lu", 8, 4 ); break;
         case FUDGE_TYPE_FLOAT_ARRAY:    outputArray ( field->data.bytes, field->numbytes, "%f", 4, 4 ); break;
         case FUDGE_TYPE_DOUBLE_ARRAY:   outputArray ( field->data.bytes, field->numbytes, "%f", 8, 4 ); break;
-        case FUDGE_TYPE_STRING:         outputString ( field->data.bytes, field->numbytes ); break;
+        case FUDGE_TYPE_STRING:         outputString ( field->data.string ); break;
         case FUDGE_TYPE_BYTE_ARRAY: 
         case FUDGE_TYPE_BYTE_ARRAY_4:
         case FUDGE_TYPE_BYTE_ARRAY_8:
@@ -171,15 +171,12 @@ void outputField ( FudgeField * field, unsigned int indent )
     printf ( "\n" );
 }
 
-void outputString ( const fudge_byte * byte, fudge_i32 numbytes )
+void outputString ( const FudgeString string )
 {
-    /* As mentioned in the main comments, this is not the correct way to
-       output UTF-8 encoded strings. It works for basic strings however, and
-       is easy to understand. Hence its use in this example code. */
-    printf ( "\"" );
-    while ( numbytes-- )
-        printf ( "%c", ( char ) *( byte++ ) );
-    printf ( "\"" );
+    char * ascii;
+    FudgeString_convertToASCIIZ ( &ascii, string );
+    printf ( "\"%s\"", ascii );
+    free ( ascii );
 }
 
 void outputArray ( const fudge_byte * byte, fudge_i32 numbytes, const char * format, fudge_i32 width, fudge_i32 truncate )
