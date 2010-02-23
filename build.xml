@@ -14,6 +14,12 @@
 		<exec executable="make" dir="${basedir}" />
 	</target>
 
+	<target name="clean">
+		<exec executable="make" dir="${basedir}">
+			<arg value="clean" />
+		</exec>
+	</target>
+
 	<target name="dist-nix" description="--> create a TGZ source bundle for the library">
 		<exec executable="make" dir="${basedir}">
 			<arg value="distcheck" />
@@ -36,11 +42,13 @@
                 </exec>
         </target>
 
-	<target name="dist-msvc" description="--> create a ZIP file for a Microsoft Visual Studio project of the library">
+	<target name="dist-msvc" depends="clean" description="--> create a ZIP file for a Microsoft Visual Studio project of the library">
 		<property name="msvc.dist.dir" value="${dist.dir}/${ant.project.name}-${version}" />
 		<mkdir dir="${msvc.dist.dir}" />
 		<copy todir="${msvc.dist.dir}">
 			<fileset dir="${basedir}">
+				<exclude name="**/.*" />
+				<exclude name="**/.*/" />
 				<exclude name="*.tar.gz" />
 				<exclude name="aclocal.m4" />
 				<exclude name="autom4te.cache/" />
@@ -57,9 +65,14 @@
 				<exclude name="**/*.am" />
 				<exclude name="**/*.in" />
 				<exclude name="reconf" />
+				<exclude name="README*" />
 				<exclude name="scripts/" />
 			</fileset>
 		</copy>
+		<concat destfile="${msvc.dist.dir}/README.txt">
+			<fileset file="${basedir}/README" />
+			<fileset file="${basedir}/README.msvc" />
+		</concat>
 		<zip destfile="${dist.dir}/${ant.project.name}-msvc-${version}.zip" basedir="${dist.dir}">
 			<include name="${ant.project.name}-${version}/**/*" />
 		</zip>
