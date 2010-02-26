@@ -17,6 +17,7 @@
 #include "fudge/message.h"
 #include "fudge/codec.h"
 #include "fudge/string.h"
+#include "fudge/stringpool.h"
 
 /* Example user types */
 
@@ -45,7 +46,7 @@ void ExampleIp4_init ( ExampleIp4Struct * ip4, uint8_t first, uint8_t second, ui
     ip4->quads [ 3 ] = fourth;
 }
 
-FudgeStatus FudgeMsg_addFieldExampleIp4 ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const ExampleIp4Struct * ip )
+FudgeStatus FudgeMsg_addFieldExampleIp4 ( FudgeMsg message, const FudgeString name, const ExampleIp4Struct * ip )
 {
     if ( ! ( message && ip ) )
         return FUDGE_NULL_POINTER;
@@ -53,7 +54,6 @@ FudgeStatus FudgeMsg_addFieldExampleIp4 ( FudgeMsg message, const fudge_byte * n
     return FudgeMsg_addFieldOpaque ( message,
                                      FUDGE_TYPE_EXAMPLEIP4,
                                      name,
-                                     namelen,
                                      0,
                                      ( const fudge_byte * ) ip,
                                      sizeof ( ExampleIp4Struct ) );
@@ -100,7 +100,7 @@ void ExampleTick_init ( ExampleTickStruct * tick, const char * ric, fudge_i32 ri
         memset ( tick->ric + riclen, 0, 16 - riclen );
 }
 
-FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const ExampleTickStruct * tick )
+FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const FudgeString name, const ExampleTickStruct * tick )
 {
     if ( ! ( message && tick ) )
         return FUDGE_NULL_POINTER;
@@ -108,7 +108,6 @@ FudgeStatus FudgeMsg_addFieldExampleTick ( FudgeMsg message, const fudge_byte * 
     return FudgeMsg_addFieldOpaque ( message,
                                      FUDGE_TYPE_EXAMPLETICK,
                                      name,
-                                     namelen,
                                      0,
                                      ( const fudge_byte * ) tick,
                                      sizeof ( ExampleTickStruct ) );
@@ -184,6 +183,8 @@ FudgeStatus FudgeType_coerceExampleTick ( const FudgeField * source, const fudge
 
 DEFINE_TEST( UserTypeHandling )
     int index;
+    FudgeStringPool stringpool;
+    FudgeStatus status;
     FudgeMsg message;
     FudgeMsgEnvelope envelope;
     FudgeField field;
@@ -195,6 +196,8 @@ DEFINE_TEST( UserTypeHandling )
     ExampleTickStruct tick;
     fudge_i64 bigint;
     fudge_byte bytes [ 16 ];
+
+    TEST_EQUALS_INT( FudgeStringPool_create ( &stringpool ), FUDGE_OK );
 
     /* Populate test objects */
     for ( index = 0; index < sizeof ( bytes ); ++index )
@@ -233,11 +236,11 @@ DEFINE_TEST( UserTypeHandling )
     /* Construct a test message with user and built-in types */
     TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_addFieldI64 ( message, ( const fudge_byte * ) "bigint", 6, 0, bigint ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, ( const fudge_byte * ) "localhost", 9, &localhost ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, ( const fudge_byte * ) "opendns", 7, &opendns ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addFieldExampleTick ( message, ( const fudge_byte * ) "tick", 4, &tick ), FUDGE_OK );
-    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( message, ( const fudge_byte * ) "byte[16]", 8, 0, bytes ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldI64 ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "bigint" ), 0, bigint ), FUDGE_OK );                 TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "localhost" ), &localhost ), FUDGE_OK );      TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldExampleIp4 ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "opendns" ), &opendns ), FUDGE_OK );          TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldExampleTick ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "tick" ), &tick ), FUDGE_OK );               TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addField16ByteArray ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "byte[16]" ), 0, bytes ), FUDGE_OK );        TEST_EQUALS_INT( status, FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 5 );
 
@@ -286,6 +289,7 @@ DEFINE_TEST( UserTypeHandling )
     FudgeString_release ( fielddata.string );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 END_TEST
 
 DEFINE_TEST_SUITE( UserTypes )

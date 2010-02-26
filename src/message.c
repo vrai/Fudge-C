@@ -228,12 +228,12 @@ unsigned long FudgeMsg_numFields ( FudgeMsg message )
     return message ? message->numfields : 0lu;
 }
 
-FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal )
+FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal )
 {
     FudgeFieldData data;
     if ( ! message )
         return FUDGE_NULL_POINTER;
-    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_INDICATOR, name, namelen, ordinal, &data, 0 );
+    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_INDICATOR, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 );
 }
 
 fudge_type_id FudgeMsg_pickIntegerType ( const fudge_type_id type, const fudge_i64 value )
@@ -248,8 +248,7 @@ fudge_type_id FudgeMsg_pickIntegerType ( const fudge_type_id type, const fudge_i
 }
 
 FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message, 
-                                       const fudge_byte * name,
-                                       fudge_i32 namelen,
+                                       const FudgeString name,
                                        const fudge_i16 * ordinal,
                                        fudge_type_id type,
                                        const fudge_i64 value )
@@ -269,28 +268,28 @@ FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message,
             return FUDGE_INTERNAL_PAYLOAD;
     }
     
-    return FudgeMsg_addFieldData ( message, type, name, namelen, ordinal, &data, 0 );
+    return FudgeMsg_addFieldData ( message, type, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 );
 }
 
-#define FUDGE_ADDINTEGERFIELD_IMPL( typename, type, typeid )                                                                                        \
-    FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, type value ) \
-    {                                                                                                                                               \
-        return FudgeMsg_addFieldInteger ( message, name, namelen, ordinal, typeid, ( fudge_i64 ) value );                                           \
+#define FUDGE_ADDINTEGERFIELD_IMPL( typename, type, typeid )                                                                    \
+    FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, type value ) \
+    {                                                                                                                           \
+        return FudgeMsg_addFieldInteger ( message, name, ordinal, typeid, ( fudge_i64 ) value );                                \
     }
 
 FUDGE_ADDINTEGERFIELD_IMPL( I16,  fudge_i16,  FUDGE_TYPE_SHORT )
 FUDGE_ADDINTEGERFIELD_IMPL( I32,  fudge_i32,  FUDGE_TYPE_INT )
 FUDGE_ADDINTEGERFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG )
 
-#define FUDGE_ADDPRIMITIVEFIELD_IMPL( typename, type, typeid, bucket )                                                                              \
-    FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const fudge_byte* name, fudge_i32 namelen, const fudge_i16 * ordinal, type value )  \
-    {                                                                                                                                               \
-        FudgeFieldData data;                                                                                                                        \
-                                                                                                                                                    \
-        if ( ! message )                                                                                                                            \
-            return FUDGE_NULL_POINTER;                                                                                                              \
-        data . bucket = value;                                                                                                                      \
-        return FudgeMsg_addFieldData ( message, typeid, name, namelen, ordinal, &data, 0 );                                                         \
+#define FUDGE_ADDPRIMITIVEFIELD_IMPL( typename, type, typeid, bucket )                                                                      \
+    FudgeStatus FudgeMsg_addField##typename ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, type value )             \
+    {                                                                                                                                       \
+        FudgeFieldData data;                                                                                                                \
+                                                                                                                                            \
+        if ( ! message )                                                                                                                    \
+            return FUDGE_NULL_POINTER;                                                                                                      \
+        data . bucket = value;                                                                                                              \
+        return FudgeMsg_addFieldData ( message, typeid, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 );    \
     }
 
 FUDGE_ADDPRIMITIVEFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE,    byte )
@@ -298,7 +297,7 @@ FUDGE_ADDPRIMITIVEFIELD_IMPL( Bool, fudge_bool, FUDGE_TYPE_BOOLEAN, boolean )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT,   f32 )
 FUDGE_ADDPRIMITIVEFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE,  f64 )
 
-FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, FudgeMsg value )
+FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, FudgeMsg value )
 {
     FudgeStatus status;
     FudgeFieldData data;
@@ -308,7 +307,7 @@ FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const fudge_byte * name, fu
     if ( ( status = FudgeMsg_retain ( value ) ) != FUDGE_OK )
         return status;
     data.message = value;
-    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_FUDGE_MSG, name, namelen, ordinal, &data, 0 ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_FUDGE_MSG, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 ) ) != FUDGE_OK )
     {
         FudgeMsg_release ( value );
         return status;
@@ -318,8 +317,7 @@ FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const fudge_byte * name, fu
 
 FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
                                       fudge_type_id type,
-                                      const fudge_byte * name,
-                                      fudge_i32 namelen,
+                                      const FudgeString name,
                                       const fudge_i16 * ordinal,
                                       const fudge_byte * bytes,
                                       fudge_i32 numbytes )
@@ -339,21 +337,20 @@ FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
     else
         data.bytes = 0;
 
-    if ( ( status = FudgeMsg_addFieldData ( message, type, name, namelen, ordinal, &data, numbytes ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, type, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, numbytes ) ) != FUDGE_OK )
         free ( ( fudge_byte * ) data.bytes );
     return status;
 }
 
-#define FUDGE_ADDARRAYFIELD_IMPL( typename, type, typeid )                                                                          \
-    FudgeStatus FudgeMsg_addField##typename##Array ( FudgeMsg message,                                                              \
-                                                     const fudge_byte * name,                                                       \
-                                                     fudge_i32 namelen,                                                             \
-                                                     const fudge_i16 * ordinal,                                                     \
-                                                     const type * elements,                                                         \
-                                                     fudge_i32 numelements )                                                        \
-    {                                                                                                                               \
-        return FudgeMsg_addFieldOpaque ( message, typeid, name, namelen, ordinal,                                                   \
-                                         ( const fudge_byte * ) elements, numelements * sizeof ( type ) );                          \
+#define FUDGE_ADDARRAYFIELD_IMPL( typename, type, typeid )                                                          \
+    FudgeStatus FudgeMsg_addField##typename##Array ( FudgeMsg message,                                              \
+                                                     const FudgeString name,                                        \
+                                                     const fudge_i16 * ordinal,                                     \
+                                                     const type * elements,                                         \
+                                                     fudge_i32 numelements )                                        \
+    {                                                                                                               \
+        return FudgeMsg_addFieldOpaque ( message, typeid, name, ordinal,                                            \
+                                         ( const fudge_byte * ) elements, numelements * sizeof ( type ) );          \
     }
 
 FUDGE_ADDARRAYFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE_ARRAY )
@@ -363,7 +360,7 @@ FUDGE_ADDARRAYFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG_ARRAY )
 FUDGE_ADDARRAYFIELD_IMPL( F32,  fudge_f32,  FUDGE_TYPE_FLOAT_ARRAY )
 FUDGE_ADDARRAYFIELD_IMPL( F64,  fudge_f64,  FUDGE_TYPE_DOUBLE_ARRAY )
 
-FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name, fudge_i32 namelen, const fudge_i16 * ordinal, FudgeString string )
+FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, FudgeString string )
 {
     FudgeStatus status;
     FudgeFieldData data;
@@ -374,19 +371,18 @@ FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const fudge_byte * name,
         return status;
     data.string = string;
 
-    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, name, namelen, ordinal, &data, FudgeString_getSize ( string ) ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, FudgeString_getSize ( string ) ) ) != FUDGE_OK )
         FudgeString_release ( string );
     return status;
 }
 
-#define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                           \
-    FudgeStatus FudgeMsg_addField##size##ByteArray ( FudgeMsg message,                              \
-                                                     const fudge_byte * name,                       \
-                                                     fudge_i32 namelen,                             \
-                                                     const fudge_i16 * ordinal,                     \
-                                                     const fudge_byte * bytes )                     \
-    {                                                                                               \
-        return FudgeMsg_addFieldOpaque ( message, typeid, name, namelen, ordinal, bytes, size );    \
+#define FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( size, typeid )                                                       \
+    FudgeStatus FudgeMsg_addField##size##ByteArray ( FudgeMsg message,                                          \
+                                                     const FudgeString name,                                    \
+                                                     const fudge_i16 * ordinal,                                 \
+                                                     const fudge_byte * bytes )                                 \
+    {                                                                                                           \
+        return FudgeMsg_addFieldOpaque ( message, typeid, name, ordinal, bytes, size );                         \
     }
 
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 4, FUDGE_TYPE_BYTE_ARRAY_4 )
