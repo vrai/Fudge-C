@@ -32,6 +32,7 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     FudgeStatus status;
     FudgeTypeDecoder decoder;
     FudgeFieldData data;
+    FudgeString name;
     const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( header.type );
 
     if ( width > numbytes )
@@ -47,10 +48,18 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     if ( ( status = decoder ( bytes, width, &data ) ) != FUDGE_OK )
         return status;
 
+    /* Construct the name string if required */
+    if ( header.name )
+    {
+        if ( ( status = FudgeString_createFromUTF8 ( &name, header.name, header.namelen ) ) != FUDGE_OK )
+            return status;
+    }
+    else
+        name = 0;
+
     return FudgeMsg_addFieldData ( message,
                                    header.type,
-                                   header.name,
-                                   header.namelen,
+                                   name,
                                    FudgeHeader_getOrdinal ( &header ),
                                    &data,
                                    FudgeCodec_getNumBytes ( typedesc, width ) );

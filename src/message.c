@@ -63,7 +63,8 @@ void FieldListNode_destroy ( FieldListNode * node )
             break;
     }
 
-    free ( ( char * ) node->field.name );
+    if ( node->field.name )
+        FudgeString_release ( node->field.name );
     free ( node );
 }
 
@@ -79,8 +80,7 @@ struct FudgeMsgImpl
 
 FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
                                     fudge_type_id type,
-                                    const fudge_byte * name,
-                                    fudge_i32 namelen,
+                                    const FudgeString name,
                                     const fudge_i16 * ordinal,
                                     FudgeFieldData * data,
                                     fudge_i32 numbytes )
@@ -115,26 +115,21 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     {
         /* Names may not have a length greater than 255 bytes (only one byte is
            available for their length) */
-        if ( namelen > 256 )
+        if ( FudgeString_getSize ( name ) > 256 )
         {
             status = FUDGE_NAME_TOO_LONG;
             goto release_node_and_fail;
         }
-        
-        if ( ! ( node->field.name = ( fudge_byte * ) malloc ( namelen ) ) )
-        {
-            status = FUDGE_OUT_OF_MEMORY;
-            goto release_node_and_fail;
-        }
 
-        memcpy ( node->field.name, name, namelen );
-        node->field.namelen = namelen;
+        if ( ( status = FudgeString_retain ( name ) ) != FUDGE_OK )
+            goto release_node_and_fail;
+
+        node->field.name = name;
         node->field.flags |= FUDGE_FIELD_HAS_NAME;
     }
     else
     {
         node->field.name = 0;
-        node->field.namelen = 0;
     }
 
     /* Set the field ordinal (if required) */
@@ -233,7 +228,7 @@ FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const FudgeString nam
     FudgeFieldData data;
     if ( ! message )
         return FUDGE_NULL_POINTER;
-    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_INDICATOR, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 );
+    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_INDICATOR, name, ordinal, &data, 0 );
 }
 
 fudge_type_id FudgeMsg_pickIntegerType ( const fudge_type_id type, const fudge_i64 value )
@@ -268,7 +263,7 @@ FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message,
             return FUDGE_INTERNAL_PAYLOAD;
     }
     
-    return FudgeMsg_addFieldData ( message, type, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 );
+    return FudgeMsg_addFieldData ( message, type, name, ordinal, &data, 0 );
 }
 
 #define FUDGE_ADDINTEGERFIELD_IMPL( typename, type, typeid )                                                                    \
@@ -289,7 +284,7 @@ FUDGE_ADDINTEGERFIELD_IMPL( I64,  fudge_i64,  FUDGE_TYPE_LONG )
         if ( ! message )                                                                                                                    \
             return FUDGE_NULL_POINTER;                                                                                                      \
         data . bucket = value;                                                                                                              \
-        return FudgeMsg_addFieldData ( message, typeid, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 );    \
+        return FudgeMsg_addFieldData ( message, typeid, name, ordinal, &data, 0 );    \
     }
 
 FUDGE_ADDPRIMITIVEFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE,    byte )
@@ -307,7 +302,7 @@ FudgeStatus FudgeMsg_addFieldMsg ( FudgeMsg message, const FudgeString name, con
     if ( ( status = FudgeMsg_retain ( value ) ) != FUDGE_OK )
         return status;
     data.message = value;
-    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_FUDGE_MSG, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, 0 ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_FUDGE_MSG, name, ordinal, &data, 0 ) ) != FUDGE_OK )
     {
         FudgeMsg_release ( value );
         return status;
@@ -337,7 +332,7 @@ FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
     else
         data.bytes = 0;
 
-    if ( ( status = FudgeMsg_addFieldData ( message, type, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, numbytes ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, type, name, ordinal, &data, numbytes ) ) != FUDGE_OK )
         free ( ( fudge_byte * ) data.bytes );
     return status;
 }
@@ -371,7 +366,7 @@ FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const FudgeString name, 
         return status;
     data.string = string;
 
-    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, FudgeString_getData ( name ), FudgeString_getSize ( name ), ordinal, &data, FudgeString_getSize ( string ) ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, name, ordinal, &data, FudgeString_getSize ( string ) ) ) != FUDGE_OK )
         FudgeString_release ( string );
     return status;
 }
@@ -417,7 +412,7 @@ FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, const FudgeMsg messag
         return FUDGE_INTERNAL_LIST_STATE;
 }
 
-FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message, const fudge_byte * name, fudge_i32 namelen )
+FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message, const FudgeString name )
 {
     FieldListNode * node;
 
@@ -426,7 +421,7 @@ FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message
 
     for ( node = message->fieldhead; node; node = node->next )
     {
-        if ( node->field.name && node->field.namelen == namelen && memcmp ( node->field.name, name, namelen ) == 0 )
+        if ( FudgeString_compare ( node->field.name, name ) == 0 )
         {
             *field = node->field;
             return FUDGE_OK;

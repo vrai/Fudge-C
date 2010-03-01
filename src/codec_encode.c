@@ -67,7 +67,7 @@ fudge_i32 FudgeCodec_getFieldLength ( const FudgeField * field )
 
     /* Add the optional field header elements */
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
-        numbytes += ( field->name ? field->namelen : 0 ) + 1;  /* 1 byte used for length */
+        numbytes += ( field->name ? FudgeString_getSize ( field->name ) : 0 ) + 1;  /* 1 byte used for length */
     if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
         numbytes += 2;
 
@@ -124,24 +124,24 @@ FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFiel
 
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
     {
+        header->namelen = field->name ? FudgeString_getSize ( field->name ) : 0;
+
         /* Allocate the space for the field name: as a NULL pointer indicates
            no name, allocate a single byte if the field name is NULL (used to
            indicate a field with a name of zero bytes in length). */
-        if ( ! ( header->name = ( fudge_byte * ) malloc ( field->name ? field->namelen : 1 ) ) )
+        if ( ! ( header->name = ( fudge_byte * ) malloc ( field->name ? header->namelen : 1 ) ) )
             return FUDGE_OUT_OF_MEMORY;
 
         if ( field->name )
         {
             /* Field name is non-null, copy it across in to the header */
-            memcpy ( header->name, field->name, field->namelen );
-            header->namelen = field->namelen;
+            memcpy ( header->name, FudgeString_getData ( field->name ), header->namelen );
         }
         else
         {
             /* Field name is null, set the placeholder byte to be NULL and
                indicate the true length of the name in the length field */
             *( header->name ) = 0;
-            header->namelen = 0;
         }
     }
     else

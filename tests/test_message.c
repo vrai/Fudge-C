@@ -162,14 +162,16 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_FUDGE_MSG );
     TEST_EQUALS_TRUE( fields [ 13 ].data.message != 0 );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "Null string", 11 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Null string" ) ), FUDGE_OK );
+    TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "Empty SubMessage", 16 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Empty SubMessage" ) ), FUDGE_OK );
+    TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_FUDGE_MSG );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "", 0 ), FUDGE_INVALID_NAME );
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "null string", 11 ), FUDGE_INVALID_NAME );
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "Bytes", 5 ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "" ) ),            FUDGE_INVALID_NAME );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "null string" ) ), FUDGE_INVALID_NAME );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Bytes" ) ),       FUDGE_INVALID_NAME );  TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, message, 10 ), FUDGE_INVALID_ORDINAL );
 
     /* Check the fixed array message */
@@ -243,12 +245,15 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( fields [ 6 ].numbytes, 40 );
     TEST_EQUALS_MEMORY( fields [ 6 ].data.bytes, 40, rawDoubles, 40 );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, ( const fudge_byte * ) "Bytes", 5 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Bytes" ) ), FUDGE_OK );
+    TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_BYTE_ARRAY );
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, ( const fudge_byte * ) "Floats", 6 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Floats" ) ), FUDGE_OK );
+    TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_FLOAT_ARRAY );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, ( const fudge_byte * ) "Empty SubMessage", 16 ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, submessage, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Empty SubMessage" ) ), FUDGE_INVALID_NAME );
+    TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 1 ), FUDGE_INVALID_ORDINAL );
 
     /* Check the empty message */

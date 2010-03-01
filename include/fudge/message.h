@@ -107,8 +107,7 @@ FUDGEAPI FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
    not be increased, but it will be decreased when the parent is destroyed. */
 FUDGEAPI FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
                                            fudge_type_id type,
-                                           const fudge_byte * name,
-                                           fudge_i32 namelen,
+                                           const FudgeString name,
                                            const fudge_i16 * ordinal,
                                            FudgeFieldData * data,
                                            fudge_i32 numbytes );
@@ -124,7 +123,7 @@ FUDGEAPI FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg mes
    be a valid, null terminated char array). Returns FUDGE_INVALID_NAME if no
    field in the message has the name.
    Linear time operation. */
-FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const fudge_byte * name, fudge_i32 namelen );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const FudgeString name );
 
 /* As above, but retrieves the first field with the ordinal provided. Returns
    FUDGE_INVALID_ORDINAL if not field in the message has the ordinal.

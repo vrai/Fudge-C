@@ -263,12 +263,12 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 5 );
 
     /* Retrieve the decoded fields */
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "bigint", 6 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "bigint" ) ), FUDGE_OK );     TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_LONG );             TEST_EQUALS_INT( field.data.i64, bigint );
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "byte[16]", 8 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "byte[16]" ) ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_BYTE_ARRAY_16 );    TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, bytes, sizeof ( bytes ) );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "localhost", 9 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "localhost" ) ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLEIP4 );       TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &localhost, sizeof ( ExampleIp4Struct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_EXAMPLEIP4, &fielddata, &payload, &fieldsize ), FUDGE_COERCION_NOT_REQUIRED );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_FUDGE_MSG, &fielddata, &payload, &fieldsize ), FUDGE_INVALID_TYPE_COERCION );
@@ -276,13 +276,13 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "127.000.000.001", 15 );
     FudgeString_release ( fielddata.string );
     
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "opendns", 7 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "opendns" ) ), FUDGE_OK );    TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLEIP4 );       TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &opendns, sizeof ( ExampleIp4Struct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "208.067.222.222", 15 );
     FudgeString_release ( fielddata.string );
 
-    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, ( const fudge_byte * ) "tick", 4 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "tick" ) ), FUDGE_OK );       TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( field.type, FUDGE_TYPE_EXAMPLETICK );      TEST_EQUALS_MEMORY( field.data.bytes, field.numbytes, ( fudge_byte * ) &tick, sizeof ( ExampleTickStruct ) );
     TEST_EQUALS_INT( FudgeMsg_getFieldAs ( &field, FUDGE_TYPE_STRING, &fielddata, &payload, &fieldsize ), FUDGE_OK );
     TEST_EQUALS_INT( payload, FUDGE_TYPE_PAYLOAD_STRING );      TEST_EQUALS_MEMORY( FudgeString_getData ( fielddata.string ), FudgeString_getSize ( fielddata.string ), "            GBP= 1.605000 1.607000       1263138018", 51 );
