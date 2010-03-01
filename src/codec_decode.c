@@ -57,12 +57,15 @@ FudgeStatus FudgeCodec_decodeField ( FudgeMsg message, FudgeFieldHeader header, 
     else
         name = 0;
 
-    return FudgeMsg_addFieldData ( message,
-                                   header.type,
-                                   name,
-                                   FudgeHeader_getOrdinal ( &header ),
-                                   &data,
-                                   FudgeCodec_getNumBytes ( typedesc, width ) );
+    status = FudgeMsg_addFieldData ( message,
+                                     header.type,
+                                     name,
+                                     FudgeHeader_getOrdinal ( &header ),
+                                     &data,
+                                     FudgeCodec_getNumBytes ( typedesc, width ) );
+    if ( header.name )
+        FudgeString_release ( name );
+    return status;
 }
 
 
