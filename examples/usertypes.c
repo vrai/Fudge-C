@@ -62,8 +62,7 @@ typedef struct
 /* Utility field to add an AddressDetails structure to a FudgeMsg. Not
    required, but allows the user type to match the standard Fudge-C API. */
 FudgeStatus FudgeMsg_addFieldAddressDetails ( FudgeMsg message,
-                                              const fudge_byte * name, 
-                                              fudge_i32 namelen,
+                                              const FudgeString name, 
                                               const fudge_i16 * ordinal,
                                               const AddressDetails * details )
 {
@@ -73,7 +72,6 @@ FudgeStatus FudgeMsg_addFieldAddressDetails ( FudgeMsg message,
     return FudgeMsg_addFieldOpaque ( message,
                                      FUDGE_TYPE_ADDRESSDETAILS,
                                      name,
-                                     namelen,
                                      ordinal,
                                      ( const fudge_byte * ) details,
                                      sizeof ( AddressDetails ) );
@@ -237,7 +235,7 @@ int main ( int argc, char * argv [ ] )
         fatalFudgeError ( status, "Failed to create Fudge message" );
 
     for ( ordinal = 0; ordinal < 2; ++ordinal )
-        FudgeMsg_addFieldAddressDetails ( message, 0, 0, &ordinal, details [ ordinal ] );
+        FudgeMsg_addFieldAddressDetails ( message, 0, &ordinal, details [ ordinal ] );
 
     /* Encode the message */
     envelope.directives = 0;

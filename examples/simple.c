@@ -77,6 +77,13 @@ int main ( int argc, char * argv [ ] )
                                              "Country",
                                              0 };
     static const char * name = "Random Person";
+
+    /* Field names */
+    FudgeString nameFieldName, dobFieldName, addressFieldName;
+    if ( ( status = FudgeString_createFromASCIIZ ( &nameFieldName   , "name" ) ) ||
+         ( status = FudgeString_createFromASCIIZ ( &dobFieldName,     "dob" ) ) ||
+         ( status = FudgeString_createFromASCIIZ ( &addressFieldName, "address" ) ) )
+        return logFudgeError ( status, "Failed to create field name strings" );
     
     /* The Fudge library must be initialised before it can be used */
     if ( ( status = Fudge_init ( ) ) )
@@ -98,7 +105,7 @@ int main ( int argc, char * argv [ ] )
     {
         FudgeString_createFromASCIIZ ( &string, *stringListIterator );
         FudgeMsg_addFieldString ( addressMsg,
-                                  0, 0,         /* No field name */
+                                  0,            /* No field name */
                                   &index,       /* Ordinal is the index */
                                   string );
         FudgeString_release ( string );
@@ -111,13 +118,13 @@ int main ( int argc, char * argv [ ] )
     /* Add the details fields */
     FudgeString_createFromASCIIZ ( &string, name );
     FudgeMsg_addFieldString ( contactMsg,
-                              ( const fudge_byte * ) "name", 4,
+                              nameFieldName,
                               0,
                               string );
     FudgeString_release ( string );
 
     FudgeMsg_addFieldI64 ( contactMsg,
-                           ( const fudge_byte * ) "dob", 3,
+                           dobFieldName,
                            0,
                            19801231 );
 
@@ -125,7 +132,7 @@ int main ( int argc, char * argv [ ] )
        reference to the inner message should be released; the outer message
        is now holding a reference of its own. */
     if ( ( status = FudgeMsg_addFieldMsg ( contactMsg,
-                                           ( const fudge_byte * ) "address", 7,
+                                           addressFieldName,
                                            0,
                                            addressMsg ) ) )
         return logFudgeError ( status, "Failed to add address message as field" );
@@ -181,8 +188,7 @@ int main ( int argc, char * argv [ ] )
     /* Retrieve and output the name; having checked that it is a string. There
        is no need to clear the field after use or free any memory as it is
        merely a reference to memory held by its parent message. */
-    if ( ( status = FudgeMsg_getFieldByName ( &field, contactMsg,
-                    ( const fudge_byte * ) "name", 4 ) ) )
+    if ( ( status = FudgeMsg_getFieldByName ( &field, contactMsg, nameFieldName ) ) )
         return logFudgeError ( status, "Failed to retrieve field \"name\"" );
     if ( field.type != FUDGE_TYPE_STRING )
         return logError ( "Field \"name\" is not a string" );
@@ -193,8 +199,7 @@ int main ( int argc, char * argv [ ] )
     /* Retrieve and output the date-of-birth field. While this was added as
        a 64bit integer it should have been stored as a 32bit value (the
        smallest integer type that can hold the value provided). */
-    if ( ( status = FudgeMsg_getFieldByName ( &field, contactMsg,
-                    ( const fudge_byte * ) "dob", 3 ) ) )
+    if ( ( status = FudgeMsg_getFieldByName ( &field, contactMsg, dobFieldName ) ) )
         return logFudgeError ( status, "Failed to retrieve field \"dob\"" );
     if ( field.type != FUDGE_TYPE_INT )
         return logError ( "Field \"dob\" is not a 32bit integer" );
@@ -205,8 +210,7 @@ int main ( int argc, char * argv [ ] )
     /* Retrieve the inner (address) message and place it in the local address
        message variable. Grab a reference to the message as it needs to persit
        beyond the lifetime of its parent message. */
-    if ( ( status = FudgeMsg_getFieldByName ( &field, contactMsg,
-                    ( const fudge_byte * ) "address", 7 ) ) )
+    if ( ( status = FudgeMsg_getFieldByName ( &field, contactMsg, addressFieldName ) ) )
         return logFudgeError ( status, "Failed to retrieve field \"address\"" );
     addressMsg = field.data.message;
     FudgeMsg_retain ( addressMsg );
@@ -228,9 +232,12 @@ int main ( int argc, char * argv [ ] )
         free ( ascii );
     }
 
-    /* Release the address message, this should leave no memory left allocated
-       that isn't static. */
+    /* Release the address message and field name strings, this should leave
+       no memory left allocated that isn't static. */
     FudgeMsg_release ( addressMsg );
+    FudgeString_release ( nameFieldName );
+    FudgeString_release ( dobFieldName );
+    FudgeString_release ( addressFieldName );
     return 0;
 }
 

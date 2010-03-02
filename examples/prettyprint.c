@@ -113,11 +113,7 @@ void outputField ( FudgeField * field, unsigned int indent )
     printf ( " " );
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
     {   
-        /* TODO Replace when field names become FudgeString */
-        FudgeString temp;
-        FudgeString_createFromUTF8 ( &temp, field->name, field->namelen );
-        outputString ( temp );
-        FudgeString_release ( temp );
+        outputString ( field->name );
 
         if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
             printf ( "/" );
