@@ -10,6 +10,7 @@ runtest.bat
 *.pdb
 *.ilk
 *.swp
+*.tar.gz
 test
 *.deps
 Makefile
@@ -21,3 +22,4 @@ libtool
 config.log
 config.status
 configure
+dist/

@@ -1,0 +1,36 @@
+
+-----
+
+Compiling under Microsoft Visual Studio
+=======================================
+
+This distribution contains a NMAKE file that will build static and dynamic
+versions of the Fudge-C library that can then be used in your own projects.
+
+Using the Visual Studio Command Prompt, go to the directory that this ZIP
+file has been unpacked into and type:
+
+  nmake /f Makefile.msvc check
+
+This will build all versions of the library and run the test suite against
+each to confirm the build was successful. The following files will be
+created:
+
+  libfudgec.dll	       - DLL version of the library
+  libfudgec.lib        - Import library for libfudgec.dll
+
+  libfudgecd.dll       - DLL version of the library (debug mode)
+  libfudgecd.lib       - Import library for libfudgecd.dll
+
+  libfudgec_cmt.lib    - Linked with LIBCMT.LIB  (/MT)
+  libfudgec_cmtd.lib   - Linked with LIBCMTD.LIB (/MTd)
+  libfudgec_crt.lib    - Linked with LIBCRT.LIB  (/MD)
+  libfudgec_crtd.lib   - Linked with LIBCRTD.LIB (/MDd)
+
+You do not need all of these files to develop against Fudge - select the one
+appropriate for the compiler settings of the project you wish to use Fudge
+with.
+
+The .lib files should be copied to your LIB folder, the .dll files to
+somewhere on the system path, and the include/fudge folder should be copied
+to your INCLUDE folder.
