@@ -1,12 +1,10 @@
-The primary task is to fully implement v0.2 of the FudgeMsg specification. The
-outstanding tasks for this version are:
+The primary task is to fully implement v0.3 (which will act as a release
+candidate) of the FudgeMsg specification. The outstanding tasks for this
+version are:
 
 * Implementation of the FudgeMsg date/time format (once this has been agreed
   upon). Will require a FudgeDateTime container structure as the specification
   exceeds the capabilities of time.h.
-
-* Provide more sophisticated handling of strings, especially where conversion
-  in to UTF-8 is required.
 
 General improvements:
 

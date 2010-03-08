@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fudge/stringpool.h"
 #include "reference.h"
 #include "simpletest.h"
 
@@ -59,6 +60,84 @@ DEFINE_TEST( ReferenceCount )
 END_TEST
 #endif /* ifndef EXTERNAL_TESTS_ONLY */
 
+DEFINE_TEST( StringPool )
+    static const char * testStrings [ 16 ] = { "Zero",  "One",  "Two",   "Three", "Four",    "Five",  "Six",  "Seven",
+                                               "Eight", "Nine", "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot" };
+
+    FudgeStringPool pool1, pool2;
+    FudgeString strings [ 16 ];
+    FudgeString string1, string2;
+    FudgeStatus status;
+    int index;
+
+    /* Construct the first string pool */
+    TEST_EQUALS_INT( FudgeStringPool_create ( &pool1 ), FUDGE_OK );
+        
+    /* Construct a full set of test strings - all members of pool1 */
+    for ( index = 0; index < 16; ++index )
+    {
+        if ( index % 2 )
+            strings [ index ] = FudgeStringPool_createStringFromASCIIZ( pool1, &status, testStrings [ index ] );
+        else
+            strings [ index ] = FudgeStringPool_createStringFromASCII ( pool1, &status, testStrings [ index ], strlen ( testStrings [ index ] ) );
+        TEST_EQUALS_INT( status, FUDGE_OK );
+    }
+
+    /* Attempt various failure cases */
+    TEST_EQUALS_INT( FudgeStringPool_create ( 0 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeStringPool_release ( 0 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeStringPool_retain ( 0 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeStringPool_acquire ( 0, strings [ 0 ] ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeStringPool_acquire ( pool1, 0 ), FUDGE_NULL_POINTER );
+    TEST_EQUALS_INT( FudgeStringPool_clear ( 0 ), FUDGE_NULL_POINTER );
+
+    /* Construct the second pool and immediately increase its reference count */
+    TEST_EQUALS_INT( FudgeStringPool_create ( &pool2 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeStringPool_retain ( pool2 ), FUDGE_OK );
+
+    /* Add the first eight strings to the second pool, and again to the first
+       pool */
+    for ( index = 0; index < 8; ++index )
+    {
+        TEST_EQUALS_INT( FudgeString_retain ( strings [ index ] ), FUDGE_OK );
+        TEST_EQUALS_INT( FudgeStringPool_acquire ( pool1, strings [ index ] ), FUDGE_OK );
+
+        TEST_EQUALS_INT( FudgeString_retain ( strings [ index ] ), FUDGE_OK );
+        TEST_EQUALS_INT( FudgeStringPool_acquire ( pool2, strings [ index ] ), FUDGE_OK );
+    }
+
+    /* Create a couple of strings - using the ASCII utility methods, but
+       without providing a status variable. Grab a local reference to the
+       strings. */
+    TEST_EQUALS_TRUE( ( string1 = FudgeStringPool_createStringFromASCII ( pool1, 0, "", 0 ) ) != 0 );
+    TEST_EQUALS_INT ( FudgeString_getSize ( string1 ), 0 );
+    TEST_EQUALS_INT( FudgeString_retain ( string1 ), FUDGE_OK );
+
+    TEST_EQUALS_TRUE( ( string2 = FudgeStringPool_createStringFromASCIIZ ( pool2, 0, "A String" ) ) != 0 );
+    TEST_EQUALS_INT ( FudgeString_getSize ( string2 ), 8 );
+    TEST_EQUALS_INT( FudgeString_retain ( string2 ), FUDGE_OK );
+
+    /* Destroy the first pool and reduce the reference count of the second */
+    TEST_EQUALS_INT( FudgeStringPool_release ( pool1 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeStringPool_release ( pool2 ), FUDGE_OK );
+
+    /* The first eight strings and the empty string should still be available */
+    for ( index = 0; index < 8; ++index )
+        TEST_EQUALS_MEMORY( testStrings [ index ], strlen ( testStrings [ index ] ), FudgeString_getData ( strings [ index ] ), FudgeString_getSize ( strings [ index ] ) );
+    TEST_EQUALS_MEMORY( 0, 0, FudgeString_getData ( string1 ), FudgeString_getSize ( string1 ) );
+
+    /* Destroy the second pool */
+    TEST_EQUALS_INT( FudgeStringPool_release ( pool2 ), FUDGE_OK );
+
+    /* The two zero status strings should still be available */
+    TEST_EQUALS_MEMORY( 0,          0, FudgeString_getData ( string1 ), FudgeString_getSize ( string1 ) );
+    TEST_EQUALS_MEMORY( "A String", 8, FudgeString_getData ( string2 ), FudgeString_getSize ( string2 ) );
+
+    /* Clean up */
+    TEST_EQUALS_INT( FudgeString_release ( string1 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_release ( string2 ), FUDGE_OK );
+END_TEST
+
 void testFloatConversion ( float input );
 void testDoubleConversion ( double input );
 void testI64Conversion ( int64_t input );
@@ -88,6 +167,7 @@ DEFINE_TEST_SUITE( Utilities )
 #ifndef EXTERNAL_TESTS_ONLY
     REGISTER_TEST( ReferenceCount )
 #endif /* ifndef EXTERNAL_TESTS_ONLY */
+    REGISTER_TEST( StringPool )
     REGISTER_TEST( EndianConversion )
 END_TEST_SUITE
 

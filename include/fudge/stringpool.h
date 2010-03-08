@@ -22,6 +22,23 @@
     extern "C" {
 #endif
 
+/* The FudgeStringPool provides a simple collection for FudgeString
+   references. When the pool is destroyed, any strings acquired by the pool
+   have their reference counts reduced by one (and so are destroyed if the
+   pool held the only reference).
+
+   The pool is of limited use in most production systems and is provided to
+   make test/example code less verbose. However it is reasonably efficient
+   (acquiring a string is a fixed cost, releasing the pool is a linear time
+   operation) and there's no reason why it could not be used in a production
+   environment if the design benefitted from it.
+
+   Thread safety:
+
+   The FudgeStringPool implementation is thread-safe and multiple threads may
+   make use of pool instances. However, each pool instance must only be acted
+   on by a single thread at any given time.
+*/
 typedef struct FudgeStringPoolImpl * FudgeStringPool;
 
 FUDGEAPI FudgeStatus FudgeStringPool_create ( FudgeStringPool * pool );
