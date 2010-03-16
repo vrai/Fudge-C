@@ -36,6 +36,10 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_STRING_INVALID_SURROGATE:  return "Invalid 3-byte modified UTF8 sequence";
         case FUDGE_OUT_OF_BYTES:              return "Out of Bytes";
         case FUDGE_UNKNOWN_FIELD_WIDTH:       return "Unknown Field Width";
+        case FUDGE_DATETIME_INVALID_YEAR:     return "Invalid value for Year";
+        case FUDGE_DATETIME_INVALID_MONTH:    return "Invalid value for Month";
+        case FUDGE_DATETIME_INVALID_DAY:      return "Invalid value for Day of Month";
+        case FUDGE_DATETIME_INVALID_SECONDS:  return "Invalid value for Seconds since midnight";
         case FUDGE_INTERNAL_LIST_STATE:       return "Internal List State";
         case FUDGE_INTERNAL_PAYLOAD:          return "Internal Type Payload Is Invalid";
         case FUDGE_REGISTRY_UNINITIALISED:    return "Fudge Registry Not Initialised";

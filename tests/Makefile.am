@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 TESTS = test_utilities  \
+        test_datetime   \
         test_message    \
         test_codec      \
         test_string     \
@@ -32,6 +33,9 @@ EXTRA_DIST = test_data
 
 test_utilities_SOURCES = test_utilities.c $(FRAMEWORK_SOURCE)
 test_utilities_LDADD = $(top_builddir)/src/libfudgec.la
+
+test_datetime_SOURCES = test_datetime.c $(FRAMEWORK_SOURCE)
+test_datetime_LDADD = $(top_builddir)/src/libfudgec.la
 
 test_message_SOURCES = test_message.c $(FRAMEWORK_SOURCE)
 test_message_LDADD = $(top_builddir)/src/libfudgec.la

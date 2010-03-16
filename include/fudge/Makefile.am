@@ -17,6 +17,7 @@ libfudgec_includedir = $(includedir)/fudge
 libfudgec_include_HEADERS = codec.h         \
                             codec_ex.h      \
                             config.h        \
+                            datetime.h      \
                             fudge.h         \
                             fudgeapi.h      \
                             message.h       \

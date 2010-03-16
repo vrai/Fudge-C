@@ -64,6 +64,55 @@ typedef struct FudgeStringImpl * FudgeString;
 
 typedef struct
 {
+    int32_t year;    /* Year: see below for allowable range */
+    uint8_t month;   /* Month: 1 (Jan) to 12 (Dec), 0 to omit */ 
+    uint8_t day;     /* Day of month: 1 to 31, 0 to omit */
+} FudgeDate;
+
+/* Allowable range for FudgeDate.year: positive values are CE, negative BCE */
+#define FUDGEDATE_MAX_YEAR  8388607
+#define FUDGEDATE_MIN_YEAR  -8388607
+
+typedef enum
+{
+    FUDGE_DATETIME_PRECISION_MILLENNIUM  = 0x0,
+    FUDGE_DATETIME_PRECISION_CENTURY     = 0x1,
+    FUDGE_DATETIME_PRECISION_YEAR        = 0x2,
+    FUDGE_DATETIME_PRECISION_MONTH       = 0x3,
+    FUDGE_DATETIME_PRECISION_DAY         = 0x4,
+    FUDGE_DATETIME_PRECISION_HOUR        = 0x5,
+    FUDGE_DATETIME_PRECISION_MINUTE      = 0x6,
+    FUDGE_DATETIME_PRECISION_SECOND      = 0x7,
+    FUDGE_DATETIME_PRECISION_MILLISECOND = 0x8,
+    FUDGE_DATETIME_PRECISION_MICROSECOND = 0x9,
+    FUDGE_DATETIME_PRECISION_NANOSECOND  = 0xa
+} FudgeDateTimePrecision;
+
+typedef struct
+{
+    uint32_t seconds;     /* Seconds since midnight: see below for upper bound */
+    uint32_t nanoseconds; /* Nanoseconds since the start of the second */
+
+    FudgeDateTimePrecision precision;
+
+    /* If the hasTimezone flag is set, the the timezoneOffset contains the
+       offset from UTC in 15 minute intervals (e.g. UTC+1H would be 4, while
+       UTC-8H would be -32). If hasTimezone is false, the offset should be
+       ignored. */
+    fudge_bool hasTimezone;
+    int8_t timezoneOffset;
+} FudgeTime;
+
+#define FUDGETIME_MAX_SECONDS   86399
+
+typedef struct
+{
+    FudgeDate date;
+    FudgeTime time;
+} FudgeDateTime;
+
+typedef struct
+{
     fudge_byte directives;      /* Processing directives, for future use */
     fudge_byte schemaversion;   /* Application specific Schema version */
     fudge_i16 taxonomy;         /* Application specific taxonomy reference */
@@ -136,6 +185,11 @@ typedef struct
 #define FUDGE_TYPE_BYTE_ARRAY_128   23    /* Byte array with 128 elements */
 #define FUDGE_TYPE_BYTE_ARRAY_256   24    /* Byte array with 256 elements */
 #define FUDGE_TYPE_BYTE_ARRAY_512   25    /* Byte array with 512 elements */
+
+/* Date / time types - see http://wiki.fudgemsg.org/display/FDG/DateTime+encoding */
+#define FUDGE_TYPE_DATE             26
+#define FUDGE_TYPE_TIME             27  
+#define FUDGE_TYPE_DATETIME         28
 
 /*****************************************************************************
  * Type information functions
