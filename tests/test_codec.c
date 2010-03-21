@@ -267,11 +267,11 @@ DEFINE_TEST( DecodeDateTimes )
     TEST_EQUALS_DATE( fields [ 2 ].data.datetime.date, 2010, 3, 4 );
 
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  3 ].name ), 13, "time-Hour-UTC",   13 ); TEST_EQUALS_INT( fields [  3 ].type, FUDGE_TYPE_TIME );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  4 ].name ), 16, "time-Minute-UTC", 16 ); TEST_EQUALS_INT( fields [  4 ].type, FUDGE_TYPE_TIME );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  5 ].name ), 16, "time-Second-UTC", 16 ); TEST_EQUALS_INT( fields [  5 ].type, FUDGE_TYPE_TIME );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  6 ].name ), 15, "time-Milli-UTC",  15 ); TEST_EQUALS_INT( fields [  6 ].type, FUDGE_TYPE_TIME );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  7 ].name ), 15, "time-Micro-UTC",  15 ); TEST_EQUALS_INT( fields [  7 ].type, FUDGE_TYPE_TIME );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  8 ].name ), 14, "time-Nano-UTC",   14 ); TEST_EQUALS_INT( fields [  8 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  4 ].name ), 15, "time-Minute-UTC", 15 ); TEST_EQUALS_INT( fields [  4 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  5 ].name ), 15, "time-Second-UTC", 15 ); TEST_EQUALS_INT( fields [  5 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  6 ].name ), 14, "time-Milli-UTC",  14 ); TEST_EQUALS_INT( fields [  6 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  7 ].name ), 14, "time-Micro-UTC",  14 ); TEST_EQUALS_INT( fields [  7 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  8 ].name ), 13, "time-Nano-UTC",   13 ); TEST_EQUALS_INT( fields [  8 ].type, FUDGE_TYPE_TIME );
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  9 ].name ),  9, "time-Nano",        9 ); TEST_EQUALS_INT( fields [  9 ].type, FUDGE_TYPE_TIME );
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 10 ].name ), 13, "time-Nano-+1h",   13 ); TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_TIME );
     TEST_EQUALS_TIME( fields [  3 ].data.datetime.time, 11 * 3600,                987654321, FUDGE_DATETIME_PRECISION_HOUR,        0 ); /* TODO This is wrong - should have no-nanoseconds */
