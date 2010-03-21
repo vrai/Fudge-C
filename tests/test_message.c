@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fudge/datetime.h"
 #include "fudge/message.h"
 #include "fudge/string.h"
 #include "fudge/stringpool.h"
@@ -32,6 +33,7 @@ DEFINE_TEST( FieldFunctions )
     FudgeStatus status;
     FudgeStringPool stringpool;
     FudgeString string;
+    FudgeDateTime datetime;
     FudgeField field;
     FudgeField fields [ 32 ];            /* Needs to be big enough to hold the largest field in the test */
     int index;
@@ -74,6 +76,15 @@ DEFINE_TEST( FieldFunctions )
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 8 );
 
+    /* Add date, time and date/time */
+    TEST_EQUALS_INT( FudgeDate_initialise ( &( datetime.date ), 2010, 3, 21 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialise ( &( datetime.time ), 15 * 3600 + 39 * 60 + 27, 0, FUDGE_DATETIME_PRECISION_SECOND ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDate ( message, 0, 0, &( datetime.date ) ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, 0, 0, &( datetime.time ) ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, 0, 0, &datetime ), FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 11 );
+
     /* Add fixed width byte arrays in a sub message */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
     ordinal = 1; TEST_EQUALS_INT( FudgeMsg_addField4ByteArray ( submessage, 0, &ordinal, largeByteArray ), FUDGE_OK );
@@ -102,7 +113,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_addFieldString ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "String" ), 0, string ), FUDGE_OK );          TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeString_release ( string ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 12 );
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 15 );
 
     /* Add empty and populated arrays in a sub message */
     TEST_EQUALS_INT( FudgeMsg_create ( &submessage ), FUDGE_OK );
@@ -128,7 +139,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
-    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 14 );
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 17 );
 
     /* Retrieve the top-level fields and check their contents */
     for ( index = 0; index < FudgeMsg_numFields ( message ); ++index )
@@ -149,18 +160,25 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_FLOAT( fields [ 6 ].data.f32, 2147483647.0f, 0.01f );
     TEST_EQUALS_INT( fields [ 7 ].type, FUDGE_TYPE_DOUBLE );
     TEST_EQUALS_FLOAT( fields [ 7 ].data.f64, -9223372036854775807.0, 0.01f );
-    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_FUDGE_MSG );
-    TEST_EQUALS_TRUE( fields [ 8 ].data.message != 0 );
-    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 9 ].data.string ), FudgeString_getSize ( fields [ 9 ].data.string ), 0, 0 );
-    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 10 ].data.string ), FudgeString_getSize ( fields [ 10 ].data.string ), 0, 0 );
-    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_STRING );
-    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 11 ].data.string ), FudgeString_getSize ( fields [ 11 ].data.string ), "This is a string", 16 );
-    TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_FUDGE_MSG );
-    TEST_EQUALS_TRUE( fields [ 12 ].data.message != 0 );
-    TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_FUDGE_MSG );
-    TEST_EQUALS_TRUE( fields [ 13 ].data.message != 0 );
+    TEST_EQUALS_INT( fields [ 8 ].type, FUDGE_TYPE_DATE );
+    TEST_EQUALS_DATE( fields [ 8 ].data.datetime.date, 2010, 3, 21 );
+    TEST_EQUALS_INT( fields [ 9 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_TIME( fields [ 9 ].data.datetime.time, 15 * 3600 + 39 * 60 + 27, 0, FUDGE_DATETIME_PRECISION_SECOND, -128 );
+    TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_DATETIME );
+    TEST_EQUALS_DATE( fields [ 10 ].data.datetime.date, 2010, 3, 21 );
+    TEST_EQUALS_TIME( fields [ 10 ].data.datetime.time, 15 * 3600 + 39 * 60 + 27, 0, FUDGE_DATETIME_PRECISION_SECOND, -128 );
+    TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FUDGE_MSG );
+    TEST_EQUALS_TRUE( fields [ 11 ].data.message != 0 );
+    TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_STRING );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 12 ].data.string ), FudgeString_getSize ( fields [ 12 ].data.string ), 0, 0 );
+    TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_STRING );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 13 ].data.string ), FudgeString_getSize ( fields [ 13 ].data.string ), 0, 0 );
+    TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_STRING );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 14 ].data.string ), FudgeString_getSize ( fields [ 14 ].data.string ), "This is a string", 16 );
+    TEST_EQUALS_INT( fields [ 15 ].type, FUDGE_TYPE_FUDGE_MSG );
+    TEST_EQUALS_TRUE( fields [ 15 ].data.message != 0 );
+    TEST_EQUALS_INT( fields [ 16 ].type, FUDGE_TYPE_FUDGE_MSG );
+    TEST_EQUALS_TRUE( fields [ 16 ].data.message != 0 );
 
     TEST_EQUALS_INT( FudgeMsg_getFieldByName ( &field, message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Null string" ) ), FUDGE_OK );
     TEST_EQUALS_INT( status, FUDGE_OK );
@@ -175,7 +193,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, message, 10 ), FUDGE_INVALID_ORDINAL );
 
     /* Check the fixed array message */
-    submessage = fields [ 8 ].data.message;
+    submessage = fields [ 11 ].data.message;
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 9 );
     for ( index = 0; index < FudgeMsg_numFields ( submessage ); ++index )
         TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( fields + index, submessage, index ), FUDGE_OK );
@@ -218,7 +236,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 10 ), FUDGE_INVALID_ORDINAL );
 
     /* Check the variable array message */
-    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 12 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 15 ), FUDGE_OK );
     submessage = field.data.message;
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 7 );
     TEST_EQUALS_INT( FudgeMsg_getFields ( fields, sizeof ( fields ) / sizeof ( FudgeField ), submessage ), 7 );
@@ -257,7 +275,7 @@ DEFINE_TEST( FieldFunctions )
     TEST_EQUALS_INT( FudgeMsg_getFieldByOrdinal ( &field, submessage, 1 ), FUDGE_INVALID_ORDINAL );
 
     /* Check the empty message */
-    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 13 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAtIndex ( &field, message, 16 ), FUDGE_OK );
     submessage = field.data.message;
     TEST_EQUALS_INT( FudgeMsg_numFields ( submessage ), 0 );
 
