@@ -88,6 +88,10 @@ FUDGEAPI FudgeStatus FudgeMsg_addField128ByteArray ( FudgeMsg message, const Fud
 FUDGEAPI FudgeStatus FudgeMsg_addField256ByteArray ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const fudge_byte * bytes );
 FUDGEAPI FudgeStatus FudgeMsg_addField512ByteArray ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const fudge_byte * bytes );
 
+FUDGEAPI FudgeStatus FudgeMsg_addFieldDate     ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const FudgeDate * date );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldTime     ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const FudgeTime * time );
+FUDGEAPI FudgeStatus FudgeMsg_addFieldDateTime ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const FudgeDateTime * datetime );
+
 /* Used to add arbitary types to a message. The data is stored and encoded as
    a simple array of bytes. No endian conversion will be applied to the
    contents. */

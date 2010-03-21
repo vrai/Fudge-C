@@ -255,6 +255,39 @@ FudgeStatus FudgeCodec_encodeFieldFudgeMsg ( const FudgeField * field, fudge_byt
     return FudgeCodec_encodeMsgFields ( field->data.message, data );
 }
 
+FudgeStatus FudgeCodec_encodeFieldDate ( const FudgeField * field, fudge_byte * * data )
+{
+    const fudge_i32 value = ( field->data.datetime.date.year << 9 ) 
+                          | ( ( field->data.datetime.date.month & 0xf ) << 5 )
+                          | ( field->data.datetime.date.day & 0x1f );
+    FudgeCodec_encodeI32 ( value, data );
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeCodec_encodeFieldTime ( const FudgeField * field, fudge_byte * * data )
+{
+    /* Write the first 4 bytes */
+    const fudge_i32 hiword = ( ( field->data.datetime.time.hasTimezone ? field->data.datetime.time.timezoneOffset
+                                                                      : -128 ) << 24 )
+                           | ( ( field->data.datetime.time.precision & 0xf )<< 20 )
+                           | ( field->data.datetime.time.seconds & 0x1ffff );
+    FudgeCodec_encodeI32 ( hiword, data );
+
+    /* Write the second 4 bytes */
+    const fudge_i32 loword = field->data.datetime.time.nanoseconds & 0x3fffffff;
+    FudgeCodec_encodeI32 ( loword, data );
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeCodec_encodeFieldDateTime  ( const FudgeField * field, fudge_byte * * data )
+{
+    FudgeStatus status;
+
+    if ( ( status = FudgeCodec_encodeFieldDate ( field, data ) ) != FUDGE_OK )
+        return status;
+    return FudgeCodec_encodeFieldTime ( field, data );
+}
+
 /*****************************************************************************
  * Functions from fudge/codec.h
  */

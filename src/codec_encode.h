@@ -39,5 +39,9 @@ FudgeStatus FudgeCodec_encodeFieldString    ( const FudgeField * field, fudge_by
 
 FudgeStatus FudgeCodec_encodeFieldFudgeMsg  ( const FudgeField * field, fudge_byte * * data );
 
+FudgeStatus FudgeCodec_encodeFieldDate      ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldTime      ( const FudgeField * field, fudge_byte * * data );
+FudgeStatus FudgeCodec_encodeFieldDateTime  ( const FudgeField * field, fudge_byte * * data );
+
 #endif
 

@@ -29,7 +29,7 @@ FudgeStatus FudgeCodec_decodeFieldI64        ( const fudge_byte * bytes, const f
 FudgeStatus FudgeCodec_decodeFieldF32        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 FudgeStatus FudgeCodec_decodeFieldF64        ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 
-FudgeStatus FudgeCodec_decodeFieldString      ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FudgeStatus FudgeCodec_decodeFieldString     ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 
 FudgeStatus FudgeCodec_decodeFieldI16Array   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 FudgeStatus FudgeCodec_decodeFieldI32Array   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
@@ -38,6 +38,10 @@ FudgeStatus FudgeCodec_decodeFieldF32Array   ( const fudge_byte * bytes, const f
 FudgeStatus FudgeCodec_decodeFieldF64Array   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 
 FudgeStatus FudgeCodec_decodeFieldFudgeMsg   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+
+FudgeStatus FudgeCodec_decodeFieldDate       ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FudgeStatus FudgeCodec_decodeFieldTime       ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
+FudgeStatus FudgeCodec_decodeFieldDateTime   ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data );
 
 #endif
 

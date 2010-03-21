@@ -261,3 +261,25 @@ void SimpleTest_equalsMemory ( const char * file, int line, const char * xStr, c
     SimpleTest_log ( "%s:%d : %s (%d bytes) == %s (%d bytes)", file, line, xStr, sizeX, yStr, sizeY );
 }
 
+void SimpleTest_equalsDate ( const char * file, int line, const char * dateStr, FudgeDate date, int32_t year, uint8_t month, uint8_t day )
+{
+    if ( date.year == year && date.month == month && date.day == day )
+        SimpleTest_log ( "%s:%d : %s (%d/%d/%d) == %d/%d/%d", file, line, dateStr, date.year, date.month, date.day, year, month, day );
+    else
+        SimpleTest_failTest ( "%s:%d : %s (%d/%d/%d) != %d/%d/%d", file, line, dateStr, date.year, date.month, date.day, year, month, day );
+}
+
+void SimpleTest_equalsTime ( const char * file, int line, const char * timeStr, FudgeTime time, uint32_t seconds, uint32_t nanoseconds, FudgeDateTimePrecision precision, int timezone )
+{
+    const fudge_bool hasTimezone = ( timezone != -128 );
+
+    if ( time.seconds == seconds && time.nanoseconds == nanoseconds && time.precision == precision && hasTimezone == time.hasTimezone && ( ! hasTimezone || timezone == time.timezoneOffset ) )
+        SimpleTest_log ( "%s:%d : %s (%d.%d[%d] %d) == %d.%d[%d] %d", file, line, timeStr,
+                                                                      time.seconds, time.nanoseconds, time.precision, time.hasTimezone ? time.timezoneOffset : -128,
+                                                                      seconds, nanoseconds, precision, timezone );
+    else
+        SimpleTest_failTest ( "%s:%d : %s (%d.%d[%d] %d) != %d.%d[%d] %d", file, line, timeStr,
+                                                                           time.seconds, time.nanoseconds, time.precision, time.hasTimezone ? time.timezoneOffset : -128,
+                                                                           seconds, nanoseconds, precision, timezone );
+}
+

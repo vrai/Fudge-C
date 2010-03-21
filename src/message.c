@@ -55,6 +55,9 @@ void FieldListNode_destroy ( FieldListNode * node )
         case FUDGE_TYPE_LONG:
         case FUDGE_TYPE_FLOAT:
         case FUDGE_TYPE_DOUBLE:
+        case FUDGE_TYPE_DATE:
+        case FUDGE_TYPE_TIME:
+        case FUDGE_TYPE_DATETIME:
             break;
 
         /* Every other type will store its data in the bytes array */
@@ -389,6 +392,37 @@ FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 64, FUDGE_TYPE_BYTE_ARRAY_64 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 128, FUDGE_TYPE_BYTE_ARRAY_128 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 256, FUDGE_TYPE_BYTE_ARRAY_256 )
 FUDGE_ADDFIXEDBYTEARRAYFIELD_IMPL( 512, FUDGE_TYPE_BYTE_ARRAY_512 )
+
+FudgeStatus FudgeMsg_addFieldDate ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const FudgeDate * date )
+{
+    FudgeFieldData data;
+    if ( ! ( message && date ) )
+        return FUDGE_NULL_POINTER;
+    data.datetime.date = *date;
+    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_DATE, name, ordinal, &data, 0 );
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeMsg_addFieldTime ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const FudgeTime * time )
+{
+    FudgeFieldData data;
+
+    if ( ! ( message && time ) )
+        return FUDGE_NULL_POINTER;
+    data.datetime.time = *time;
+    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_TIME, name, ordinal, &data, 0 );
+}
+
+FudgeStatus FudgeMsg_addFieldDateTime ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal, const FudgeDateTime * datetime )
+{
+    FudgeFieldData data;
+
+    if ( ! ( message && datetime ) )
+        return FUDGE_NULL_POINTER;
+
+    data.datetime = *datetime;
+    return FudgeMsg_addFieldData ( message, FUDGE_TYPE_DATETIME, name, ordinal, &data, 0 );
+}
 
 FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, const FudgeMsg message, unsigned long index )
 {

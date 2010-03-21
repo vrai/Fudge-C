@@ -103,7 +103,8 @@ typedef struct
     int8_t timezoneOffset;
 } FudgeTime;
 
-#define FUDGETIME_MAX_SECONDS   86399
+#define FUDGETIME_MAX_SECONDS       131071
+#define FUDGETIME_MAX_NANOSECONDS   1073741824
 
 typedef struct
 {
@@ -135,6 +136,9 @@ typedef union
 
     /* UTF8 string */
     FudgeString string;
+
+    /* Date/time value - can be partially populated depending on type */
+    FudgeDateTime datetime;
 
     /* Other data types */
     const fudge_byte * bytes;

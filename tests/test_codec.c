@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "fudge/codec.h"
+#include "fudge/datetime.h"
 #include "fudge/string.h"
 #include "fudge/stringpool.h"
 #include "simpletest.h"
@@ -25,6 +26,7 @@
 #define SUBMSG_FILENAME         "test_data/subMsg.dat"
 #define UNKNOWN_FILENAME        "test_data/unknown.dat"
 #define VARIABLE_WIDTH_FILENAME "test_data/variableWidthColumnSizes.dat"
+#define DATETIMES_FILENAME      "test_data/dateTimes.dat"
 #define DEEPER_FILENAME         "test_data/deeper_fudge_msg.dat"
 
 FudgeMsg loadFudgeMsg ( const char * filename );
@@ -246,6 +248,56 @@ DEFINE_TEST( DecodeVariableWidths )
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 0 ].name ), 3, "100", 3 );    TEST_EQUALS_MEMORY( fields [ 0 ].data.bytes, fields [ 0 ].numbytes, empty, 100 );
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 1 ].name ), 4, "1000", 4 );   TEST_EQUALS_MEMORY( fields [ 1 ].data.bytes, fields [ 1 ].numbytes, empty, 1000 );
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 2 ].name ), 5, "10000", 5 );  TEST_EQUALS_MEMORY( fields [ 2 ].data.bytes, fields [ 2 ].numbytes, empty, 100000 );
+
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+END_TEST
+
+DEFINE_TEST( DecodeDateTimes )
+    FudgeField fields [ 16 ];
+    FudgeMsg message = loadFudgeMsg ( DATETIMES_FILENAME );
+
+    TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 16 );
+    TEST_EQUALS_INT( FudgeMsg_getFields ( fields, FudgeMsg_numFields ( message ), message ), 16 );
+
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 0 ].name ), 9,  "date-Year",  9 );   TEST_EQUALS_INT( fields [ 0 ].type, FUDGE_TYPE_DATE );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 1 ].name ), 10, "date-Month", 10 );  TEST_EQUALS_INT( fields [ 1 ].type, FUDGE_TYPE_DATE );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 2 ].name ), 8,  "date-Day",   8 );   TEST_EQUALS_INT( fields [ 2 ].type, FUDGE_TYPE_DATE );
+    TEST_EQUALS_DATE( fields [ 0 ].data.datetime.date, 2010, 0, 0 );
+    TEST_EQUALS_DATE( fields [ 1 ].data.datetime.date, 2010, 3, 0 );
+    TEST_EQUALS_DATE( fields [ 2 ].data.datetime.date, 2010, 3, 4 );
+
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  3 ].name ), 13, "time-Hour-UTC",   13 ); TEST_EQUALS_INT( fields [  3 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  4 ].name ), 16, "time-Minute-UTC", 16 ); TEST_EQUALS_INT( fields [  4 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  5 ].name ), 16, "time-Second-UTC", 16 ); TEST_EQUALS_INT( fields [  5 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  6 ].name ), 15, "time-Milli-UTC",  15 ); TEST_EQUALS_INT( fields [  6 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  7 ].name ), 15, "time-Micro-UTC",  15 ); TEST_EQUALS_INT( fields [  7 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  8 ].name ), 14, "time-Nano-UTC",   14 ); TEST_EQUALS_INT( fields [  8 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  9 ].name ),  9, "time-Nano",        9 ); TEST_EQUALS_INT( fields [  9 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 10 ].name ), 13, "time-Nano-+1h",   13 ); TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_TIME );
+    TEST_EQUALS_TIME( fields [  3 ].data.datetime.time, 11 * 3600,                987654321, FUDGE_DATETIME_PRECISION_HOUR,        0 ); /* TODO This is wrong - should have no-nanoseconds */
+    TEST_EQUALS_TIME( fields [  4 ].data.datetime.time, 11 * 3600 + 12 * 60,      987654321, FUDGE_DATETIME_PRECISION_MINUTE,      0 ); /* TODO This is wrong - should have no-nanoseconds */
+    TEST_EQUALS_TIME( fields [  5 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13,         0, FUDGE_DATETIME_PRECISION_SECOND,      0 );
+    TEST_EQUALS_TIME( fields [  6 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987000000, FUDGE_DATETIME_PRECISION_MILLISECOND, 0 );
+    TEST_EQUALS_TIME( fields [  7 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654000, FUDGE_DATETIME_PRECISION_MICROSECOND, 0 );
+    TEST_EQUALS_TIME( fields [  8 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND,  0 );
+    TEST_EQUALS_TIME( fields [  9 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND,  -128 );
+    TEST_EQUALS_TIME( fields [ 10 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND,  4 );
+
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 11 ].name ), 17, "datetime-Millenia", 17 ); TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_DATETIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 12 ].name ), 16, "datetime-Century",  16 ); TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_DATETIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 13 ].name ), 17, "datetime-Nano-UTC", 17 ); TEST_EQUALS_INT( fields [ 13 ].type, FUDGE_TYPE_DATETIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 14 ].name ), 13, "datetime-Nano",     13 ); TEST_EQUALS_INT( fields [ 14 ].type, FUDGE_TYPE_DATETIME );
+    TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 15 ].name ), 17, "datetime-Nano-+1h", 17 ); TEST_EQUALS_INT( fields [ 15 ].type, FUDGE_TYPE_DATETIME );
+    TEST_EQUALS_DATE( fields [ 11 ].data.datetime.date, 1000, 0, 0 );
+    TEST_EQUALS_DATE( fields [ 12 ].data.datetime.date, 1900, 0, 0 );
+    TEST_EQUALS_DATE( fields [ 13 ].data.datetime.date, 2010, 3, 4 );
+    TEST_EQUALS_DATE( fields [ 14 ].data.datetime.date, 2010, 3, 4 );
+    TEST_EQUALS_DATE( fields [ 15 ].data.datetime.date, 2010, 3, 4 );
+    TEST_EQUALS_TIME( fields [ 11 ].data.datetime.time,                        0,         0, FUDGE_DATETIME_PRECISION_MILLENNIUM, -128 );
+    TEST_EQUALS_TIME( fields [ 12 ].data.datetime.time,                        0,         0, FUDGE_DATETIME_PRECISION_CENTURY,    -128 );
+    TEST_EQUALS_TIME( fields [ 13 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 0 );
+    TEST_EQUALS_TIME( fields [ 14 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, -128 );
+    TEST_EQUALS_TIME( fields [ 15 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 4 );
 
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
 END_TEST
@@ -625,6 +677,73 @@ DEFINE_TEST( EncodeVariableWidths )
     free ( reference );
 END_TEST
 
+DEFINE_TEST( EncodeDateTimes )
+    fudge_byte * encoded, * reference;
+    fudge_i32 encodedsize, referencesize;
+    FudgeDate date;
+    FudgeTime time;
+    FudgeDateTime datetime;
+    FudgeMsgEnvelope envelope;
+    FudgeMsg message;
+    FudgeStringPool stringpool;
+    FudgeStatus status;
+
+    TEST_EQUALS_INT( FudgeStringPool_create ( &stringpool ), FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeMsg_create ( &message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDate_initialise ( &date, 2010, 0, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDate ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "date-Year" ), 0, &date ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDate_initialise ( &date, 2010, 3, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDate ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "date-Month" ), 0, &date ), FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDate_initialise ( &date, 2010, 3, 4 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDate ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "date-Day" ), 0, &date ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_HOUR, 0 ), FUDGE_OK );
+    time.nanoseconds = 987654321;   /* TODO Incorrect - nanoseconds should be zeroed out */
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Hour-UTC" ), 0, &time ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_MINUTE, 0 ), FUDGE_OK );
+    time.nanoseconds = 987654321;   /* TODO Incorrect - nanoseconds should be zeroed out */
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Minute-UTC" ), 0, &time ), FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_SECOND, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Second-UTC" ), 0, &time ), FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_MILLISECOND, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Milli-UTC" ), 0, &time ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_MICROSECOND, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Micro-UTC" ), 0, &time ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Nano-UTC" ), 0, &time ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialise ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Nano" ), 0, &time ), FUDGE_OK );       TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 4 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Nano-+1h" ), 0, &time ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
+
+    TEST_EQUALS_INT( FudgeDateTime_initialise ( &datetime, 1000, 0, 0, 0, 0, FUDGE_DATETIME_PRECISION_MILLENNIUM ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "datetime-Millenia" ), 0, &datetime ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDateTime_initialise ( &datetime, 1900, 0, 0, 0, 0, FUDGE_DATETIME_PRECISION_CENTURY ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "datetime-Century" ), 0, &datetime ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDateTime_initialiseWithTimezone ( &datetime, 2010, 3, 4, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "datetime-Nano-UTC" ), 0, &datetime ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDateTime_initialise ( &datetime, 2010, 3, 4, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "datetime-Nano" ), 0, &datetime ), FUDGE_OK );      TEST_EQUALS_INT( status, FUDGE_OK );
+    TEST_EQUALS_INT( FudgeDateTime_initialiseWithTimezone ( &datetime, 2010, 3, 4, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 4 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "datetime-Nano-+1h" ), 0, &datetime ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
+
+    envelope.directives = 0;
+    envelope.schemaversion = 0;
+    envelope.taxonomy = 0;
+    envelope.message = message;
+
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
+
+    loadFile ( &reference, &referencesize, DATETIMES_FILENAME );
+    TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
+
+    free ( encoded );
+    free ( reference );
+END_TEST
+
 DEFINE_TEST( EncodeDeepTree )
     fudge_byte bytes [ 512 ], empty [ 512 ];
     fudge_f64 doubles [ 16 ];
@@ -730,6 +849,7 @@ DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( DecodeSubMsgs )
     REGISTER_TEST( DecodeUnknown )
     REGISTER_TEST( DecodeVariableWidths )
+    REGISTER_TEST( DecodeDateTimes )
 
     /* Other decode test files */
     REGISTER_TEST( DecodeDeepTree )
@@ -741,6 +861,7 @@ DEFINE_TEST_SUITE( Codec )
     REGISTER_TEST( EncodeUnknown )
     REGISTER_TEST( EncodeSubMsgs )
     REGISTER_TEST( EncodeVariableWidths )
+    REGISTER_TEST( EncodeDateTimes )
 
     /* Other encode tests */
     REGISTER_TEST( EncodeDeepTree );

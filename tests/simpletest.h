@@ -17,7 +17,7 @@
 #define INC_FUDGE_SIMPLETEST_H
 
 #include "fudge/fudge.h"
-#include "fudge/platform.h"
+#include "fudge/types.h"
 #include <stdio.h>
 #ifdef FUDGE_HAVE_SETJMP_H
 #include <setjmp.h>
@@ -31,6 +31,8 @@ extern jmp_buf g_simpleTest_jmpBuffer;
 #define TEST_EQUALS_INT( x, y ) SimpleTest_equalsInt ( __FILE__, __LINE__, #x, #y, x, y )
 #define TEST_EQUALS_FLOAT( x, y, epsilon ) SimpleTest_equalsFloat ( __FILE__, __LINE__, #x, #y, x, y, epsilon )
 #define TEST_EQUALS_MEMORY( x, sx, y, sy ) SimpleTest_equalsMemory ( __FILE__, __LINE__, #x, #y, x, sx, y, sy )
+#define TEST_EQUALS_DATE( x, yy, ym, yd ) SimpleTest_equalsDate ( __FILE__, __LINE__, #x, x, yy, ym, yd )
+#define TEST_EQUALS_TIME( x, ys, yn, yp, yt ) SimpleTest_equalsTime ( __FILE__, __LINE__, #x, x, ys, yn, yp, yt )
 
 /* Helper macros - the test framework should be accessed using these */
 #define DEFINE_TEST_SUITE( name )                               \
@@ -76,6 +78,8 @@ extern void SimpleTest_equalsTrue ( const char * file, int line, const char * xS
 extern void SimpleTest_equalsInt ( const char * file, int line, const char * xStr, const char * yStr, int64_t x, int64_t y );
 extern void SimpleTest_equalsFloat ( const char * file, int line, const char * xStr, const char * yStr, double x, double y, double epsilon );
 extern void SimpleTest_equalsMemory ( const char * file, int line, const char * xStr, const char * yStr, const void * x, int sizeX, const void * y, int sizeY );
+extern void SimpleTest_equalsDate ( const char * file, int line, const char * dateStr, FudgeDate date, int32_t year, uint8_t month, uint8_t day );
+extern void SimpleTest_equalsTime ( const char * file, int line, const char * timeStr, FudgeTime time, uint32_t seconds, uint32_t nanoseconds, FudgeDateTimePrecision precision, int timezone );
 
 #endif
 

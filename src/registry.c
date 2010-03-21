@@ -79,6 +79,10 @@ FudgeStatus FudgeRegistry_init ( )
 
     FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_FUDGE_MSG,       -1, FUDGE_TYPE_PAYLOAD_SUBMSG, FudgeCodec_decodeFieldFudgeMsg,   FudgeCodec_encodeFieldFudgeMsg,  FudgeType_coerceDefault );
 
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_DATE,            4,  FUDGE_TYPE_PAYLOAD_LOCAL,  FudgeCodec_decodeFieldDate,       FudgeCodec_encodeFieldDate,      FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_TIME,            8,  FUDGE_TYPE_PAYLOAD_LOCAL,  FudgeCodec_decodeFieldTime,       FudgeCodec_encodeFieldTime,      FudgeType_coerceDefault );
+    FudgeRegistry_registerTypeInternal ( FUDGE_TYPE_DATETIME,       12,  FUDGE_TYPE_PAYLOAD_LOCAL,  FudgeCodec_decodeFieldDateTime,   FudgeCodec_encodeFieldDateTime,  FudgeType_coerceDefault );
+
     s_registryInitialised = FUDGE_TRUE;
     return FUDGE_OK;
 }

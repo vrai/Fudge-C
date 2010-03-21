@@ -245,6 +245,42 @@ FudgeStatus FudgeCodec_decodeFieldFudgeMsg ( const fudge_byte * bytes, const fud
     return FUDGE_OK;
 }
 
+FudgeStatus FudgeCodec_decodeFieldDate ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
+{
+    FudgeDate * date = &( data->datetime.date );
+    const fudge_i32 value = FudgeCodec_decodeI32 ( bytes );
+
+    date->year = value >> 9;
+    date->month = ( value >> 5 ) & 0xf;
+    date->day = value & 0x1f;
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeCodec_decodeFieldTime ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
+{
+    FudgeTime * time = &( data->datetime.time );
+    const fudge_i32 hiword = FudgeCodec_decodeI32 ( bytes );
+    const fudge_i32 loword = FudgeCodec_decodeI32 ( bytes + sizeof ( fudge_i32 ) );
+    int timezone;
+
+    timezone = ( hiword ) >> 24;
+    time->hasTimezone = ( timezone != -128 );
+    time->timezoneOffset = time->hasTimezone ? timezone : 0;
+
+    time->precision = ( hiword >> 20 ) & 0xf;
+    time->seconds = hiword & 0x1ffff;
+    time->nanoseconds = loword & 0x3fffffff;
+    return FUDGE_OK;
+}
+
+FudgeStatus FudgeCodec_decodeFieldDateTime ( const fudge_byte * bytes, const fudge_i32 width, FudgeFieldData * data )
+{
+    FudgeStatus status;
+    if ( ( status = FudgeCodec_decodeFieldDate ( bytes, width, data ) ) != FUDGE_OK )
+        return status;
+    return FudgeCodec_decodeFieldTime ( bytes + 4 /* Width of date representation */, width, data );
+}
+
 /*****************************************************************************
  * Functions from fudge/codec.h
  */
