@@ -274,8 +274,8 @@ DEFINE_TEST( DecodeDateTimes )
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  8 ].name ), 13, "time-Nano-UTC",   13 ); TEST_EQUALS_INT( fields [  8 ].type, FUDGE_TYPE_TIME );
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  9 ].name ),  9, "time-Nano",        9 ); TEST_EQUALS_INT( fields [  9 ].type, FUDGE_TYPE_TIME );
     TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 10 ].name ), 13, "time-Nano-+1h",   13 ); TEST_EQUALS_INT( fields [ 10 ].type, FUDGE_TYPE_TIME );
-    TEST_EQUALS_TIME( fields [  3 ].data.datetime.time, 11 * 3600,                987654321, FUDGE_DATETIME_PRECISION_HOUR,        0 ); /* TODO This is wrong - should have no-nanoseconds */
-    TEST_EQUALS_TIME( fields [  4 ].data.datetime.time, 11 * 3600 + 12 * 60,      987654321, FUDGE_DATETIME_PRECISION_MINUTE,      0 ); /* TODO This is wrong - should have no-nanoseconds */
+    TEST_EQUALS_TIME( fields [  3 ].data.datetime.time, 11 * 3600,                        0, FUDGE_DATETIME_PRECISION_HOUR,        0 );
+    TEST_EQUALS_TIME( fields [  4 ].data.datetime.time, 11 * 3600 + 12 * 60,              0, FUDGE_DATETIME_PRECISION_MINUTE,      0 );
     TEST_EQUALS_TIME( fields [  5 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13,         0, FUDGE_DATETIME_PRECISION_SECOND,      0 );
     TEST_EQUALS_TIME( fields [  6 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987000000, FUDGE_DATETIME_PRECISION_MILLISECOND, 0 );
     TEST_EQUALS_TIME( fields [  7 ].data.datetime.time, 11 * 3600 + 12 * 60 + 13, 987654000, FUDGE_DATETIME_PRECISION_MICROSECOND, 0 );
@@ -699,10 +699,8 @@ DEFINE_TEST( EncodeDateTimes )
     TEST_EQUALS_INT( FudgeMsg_addFieldDate ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "date-Day" ), 0, &date ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_HOUR, 0 ), FUDGE_OK );
-    time.nanoseconds = 987654321;   /* TODO Incorrect - nanoseconds should be zeroed out */
     TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Hour-UTC" ), 0, &time ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_MINUTE, 0 ), FUDGE_OK );
-    time.nanoseconds = 987654321;   /* TODO Incorrect - nanoseconds should be zeroed out */
     TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Minute-UTC" ), 0, &time ), FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeTime_initialiseWithTimezone ( &time, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_SECOND, 0 ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "time-Second-UTC" ), 0, &time ), FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
