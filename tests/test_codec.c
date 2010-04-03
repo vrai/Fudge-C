@@ -15,6 +15,7 @@
  */
 #include "fudge/codec.h"
 #include "fudge/datetime.h"
+#include "fudge/envelope.h"
 #include "fudge/string.h"
 #include "fudge/stringpool.h"
 #include "simpletest.h"
@@ -447,13 +448,10 @@ DEFINE_TEST( EncodeAllNames )
 
     TEST_EQUALS_INT( FudgeMsg_addFieldIndicator ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "indicator" ), 0 ), FUDGE_OK );   TEST_EQUALS_INT( status, FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
 
     TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 
@@ -492,13 +490,10 @@ DEFINE_TEST( EncodeFixedWidths )
 
     TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "byte[28]" ), 0, bytes, 28 ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, FIXED_WIDTH_FILENAME );
@@ -542,13 +537,10 @@ DEFINE_TEST( EncodeAllOrdinals )
     ordinal = 16;   TEST_EQUALS_INT( FudgeMsg_addFieldF32Array ( message, 0, &ordinal, ( fudge_f32 * ) empty, 24 ),  FUDGE_OK );
     ordinal = 17;   TEST_EQUALS_INT( FudgeMsg_addFieldF64Array ( message, 0, &ordinal, ( fudge_f64 * ) empty, 273 ), FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, ALLORDINALS_FILENAME );
     TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
@@ -573,13 +565,10 @@ DEFINE_TEST( EncodeUnknown )
     TEST_EQUALS_INT( FudgeMsg_addFieldOpaque ( message, 200, name, 0, empty, 10 ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeString_release ( name ), FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, UNKNOWN_FILENAME );
     TEST_EQUALS_MEMORY( encoded, encodedsize, reference, referencesize );
@@ -627,13 +616,10 @@ DEFINE_TEST( EncodeSubMsgs )
     TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, SUBMSG_FILENAME );
@@ -661,13 +647,10 @@ DEFINE_TEST( EncodeVariableWidths )
     TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "1000" ),  0, empty, 1000 ),   FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldByteArray ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "10000" ), 0, empty, 100000 ), FUDGE_OK ); TEST_EQUALS_INT( status, FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, VARIABLE_WIDTH_FILENAME );
@@ -726,13 +709,10 @@ DEFINE_TEST( EncodeDateTimes )
     TEST_EQUALS_INT( FudgeDateTime_initialiseWithTimezone ( &datetime, 2010, 3, 4, 11 * 3600 + 12 * 60 + 13, 987654321, FUDGE_DATETIME_PRECISION_NANOSECOND, 4 ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_addFieldDateTime ( message, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "datetime-Nano-+1h" ), 0, &datetime ), FUDGE_OK );  TEST_EQUALS_INT( status, FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, DATETIMES_FILENAME );
@@ -823,13 +803,10 @@ DEFINE_TEST( EncodeDeepTree )
     TEST_EQUALS_INT( status, FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( submessage ), FUDGE_OK );
 
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeStringPool_release ( stringpool ), FUDGE_OK );
 
     loadFile ( &reference, &referencesize, DEEPER_FILENAME );
@@ -870,11 +847,16 @@ FudgeMsg loadFudgeMsg ( const char * filename )
     fudge_byte * referenceBytes;
     fudge_i32 numReferenceBytes;
     FudgeMsgEnvelope envelope;
+    FudgeMsg message;
 
     loadFile ( &referenceBytes, &numReferenceBytes, filename );
     TEST_EQUALS_INT( FudgeCodec_decodeMsg ( &envelope, referenceBytes, numReferenceBytes ), FUDGE_OK );
     free ( referenceBytes );
-    return envelope.message;
+
+    message = FudgeMsgEnvelope_getMessage ( envelope );
+    FudgeMsg_retain ( message );
+    FudgeMsgEnvelope_release ( envelope );
+    return message;
 }
 
 void loadFile ( fudge_byte * * target, fudge_i32 * targetSize, const char * filename )

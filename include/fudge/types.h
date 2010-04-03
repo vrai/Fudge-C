@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ typedef uint8_t fudge_type_id;
  * Structure/union type definitions
  */
 
+typedef struct FudgeMsgEnvelopeImpl * FudgeMsgEnvelope;
+
 typedef struct FudgeMsgImpl * FudgeMsg;
 
 typedef struct FudgeStringImpl * FudgeString;
@@ -111,14 +113,6 @@ typedef struct
     FudgeDate date;
     FudgeTime time;
 } FudgeDateTime;
-
-typedef struct
-{
-    fudge_byte directives;      /* Processing directives, for future use */
-    fudge_byte schemaversion;   /* Application specific Schema version */
-    fudge_i16 taxonomy;         /* Application specific taxonomy reference */
-    FudgeMsg message;           /* The actual message */
-} FudgeMsgEnvelope;
 
 typedef union
 {

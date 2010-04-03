@@ -32,6 +32,7 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        coerce.c         \
                        convertutf.c     \
                        datetime.c       \
+                       envelope.c       \
                        fudge.c          \
                        header.c         \
                        message.c        \

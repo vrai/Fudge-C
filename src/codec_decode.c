@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fudge/envelope.h"
 #include "fudge/string.h"
 #include "codec_decode.h"
 #include "header.h"
@@ -302,10 +303,15 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte
     if ( ( status = FudgeMsg_create ( &message ) ) != FUDGE_OK )
         return status;
 
-    envelope->directives = header.directives;
-    envelope->schemaversion = header.schemaversion;
-    envelope->taxonomy = header.taxonomy;
-    envelope->message = message;
+    if ( ( status = FudgeMsgEnvelope_create ( envelope,
+                                              header.directives,
+                                              header.schemaversion,
+                                              header.taxonomy,
+                                              message ) ) != FUDGE_OK )
+        goto release_message_and_fail;
+
+    /* Envelope now has a message reference */
+    FudgeMsg_release ( message );
 
     /* Advance to the end of the header */
     bytes += sizeof ( FudgeMsgHeader );
@@ -313,11 +319,15 @@ FudgeStatus FudgeCodec_decodeMsg ( FudgeMsgEnvelope * envelope, const fudge_byte
 
     /* Consume fields */
     if ( ( status = FudgeCodec_decodeMsgFields ( message, bytes, numbytes ) ) != FUDGE_OK )
-    {
-        FudgeMsg_release ( message );
-        envelope->message = 0;
-    }
+        goto release_envelope_and_fail;
 
+    return status;
+
+release_envelope_and_fail:
+    FudgeMsgEnvelope_release ( *envelope );
+
+release_message_and_fail:
+    FudgeMsg_release ( message );
     return status;
 }
 

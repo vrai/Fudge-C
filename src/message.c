@@ -177,7 +177,11 @@ FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr )
         return FUDGE_OUT_OF_MEMORY;
 
     if ( ( status = FudgeRefCount_create ( &( ( *messageptr )->refcount ) ) ) != FUDGE_OK )
+    {
+        free ( *messageptr );
         return status;
+    }
+
     ( *messageptr )->fieldhead = 0;
     ( *messageptr )->fieldtail = 0;
     ( *messageptr )->numfields = 0ul;
@@ -202,7 +206,7 @@ FudgeStatus FudgeMsg_release ( FudgeMsg message )
 
     if ( ! FudgeRefCount_decrementAndReturn ( message->refcount ) )
     {
-        /* Last reference has been released - destroyed the message and all of its fields */
+        /* Last reference has been released - destroy the message and all of its fields */
         FudgeStatus status;
         FieldListNode * node;
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "fudge/envelope.h"
 #include "fudge/string.h"
 #include "codec_encode.h"
 #include "header.h"
@@ -294,14 +295,18 @@ FudgeStatus FudgeCodec_encodeFieldDateTime  ( const FudgeField * field, fudge_by
 
 FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * bytes, fudge_i32 * numbytes )
 {
+    FudgeMsg message;
     FudgeStatus status;
     fudge_byte * writepos;
 
-    if ( ! ( bytes && numbytes && envelope.message ) )
+    if ( ! ( bytes && numbytes && envelope ) )
+        return FUDGE_NULL_POINTER;
+
+    if ( ! ( message = FudgeMsgEnvelope_getMessage ( envelope ) ) )
         return FUDGE_NULL_POINTER;
 
     /* Get the length of the message, plus the envelope header */
-    if ( ( status = FudgeCodec_getMessageLength ( envelope.message, numbytes ) ) != FUDGE_OK )
+    if ( ( status = FudgeCodec_getMessageLength ( message, numbytes ) ) != FUDGE_OK )
         return status;
     *numbytes += sizeof ( FudgeMsgHeader );
 
@@ -311,13 +316,13 @@ FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * byt
 
     /* Write the message envelope */
     writepos = *bytes;
-    FudgeCodec_encodeByte ( envelope.directives, &writepos );
-    FudgeCodec_encodeByte ( envelope.schemaversion, &writepos );
-    FudgeCodec_encodeI16 ( envelope.taxonomy, &writepos );
+    FudgeCodec_encodeByte ( FudgeMsgEnvelope_getDirectives ( envelope ), &writepos );
+    FudgeCodec_encodeByte ( FudgeMsgEnvelope_getSchemaVersion ( envelope ), &writepos );
+    FudgeCodec_encodeI16 ( FudgeMsgEnvelope_getTaxonomy ( envelope ), &writepos );
     FudgeCodec_encodeI32 ( *numbytes, &writepos );
 
     /* Write the top-level fields */
-    if ( ( status = FudgeCodec_encodeMsgFields ( envelope.message, &writepos ) ) != FUDGE_OK )
+    if ( ( status = FudgeCodec_encodeMsgFields ( message, &writepos ) ) != FUDGE_OK )
         goto release_bytes_and_fail;
 
     /* Ensure that all bytes have been written */

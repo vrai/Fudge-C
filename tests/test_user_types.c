@@ -16,6 +16,7 @@
 #include "simpletest.h"
 #include "fudge/message.h"
 #include "fudge/codec.h"
+#include "fudge/envelope.h"
 #include "fudge/string.h"
 #include "fudge/stringpool.h"
 
@@ -245,19 +246,18 @@ DEFINE_TEST( UserTypeHandling )
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 5 );
 
     /* Encode the test message */
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
-
-    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ), FUDGE_OK );
     TEST_EQUALS_INT( FudgeMsg_release ( message ), FUDGE_OK );
-    envelope.message = 0;
+    TEST_EQUALS_INT( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
+    envelope = 0;
 
     /* Decode the test message */
     TEST_EQUALS_INT( FudgeCodec_decodeMsg ( &envelope, encoded, encodedsize ), FUDGE_OK );
-    TEST_EQUALS_TRUE( envelope.message != 0 );
-    message = envelope.message;
+    TEST_EQUALS_TRUE( envelope != 0 );
+    TEST_EQUALS_TRUE( ( message = FudgeMsgEnvelope_getMessage ( envelope ) ) != 0 );
+    TEST_EQUALS_INT( FudgeMsg_retain ( message ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     free ( encoded );
 
     TEST_EQUALS_INT( FudgeMsg_numFields ( message ), 5 );
