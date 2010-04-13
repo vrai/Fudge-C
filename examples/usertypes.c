@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <fudge/fudge.h>
-#include <fudge/message.h>
+#include <fudge/envelope.h>
 #include <fudge/codec.h>
 #include <fudge/string.h>
 #include <stdio.h>
@@ -238,10 +238,8 @@ int main ( int argc, char * argv [ ] )
         FudgeMsg_addFieldAddressDetails ( message, 0, &ordinal, details [ ordinal ] );
 
     /* Encode the message */
-    envelope.directives = 0;
-    envelope.schemaversion = 0;
-    envelope.taxonomy = 0;
-    envelope.message = message;
+    if ( ( status = FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, message ) ) )
+        fatalFudgeError ( status, "Failed to create Fudge messag envelope" );
 
     if ( ( status = FudgeCodec_encodeMsg ( envelope, &encoded, &encodedsize ) ) )
         fatalFudgeError ( status, "Failed to encode Fudge message" );
@@ -249,6 +247,7 @@ int main ( int argc, char * argv [ ] )
     /* Clean up source details and messge */
     free ( details [ 0 ] );
     free ( details [ 1 ] );
+    FudgeMsgEnvelope_release ( envelope );
     FudgeMsg_release ( message );
 
     /* Decode the message and release the encoded bytes array */
@@ -265,7 +264,7 @@ int main ( int argc, char * argv [ ] )
         fudge_i32 datasize;
         char * ascii;
 
-        if ( ( status = FudgeMsg_getFieldByOrdinal ( &field, envelope.message, ordinal ) ) )
+        if ( ( status = FudgeMsg_getFieldByOrdinal ( &field, FudgeMsgEnvelope_getMessage ( envelope ), ordinal ) ) )
             fatalFudgeError ( status, "Failed to find field" );
 
         /* Convert the field in to a string */
@@ -287,7 +286,7 @@ int main ( int argc, char * argv [ ] )
     }
 
     /* Clean up */
-    FudgeMsg_release ( envelope.message );
+    FudgeMsgEnvelope_release ( envelope );
     return 0;
 }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <fudge/fudge.h>
-#include <fudge/message.h>
+#include <fudge/envelope.h>
 #include <fudge/codec.h>
 #include <fudge/string.h>
 #include <stdio.h>
@@ -142,28 +142,25 @@ int main ( int argc, char * argv [ ] )
      * Encode a Fudge Message
      */
 
-    /* Before being encoded a fudge message must be wrapped in an envelope. 
-       This will not grab a reference to the message it holds and is only
-       intented as a temporary stack object. */
-    envelope.directives = 0;
-    envelope.schemaversion = 1;
-    envelope.taxonomy = 0;
-    envelope.message = contactMsg;
+    /* Before being encoded a fudge message must be wrapped in an envelope. */
+    if ( ( status = FudgeMsgEnvelope_create ( &envelope, 0, 1, 0, contactMsg ) ) )
+        return logFudgeError ( status, "Failed to create message envelope" );
 
     if ( ( status = FudgeCodec_encodeMsg ( envelope, &bytes, &numbytes ) ) )
         return logFudgeError ( status, "Failed to encode contact message" );
     printf ( "Contacts message encoded as a %d byte Fudge message\n", numbytes );
 
-    /* Now that the message has been encoded, the contacts message can be
-       released. This will destroy the message and its fields (including the
-       address message as the contacts message holds the only reference to
-       it). */
+    /* Now that the message has been encoded, the contacts message and
+       envelope can be released. This will destroy the message and its fields
+       (including the address message as the contacts message holds the only
+       reference to it). */
     FudgeMsg_release ( contactMsg );
+    FudgeMsgEnvelope_release ( envelope );
 
     /* Clear some of the working variables. Hopefully this should make it more
        obvious which ones the decoding process will change. */
     addressMsg = contactMsg = 0;
-    memset ( &envelope, 0, sizeof ( envelope ) );
+    envelope = 0;
 
     /*************************************************************************
      * Decode a Fudge Message
@@ -172,18 +169,17 @@ int main ( int argc, char * argv [ ] )
     if ( ( status = FudgeCodec_decodeMsg ( &envelope, bytes, numbytes ) ) )
         return logFudgeError ( status, "Failed to decode contact message" );
     printf ( "Decoded Fudge message with schema version %d and %lu fields\n",
-             envelope.schemaversion,
-             FudgeMsg_numFields ( envelope.message ) );
+             FudgeMsgEnvelope_getSchemaVersion ( envelope ),
+             FudgeMsg_numFields ( FudgeMsgEnvelope_getMessage ( envelope ) ) );
 
     /* Now the message has been decoded it's safe to free the byte array
        holding the encoded message. */
     free ( bytes );
 
-    /* Re-use the local contacts message variable to save on typing. Don't
-       increase the reference count as the calling code is already considered
-       to hold a reference after decoding (which must be released by the
-       calling code when the message is no longer needed). */
-    contactMsg = envelope.message;
+    /* Re-use the local contacts message variable to save on typing. Grab a
+       local reference and release the, no longer needed, envelope. */
+    FudgeMsg_retain ( contactMsg = FudgeMsgEnvelope_getMessage ( envelope ) );
+    FudgeMsgEnvelope_release ( envelope );
 
     /* Retrieve and output the name; having checked that it is a string. There
        is no need to clear the field after use or free any memory as it is

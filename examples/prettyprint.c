@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <fudge/fudge.h>
-#include <fudge/message.h>
+#include <fudge/envelope.h>
 #include <fudge/codec.h>
 #include <fudge/string.h>
 #include <stdio.h>
@@ -70,16 +70,16 @@ int main ( int argc, char * argv [ ] )
 
     /* Output the file contents */
     outputEnvelope ( envelope );
-    FudgeMsg_release ( envelope.message );
+    FudgeMsgEnvelope_release ( envelope );
     return 0;
 }
 
 void outputEnvelope ( FudgeMsgEnvelope envelope )
 {
     printf ( "Schema version: %d\nTaxonomy: %d\nMessage:\n{\n",
-             ( int ) envelope.schemaversion,
-             ( int ) envelope.taxonomy );
-    outputMessage ( envelope.message, 0 );
+             ( int ) FudgeMsgEnvelope_getSchemaVersion ( envelope ),
+             ( int ) FudgeMsgEnvelope_getTaxonomy ( envelope ) );
+    outputMessage ( FudgeMsgEnvelope_getMessage ( envelope ), 0 );
     printf ( "}\n" );
 }
 
