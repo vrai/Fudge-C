@@ -34,6 +34,7 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_STRING_INCOMPLETE_UNICODE:     return "Incomplete Unicode char encountered";
         case FUDGE_STRING_UNCONSUMED_UNICODE:     return "Unicode conversion did not consume all source chars";
         case FUDGE_STRING_INVALID_SURROGATE:      return "Invalid 3-byte modified UTF8 sequence";
+        case FUDGE_STRING_UNKNOWN_UNICODE_TYPE:   return "Unicode type was not recognised";
         case FUDGE_OUT_OF_BYTES:                  return "Out of Bytes";
         case FUDGE_UNKNOWN_FIELD_WIDTH:           return "Unknown Field Width";
         case FUDGE_DATETIME_INVALID_YEAR:         return "Invalid value for Year";
