@@ -24,12 +24,17 @@
 #define FUDGE_HAVE_STDARG_H
 #define FUDGE_HAVE_STDLIB_H
 #define FUDGE_HAVE_TIME_H
+#if _MSC_VER >= 1600 /* stdint.h available on 2010 and higher */
+#define FUDGE_HAVE_STDINT_H
+#endif /* if _MSV_VER >= 1600 */
 
 #define FUDGE_SIZEOF_DOUBLE	sizeof(double)
 #define FUDGE_SIZEOF_FLOAT	sizeof(float)
 
 #define FUDGE_ARPA_INET_WINSOCK_HACK
 
-#define inline __declspec(inline)
+#ifndef __cplusplus
+#define inline __declspec (inline)
+#endif /* ifndef __cplusplus */
 
 #endif /* ifndef _INCLUDE_FUDGE_CONFIG_H */
