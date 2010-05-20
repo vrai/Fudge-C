@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 #include "fudge/message.h"
-#include "fudge/platform.h"
 #include "message_internal.h"
-#include "header.h"
+#include "fudge/header.h"
 #include "reference.h"
 #include "registry_internal.h"
 #include <assert.h>

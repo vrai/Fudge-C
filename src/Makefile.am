@@ -20,10 +20,8 @@ noinst_HEADERS = codec_decode.h         \
                  codec_encode.h         \
                  coerce.h               \
                  convertutf.h           \
-                 header.h               \
                  message_internal.h     \
                  prefix.h               \
-                 pstdint.h              \
                  reference.h            \
                  registry_internal.h
 

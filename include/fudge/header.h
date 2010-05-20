@@ -19,6 +19,10 @@
 #include "fudge/status.h"
 #include "fudge/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* ifdef __cplusplus */
+
 typedef struct
 {
     fudge_byte directives;      /* Processing directives, reserved for future use */
@@ -37,15 +41,18 @@ typedef struct
     fudge_i32 namelen;
 } FudgeFieldHeader;
 
-FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes );
 
-FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32 * consumed, const fudge_byte * bytes, fudge_i32 numbytes );
-FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fudge_byte * * writepos );
-FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header );
+FUDGEAPI FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32 * consumed, const fudge_byte * bytes, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fudge_byte * * writepos );
+FUDGEAPI FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header );
 
-FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed, FudgeFieldHeader header, const fudge_byte * bytes, fudge_i32 numbytes );
+FUDGEAPI FudgeStatus FudgeHeader_getFieldWidth ( fudge_i32 * width, fudge_i32 * consumed, FudgeFieldHeader header, const fudge_byte * bytes, fudge_i32 numbytes );
 
-const fudge_i16 * FudgeHeader_getOrdinal ( const FudgeFieldHeader * header );
+FUDGEAPI const fudge_i16 * FudgeHeader_getOrdinal ( const FudgeFieldHeader * header );
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* ifdef __cplusplus */
 
+#endif /* ifndef INC_FUDGE_HEADER_H */

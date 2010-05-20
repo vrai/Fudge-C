@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "codec_decode.h"
-#include "header.h"
+#include "fudge/header.h"
 #include "registry_internal.h"
 #include <assert.h>
 
