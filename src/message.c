@@ -105,7 +105,7 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     {
         /* Names may not have a length greater than 255 bytes (only one byte is
            available for their length) */
-        if ( namelen > 256 )
+        if ( namelen >= 256 )
         {
             status = FUDGE_NAME_TOO_LONG;
             goto release_node_and_fail;
