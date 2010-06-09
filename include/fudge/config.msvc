@@ -24,6 +24,7 @@
 #define FUDGE_HAVE_STDARG_H
 #define FUDGE_HAVE_STDLIB_H
 #define FUDGE_HAVE_TIME_H
+#define FUDGE_HAVE_INTRIN_H
 #if _MSC_VER >= 1600 /* stdint.h available on 2010 and higher */
 #define FUDGE_HAVE_STDINT_H
 #endif /* if _MSV_VER >= 1600 */
