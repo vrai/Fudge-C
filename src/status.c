@@ -28,6 +28,7 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_NAME_TOO_LONG:                 return "Name Too Long";
         case FUDGE_INVALID_TYPE_COERCION:         return "Invaild Type Coercion";
         case FUDGE_COERCION_NOT_REQUIRED:         return "Coercion Not Required";
+        case FUDGE_INVALID_TYPE_ACCESSOR:         return "Cannot use this accessor/field type combination";
         case FUDGE_INVALID_USER_TYPE:             return "Invalid User Type";
         case FUDGE_STRING_INVALID_ASCII:          return "Invalid ASCII char in string";
         case FUDGE_STRING_INVALID_UNICODE:        return "Invalid Unicode char encountered";

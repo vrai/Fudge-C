@@ -35,6 +35,7 @@ typedef enum
 
     FUDGE_INVALID_TYPE_COERCION         = 0x0020,
     FUDGE_COERCION_NOT_REQUIRED         = 0x0021,
+    FUDGE_INVALID_TYPE_ACCESSOR         = 0x0022,
 
     FUDGE_INVALID_USER_TYPE             = 0x0040,
 
