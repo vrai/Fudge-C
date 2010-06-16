@@ -15,6 +15,7 @@
  */
 #include "reference.h"
 #include "fudge/platform.h"
+#include "atomic.h"
 #include <assert.h>
 
 struct FudgeRefCountImpl
@@ -41,7 +42,7 @@ FudgeStatus FudgeRefCount_destroy ( FudgeRefCount refcount )
 void FudgeRefCount_increment ( FudgeRefCount refcount )
 {
     if ( refcount )
-        refcount->count += 1u;
+	AtomicIncrementAndReturn (refcount->count);
     else
         assert ( refcount );
 }
@@ -51,7 +52,7 @@ int FudgeRefCount_decrementAndReturn ( FudgeRefCount refcount )
     if ( refcount )
     {
         assert ( refcount->count >= 1u );
-        return refcount->count -= 1u;
+	return AtomicDecrementAndReturn (refcount->count);
     }
     else
     {

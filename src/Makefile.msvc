@@ -40,10 +40,8 @@ HEADERS=	include\fudge\codec.h \
 		include\fudge\types.h \
 		src\codec_decode.h \
 		src\codec_encode.h \
-		src\header.h \
 		src\message_internal.h \
 		src\prefix.h \
-		src\pstdint.h \
 		src\reference.h \
 		src\registry_internal.h
 

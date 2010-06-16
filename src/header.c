@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "fudge/codec_ex.h"
-#include "header.h"
+#include "fudge/header.h"
 #include "prefix.h"
 
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes )

@@ -17,7 +17,7 @@
 #include "fudge/platform.h"
 #include "fudge/string.h"
 #include "message_internal.h"
-#include "header.h"
+#include "fudge/header.h"
 #include "reference.h"
 #include "registry_internal.h"
 #include <assert.h>
@@ -118,7 +118,7 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     {
         /* Names may not have a length greater than 255 bytes (only one byte is
            available for their length) */
-        if ( FudgeString_getSize ( name ) > 256 )
+        if ( FudgeString_getSize ( name ) >= 256 )
         {
             status = FUDGE_NAME_TOO_LONG;
             goto release_node_and_fail;

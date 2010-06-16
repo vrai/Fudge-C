@@ -16,7 +16,7 @@
 #include "fudge/envelope.h"
 #include "fudge/string.h"
 #include "codec_encode.h"
-#include "header.h"
+#include "fudge/header.h"
 #include "message_internal.h"
 #include "prefix.h"
 #include "registry_internal.h"

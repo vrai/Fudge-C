@@ -19,7 +19,7 @@
 #include "fudgeapi.h"
 #include "config.h"
 
-/* Include the availale system headers. */
+/* Include the available system headers. */
 #ifdef FUDGE_HAVE_SYS_TYPES_H
 #   include <sys/types.h>
 #endif
@@ -29,7 +29,7 @@
 #ifdef FUDGE_HAVE_STDINT_H
 #   include <stdint.h>
 #else /* ifdef FUDGE_HAVE_STDINT_H */
-#   include "../../src/pstdint.h"
+#   include "pstdint.h"
 #endif /* ifdef FUDGE_HAVE_STDINT_H */
 #ifdef FUDGE_HAVE_STDLIB_H
 #   include <stdlib.h>
