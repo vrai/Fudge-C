@@ -17,6 +17,7 @@
 #define INC_FUDGE_MESSAGE_H
 
 #include "fudge/message_ex.h"
+#include "fudge/string.h"
 
 #ifdef __cplusplus
     extern "C" {
