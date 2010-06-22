@@ -135,6 +135,7 @@ FudgeString FudgeStringPool_createStringFromASCII ( FudgeStringPool pool, FudgeS
     if ( ! pool )
     {
         localstatus = FUDGE_NULL_POINTER;
+        string = 0;
         goto status_and_return;
     }
 
@@ -160,6 +161,7 @@ FudgeString FudgeStringPool_createStringFromASCIIZ ( FudgeStringPool pool, Fudge
     if ( ! pool )
     {
         localstatus = FUDGE_NULL_POINTER;
+        string = 0;
         goto status_and_return;
     }
 
