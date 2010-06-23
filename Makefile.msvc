@@ -25,6 +25,7 @@ all:	obj \
 
 clean:
 	rd /s/q obj
+	del include\fudge\config.h
 	del libfudgec*.dll
 	del libfudgec*.lib
 	del libfudgec*.ilk
