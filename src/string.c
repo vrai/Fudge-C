@@ -232,6 +232,35 @@ const fudge_byte * FudgeString_getData ( const FudgeString string )
     return string ? string->bytes : 0;
 }
 
+FUDGEAPI size_t FudgeString_getLength ( const FudgeString string )
+{
+    size_t length = 0, readPosition = 0, trailing;
+    char character;
+    if ( ! ( string ) )
+        /* Null string pointer */
+        return -1;
+    if ( ! string->numbytes )
+        /* Empty string */
+        return 0;
+    while ( readPosition < string->numbytes )
+    {
+        character = string->bytes [ readPosition++ ];
+        if ( ( trailing = trailingBytesForUTF8 [ ( UTF8 ) character ] ) )
+        {
+            if ( ( readPosition += trailing ) > string->numbytes )
+                /* Incomplete Unicode sequence */
+                return -1;
+            if ( trailing == 2 && ( UTF8 ) character == 0xef
+                               && ( UTF8 ) ( string->bytes [ readPosition - 2 ] ) == 0xbb
+                               && ( UTF8 ) ( string->bytes [ readPosition - 1 ] ) == 0xbf )
+                /* Don't count BOM sequence */
+                continue;
+        }
+        length++;
+    }
+    return length;
+}
+
 FudgeStatus FudgeString_convertToASCIIZ ( char * * target, const FudgeString string )
 {
     if ( ! ( target && string ) )
@@ -357,6 +386,76 @@ FudgeStatus FudgeString_convertToUTF32 ( fudge_byte * * target, size_t * numbyte
     }
     *numbytes = ( size_t ) targetStart - ( size_t ) *target;
     return FUDGE_OK;
+}
+
+FUDGEAPI size_t FudgeString_copyToASCII ( char * buffer, size_t buffersize, const FudgeString string )
+{
+    size_t readPosition = 0, writePosition = 0, trailing;
+    if ( ! ( string && buffer ) )
+        return 0;
+    while ( ( readPosition < string->numbytes ) && ( writePosition < buffersize ) )
+    {
+        char character = string->bytes [ readPosition++ ] ;
+        if ( ( trailing = trailingBytesForUTF8 [ ( UTF8 ) character ] ) )
+        {
+            /* Unicode character is the start of a sequence: make sure
+             * there's enough bytes in the source to complete it */
+            if ( readPosition + trailing > string->numbytes )
+                return 0;
+            /* UTF8 strings can contain BOM sequences (0xefbbbf), these
+             * should be skipped over */
+            if ( trailing == 2 && ( UTF8 ) character == 0xef
+                               && ( UTF8 ) ( string->bytes [ readPosition ] ) == 0xbb
+                               && ( UTF8 ) ( string->bytes [ readPosition + 1 ] ) == 0xbf )
+            {
+                readPosition += trailing;
+                continue;
+            }
+            character = '?';
+            readPosition += trailing;
+        }
+        else
+        {
+            if ( character < 1 || character > 126 )
+                character = '?';
+        }
+        buffer [ writePosition++ ] = character;
+    }
+    return writePosition;
+}
+
+FUDGEAPI size_t FudgeString_copyToUTF16 ( fudge_byte * buffer, size_t buffersize, const FudgeString string )
+{
+    const UTF8 * sourceStart;
+    UTF16 * bufferStart;
+    if ( ! ( buffer && string ) )
+        return 0;
+    sourceStart = ( const UTF8 * ) string->bytes;
+    bufferStart = ( UTF16 * ) buffer;
+    if ( ConvertUTF8toUTF16 ( &sourceStart,
+                              ( const UTF8 * ) ( sourceStart + string->numbytes ),
+                              &bufferStart,
+                              ( UTF16 * ) ( buffer + buffersize ),
+                              lenientConversion ) )
+        return 0;
+    return ( size_t ) bufferStart - ( size_t ) buffer;
+}
+
+FUDGEAPI size_t FudgeString_copyToUTF32 ( fudge_byte * buffer, size_t buffersize, const FudgeString string )
+{
+    const UTF8 * sourceStart;
+    UTF32 * bufferStart;
+    if ( ! ( buffer && string ) )
+        return 0;
+    sourceStart = ( const UTF8 * ) string->bytes;
+    bufferStart = ( UTF32 * ) buffer;
+    if ( ConvertUTF8toUTF32 ( &sourceStart,
+                              ( const UTF8 * ) ( sourceStart + string->numbytes ),
+                              &bufferStart,
+                              ( UTF32 * ) ( buffer + buffersize ),
+                              lenientConversion ) )
+        return 0;
+    return ( size_t ) bufferStart - ( size_t ) buffer;
 }
 
 inline int FudgeString_byteCompare ( UTF8 left, UTF8 right )

@@ -81,10 +81,16 @@ DEFINE_TEST( CreateFromUTF8 )
 
     /* Check the string contents */
     TEST_EQUALS_MEMORY( FudgeString_getData ( string ), FudgeString_getSize ( string ), StringTest_utf8Source, sizeof ( StringTest_utf8Source ) );
+    TEST_EQUALS_INT( FudgeString_getLength ( string ), sizeof ( StringTest_asciiConverted ) );
 
     /* Test ASCII output */
     TEST_EQUALS_INT( FudgeString_convertToASCIIZ ( &buffer, string ), FUDGE_OK );
     TEST_EQUALS_MEMORY( buffer, strlen ( buffer ), StringTest_asciiConverted, sizeof ( StringTest_asciiConverted ) );
+    free ( buffer );
+
+    buffer = ( char * ) malloc ( numbytes = sizeof ( StringTest_asciiConverted ) );
+    TEST_EQUALS_INT( FudgeString_copyToASCII ( buffer, numbytes, string ), numbytes );
+    TEST_EQUALS_MEMORY( buffer, numbytes, StringTest_asciiConverted, numbytes );
     free ( buffer );
 
     /* Test UTF16 output. Note that as the source string had no BOM, neither
@@ -94,11 +100,21 @@ DEFINE_TEST( CreateFromUTF8 )
     TEST_EQUALS_MEMORY( bytes, numbytes, StringTest_utf16Source + 2, sizeof ( StringTest_utf16Source ) - 2 );
     free ( bytes );
 
+    bytes = ( fudge_byte * ) malloc ( numbytes = sizeof ( StringTest_utf16Source ) - 2 );
+    TEST_EQUALS_INT( FudgeString_copyToUTF16 ( bytes, numbytes, string ), numbytes );
+    TEST_EQUALS_MEMORY( bytes, numbytes, StringTest_utf16Source + 2, numbytes );
+    free ( bytes );
+
     /* Test UTF32 output. As for the UTF16 output test there is no BOM in the
        source string, so the first four bytes of the UTF32 comparison string
        must be skipped. */
     TEST_EQUALS_INT( FudgeString_convertToUTF32 ( &bytes, &numbytes, string ), FUDGE_OK );
     TEST_EQUALS_MEMORY( bytes, numbytes, StringTest_utf32Source + 4, sizeof ( StringTest_utf32Source ) - 4 );
+    free ( bytes );
+
+    bytes = ( fudge_byte * ) malloc ( numbytes = sizeof ( StringTest_utf32Source ) - 4 );
+    TEST_EQUALS_INT( FudgeString_copyToUTF32 ( bytes, numbytes, string ), numbytes );
+    TEST_EQUALS_MEMORY( bytes, numbytes, StringTest_utf32Source + 4, numbytes );
     free ( bytes );
 
     FudgeString_release ( string );
@@ -116,6 +132,7 @@ DEFINE_TEST( CreateFromUTF16 )
     
     /* Check the string contents */
     TEST_EQUALS_MEMORY( FudgeString_getData ( string ), FudgeString_getSize ( string ), StringTest_utf8Converted, sizeof ( StringTest_utf8Converted ) );
+    TEST_EQUALS_INT( FudgeString_getLength ( string ), sizeof ( StringTest_asciiConverted ) );
 
     /* Test ASCII output */
     TEST_EQUALS_INT( FudgeString_convertToASCIIZ ( &buffer, string ), FUDGE_OK );
@@ -147,6 +164,7 @@ DEFINE_TEST( CreateFromUTF32 )
     
     /* Check the string contents */
     TEST_EQUALS_MEMORY( FudgeString_getData ( string ), FudgeString_getSize ( string ), StringTest_utf8Converted, sizeof ( StringTest_utf8Converted ) );
+    TEST_EQUALS_INT( FudgeString_getLength ( string ), sizeof (StringTest_asciiConverted ) );
 
     /* Test ASCII output */
     TEST_EQUALS_INT( FudgeString_convertToASCIIZ ( &buffer, string ), FUDGE_OK );
