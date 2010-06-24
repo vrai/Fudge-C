@@ -21,7 +21,7 @@
 #ifdef _FUDGEREFCOUNTIMPL_DEFINED
 typedef struct FudgeRefCountImpl * FudgeRefCount;
 #else /* ifdef _FUDGEREFCOUNTIMPL_DEFINED */
-typedef void * FudgeRefCount;
+typedef struct { void * reserved; } * FudgeRefCount;
 #endif /* ifdef _FUDGEREFCOUNTIMPL_DEFINED */
 
 FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr );

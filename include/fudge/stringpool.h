@@ -42,7 +42,7 @@
 #ifdef _FUDGESTRINGPOOLIMPL_DEFINED
 typedef struct FudgeStringPoolImpl * FudgeStringPool;
 #else /* ifdef _FUDGESTRINGPOOLIMPL_DEFINED */
-typedef void * FudgeStringPool;
+typedef struct { void * reserved; } * FudgeStringPool;
 #endif /* ifdef _FUDGESTRINGPOOLIMPL_DEFINED */
 
 FUDGEAPI FudgeStatus FudgeStringPool_create ( FudgeStringPool * pool );
