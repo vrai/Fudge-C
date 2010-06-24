@@ -15,7 +15,9 @@
 TESTS=	tests\test_utilities$(SUFFIX).exe \
 	tests\test_message$(SUFFIX).exe \
 	tests\test_codec$(SUFFIX).exe \
-	tests\test_user_types$(SUFFIX).exe
+	tests\test_user_types$(SUFFIX).exe \
+	tests\test_datetime$(SUFFIX).exe \
+	tests\test_string$(SUFFIX).exe
 
 test$(SUFFIX):	tests\runtest.bat \
 		$(TESTS)
@@ -23,6 +25,8 @@ test$(SUFFIX):	tests\runtest.bat \
 	tests\runtest test_message$(SUFFIX)
 	tests\runtest test_codec$(SUFFIX)
 	tests\runtest test_user_types$(SUFFIX)
+	tests\runtest test_string$(SUFFIX)
+	tests\runtest test_datetime$(SUFFIX)
 
 CL=cl $(CL_OPTS) $(CL_LINK_OPT) /Isrc
 
@@ -52,3 +56,12 @@ tests\test_user_types$(SUFFIX).exe:	obj\simpletest$(SUFFIX).obj \
 					tests\test_user_types.c
 	$(CL) /Fetests\test_user_types$(SUFFIX).exe /Foobj\test_user_types$(SUFFIX).obj tests\test_user_types.c obj\simpletest$(SUFFIX).obj libfudgec$(SUFFIX).lib wsock32.lib
 
+tests\test_datetime$(SUFFIX).exe:	obj\simpletest$(SUFFIX).obj \
+					libfudgec$(SUFFIX).lib \
+					tests\test_datetime.c
+	$(CL) /Fetests\test_datetime$(SUFFIX).exe /Foobj\test_datetime$(SUFFIX).obj tests\test_datetime.c obj\simpletest$(SUFFIX).obj libfudgec$(SUFFIX).lib wsock32.lib
+
+tests\test_string$(SUFFIX).exe:		obj\simpletest$(SUFFIX).obj \
+					libfudgec$(SUFFIX).lib \
+					tests\test_string.c
+	$(CL) /Fetests\test_string$(SUFFIX).exe /Foobj\test_string$(SUFFIX).obj tests\test_string.c obj\simpletest$(SUFFIX).obj libfudgec$(SUFFIX).lib wsock32.lib
