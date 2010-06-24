@@ -17,6 +17,8 @@
 #include "fudge/string.h"
 #include "convertutf.h"
 #include "reference.h"
+#include "atomic.h"
+#include <assert.h>
 
 struct FudgeStringImpl
 {
@@ -524,3 +526,19 @@ int FudgeString_compare ( const FudgeString left, const FudgeString right )
     }
 }
 
+FudgeString FudgeString_fromStatic (FudgeStringStatic * string)
+{
+    if ( ! string )
+        return 0;
+    if ( ! string->reserved )
+    {
+        FudgeString str;
+        FudgeStatus status;
+        status = FudgeString_createFromUTF8 ( &str, ( fudge_byte * ) string->bytes, string->numbytes );
+        assert ( status == FUDGE_OK );
+        str = AtomicExchangePointer ( string->reserved, str );
+        if ( str )
+            FudgeString_release ( str );
+    }
+    return ( FudgeString ) string->reserved;
+}

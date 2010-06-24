@@ -79,6 +79,16 @@ FUDGEAPI size_t FudgeString_copyToUTF32 ( fudge_byte * buffer, size_t buffersize
 
 FUDGEAPI int FudgeString_compare ( const FudgeString left, const FudgeString right );
 
+#pragma pack(push,8)
+typedef struct {
+  void * reserved;
+  const char * bytes;
+  size_t numbytes;
+} FudgeStringStatic;
+#pragma pack(pop)
+
+FudgeString FudgeString_fromStatic (FudgeStringStatic * string);
+
 #ifdef __cplusplus
     }
 #endif

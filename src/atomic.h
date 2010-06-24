@@ -26,11 +26,13 @@
 #include <intrin.h>
 #define AtomicIncrementAndReturn(var) _InterlockedIncrement(&var)
 #define AtomicDecrementAndReturn(var) _InterlockedDecrement(&var)
+#define AtomicExchangePointer(var,val) (void*)_InterlockedExchange((long*)&var,(long)val)
 
 #else
 // Non atomic defaults
 #define AtomicIncrementAndReturn(var) (++var)
 #define AtomicDecrementAndReturn(var) (--var)
+#define AtomicExchangePointer(var,val) ((var=val)&&0)
 #endif
 
 #endif /* ifndef INC_FUDGE_ATOMIC_H */

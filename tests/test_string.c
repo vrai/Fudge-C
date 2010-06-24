@@ -41,6 +41,27 @@ static const fudge_byte StringTest_utf8Converted [] =  { 0xef, 0xbb, 0xbf, 0xe2,
 static const fudge_byte StringTest_asciiConverted [] = { 0x3f, 0x20, 0x3f, 0x3f, 0x54, 0x65, 0x73, 0x74,
                                                          0x3f, 0x3f };
 
+DEFINE_TEST( Static )
+    static FudgeStringStatic staticStr = { 0, StringTest_utf8Source, sizeof ( StringTest_utf8Source ) };
+    FudgeString strFromUTF8;
+    FudgeString strFromStatic1;
+    FudgeString strFromStatic2;
+
+    /* Construct a reference copy */
+    TEST_EQUALS_INT( FudgeString_createFromUTF8 ( &strFromUTF8, StringTest_utf8Source, sizeof ( StringTest_utf8Source ) ), FUDGE_OK );
+
+    /* Get an instance of the static string (should be the same pointer returned) */
+    strFromStatic1 = FudgeString_fromStatic ( &staticStr );
+    strFromStatic2 = FudgeString_fromStatic ( &staticStr );
+    TEST_EQUALS_TRUE ( strFromStatic1 == strFromStatic2 );
+
+    /* Check it was constructed properly */
+    TEST_EQUALS_INT( FudgeString_compare ( strFromUTF8, strFromStatic1 ), 0 );
+
+    /* Tidy up. Note we don't release the static strings (unless we called retain) */
+    TEST_EQUALS_INT ( FudgeString_release ( strFromUTF8 ), FUDGE_OK );
+END_TEST
+
 DEFINE_TEST( CreateFromASCII )
     FudgeString one, two;
 
@@ -236,6 +257,7 @@ END_TEST
 
 
 DEFINE_TEST_SUITE( String )
+    REGISTER_TEST( Static )
     REGISTER_TEST( CreateFromASCII )
     REGISTER_TEST( CreateFromUTF8 )
     REGISTER_TEST( CreateFromUTF16 )
