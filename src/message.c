@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#define _FUDGEMSGIMPL_DEFINED 1
 #include "fudge/message.h"
 #include "fudge/platform.h"
 #include "fudge/string.h"

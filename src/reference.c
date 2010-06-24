@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define _FUDGEREFCOUNTIMPL_DEFINED 1
 #include "reference.h"
 #include "fudge/platform.h"
 #include "atomic.h"

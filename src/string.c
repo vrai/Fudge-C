@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define _FUDGESTRINGIMPL_DEFINED 1
 #include "fudge/string.h"
 #include "convertutf.h"
 #include "reference.h"

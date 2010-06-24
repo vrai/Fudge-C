@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define _FUDGESTRINGPOOLIMPL_DEFINED 1
 #include "fudge/stringpool.h"
 #include "reference.h"
 

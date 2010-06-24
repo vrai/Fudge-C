@@ -18,7 +18,11 @@
 
 #include "fudge/status.h"
 
+#ifdef _FUDGEREFCOUNTIMPL_DEFINED
 typedef struct FudgeRefCountImpl * FudgeRefCount;
+#else /* ifdef _FUDGEREFCOUNTIMPL_DEFINED */
+typedef void * FudgeRefCount;
+#endif /* ifdef _FUDGEREFCOUNTIMPL_DEFINED */
 
 FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr );
 FudgeStatus FudgeRefCount_destroy ( FudgeRefCount refcount );
