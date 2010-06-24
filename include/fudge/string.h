@@ -87,7 +87,7 @@ typedef struct {
 } FudgeStringStatic;
 #pragma pack(pop)
 
-FudgeString FudgeString_fromStatic (FudgeStringStatic * string);
+FUDGEAPI FudgeString FudgeString_fromStatic (FudgeStringStatic * string);
 
 #ifdef __cplusplus
     }
