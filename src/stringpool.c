@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define _FUDGESTRINGPOOLIMPL_DEFINED 1
 #include "fudge/stringpool.h"
 #include "reference.h"
 
@@ -135,6 +136,7 @@ FudgeString FudgeStringPool_createStringFromASCII ( FudgeStringPool pool, FudgeS
     if ( ! pool )
     {
         localstatus = FUDGE_NULL_POINTER;
+        string = 0;
         goto status_and_return;
     }
 
@@ -160,6 +162,7 @@ FudgeString FudgeStringPool_createStringFromASCIIZ ( FudgeStringPool pool, Fudge
     if ( ! pool )
     {
         localstatus = FUDGE_NULL_POINTER;
+        string = 0;
         goto status_and_return;
     }
 

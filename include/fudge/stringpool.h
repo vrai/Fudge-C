@@ -39,7 +39,11 @@
    make use of pool instances. However, each pool instance must only be acted
    on by a single thread at any given time.
 */
+#ifdef _FUDGESTRINGPOOLIMPL_DEFINED
 typedef struct FudgeStringPoolImpl * FudgeStringPool;
+#else /* ifdef _FUDGESTRINGPOOLIMPL_DEFINED */
+typedef struct { void * reserved; } * FudgeStringPool;
+#endif /* ifdef _FUDGESTRINGPOOLIMPL_DEFINED */
 
 FUDGEAPI FudgeStatus FudgeStringPool_create ( FudgeStringPool * pool );
 FUDGEAPI FudgeStatus FudgeStringPool_retain ( FudgeStringPool pool );

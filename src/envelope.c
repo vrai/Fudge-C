@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#define _FUDGEMSGENVELOPEIMPL_DEFINED 1
 #include "fudge/envelope.h"
 #include "fudge/message.h"
 #include "reference.h"

@@ -267,15 +267,15 @@ FudgeStatus FudgeCodec_encodeFieldDate ( const FudgeField * field, fudge_byte * 
 
 FudgeStatus FudgeCodec_encodeFieldTime ( const FudgeField * field, fudge_byte * * data )
 {
-    /* Write the first 4 bytes */
+    /* Work out the first 4 bytes */
     const fudge_i32 hiword = ( ( field->data.datetime.time.hasTimezone ? field->data.datetime.time.timezoneOffset
                                                                       : -128 ) << 24 )
                            | ( ( field->data.datetime.time.precision & 0xf )<< 20 )
                            | ( field->data.datetime.time.seconds & 0x1ffff );
-    FudgeCodec_encodeI32 ( hiword, data );
-
-    /* Write the second 4 bytes */
+    /* Work out the second 4 bytes */
     const fudge_i32 loword = field->data.datetime.time.nanoseconds & 0x3fffffff;
+    /* Write out */
+    FudgeCodec_encodeI32 ( hiword, data );
     FudgeCodec_encodeI32 ( loword, data );
     return FUDGE_OK;
 }

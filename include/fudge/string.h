@@ -67,11 +67,27 @@ FUDGEAPI FudgeStatus FudgeString_release ( FudgeString string );
 FUDGEAPI size_t FudgeString_getSize ( const FudgeString string );
 FUDGEAPI const fudge_byte * FudgeString_getData ( const FudgeString string );
 
+FUDGEAPI size_t FudgeString_getLength ( const FudgeString string );
+
 FUDGEAPI FudgeStatus FudgeString_convertToASCIIZ ( char * * target, const FudgeString string );
 FUDGEAPI FudgeStatus FudgeString_convertToUTF16 ( fudge_byte * * target, size_t * numbytes, const FudgeString string );
 FUDGEAPI FudgeStatus FudgeString_convertToUTF32 ( fudge_byte * * target, size_t * numbytes, const FudgeString string );
 
+FUDGEAPI size_t FudgeString_copyToASCII ( char * buffer, size_t buffersize, const FudgeString string );
+FUDGEAPI size_t FudgeString_copyToUTF16 ( fudge_byte * buffer, size_t buffersize, const FudgeString string );
+FUDGEAPI size_t FudgeString_copyToUTF32 ( fudge_byte * buffer, size_t buffersize, const FudgeString string );
+
 FUDGEAPI int FudgeString_compare ( const FudgeString left, const FudgeString right );
+
+#pragma pack(push,8)
+typedef struct {
+  void * reserved;
+  const fudge_byte * bytes;
+  size_t numbytes;
+} FudgeStringStatic;
+#pragma pack(pop)
+
+FUDGEAPI FudgeString FudgeString_fromStatic (FudgeStringStatic * string);
 
 #ifdef __cplusplus
     }

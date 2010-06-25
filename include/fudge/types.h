@@ -58,11 +58,23 @@ typedef uint8_t fudge_type_id;
  * Structure/union type definitions
  */
 
+#ifdef _FUDGEMSGENVELOPEIMPL_DEFINED
 typedef struct FudgeMsgEnvelopeImpl * FudgeMsgEnvelope;
+#else /* ifdef _FUDGEMSGENVELOPEIMPL_DEFINED */
+typedef struct { void * reserved; } * FudgeMsgEnvelope;
+#endif /* ifdef _FUDGEMSGENVELOPEIMPL_DEFINED */
 
+#ifdef _FUDGEMSGIMPL_DEFINED
 typedef struct FudgeMsgImpl * FudgeMsg;
+#else /* ifdef _FUDGEMSGIMPL_DEFINED */
+typedef struct { void * reserved; } * FudgeMsg;
+#endif /* ifdef _FUDGEMSGIMPL_DEFINED */
 
+#ifdef _FUDGESTRINGIMPL_DEFINED
 typedef struct FudgeStringImpl * FudgeString;
+#else /* ifdef _FUDGESTRINGIMPL_DEFINED */
+typedef struct { void * reserved; } * FudgeString;
+#endif /* ifdef _FUDGESTRINGIMPL_DEFINED */
 
 typedef struct
 {

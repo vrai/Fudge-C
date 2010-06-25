@@ -18,6 +18,8 @@
    multithreading support is required and the capabilities of the
    compiler/environment being used to build the library. */
 
+#define _FUDGEREFCOUNTIMPL_DEFINED 1
+#include "reference.h"
 #include "fudge/config.h"
 
 #if defined(_MT)

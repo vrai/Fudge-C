@@ -19,6 +19,9 @@ OBJ_DIR=obj
 OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
 	$(OBJ_DIR)\codec_encode$(SUFFIX).obj \
 	$(OBJ_DIR)\coerce$(SUFFIX).obj \
+	$(OBJ_DIR)\convertutf$(SUFFIX).obj \
+	$(OBJ_DIR)\datetime$(SUFFIX).obj \
+	$(OBJ_DIR)\envelope$(SUFFIX).obj \
 	$(OBJ_DIR)\fudge$(SUFFIX).obj \
 	$(OBJ_DIR)\header$(SUFFIX).obj \
 	$(OBJ_DIR)\message$(SUFFIX).obj \
@@ -28,6 +31,8 @@ OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
 	$(OBJ_DIR)\reference$(SUFFIX).obj \
 	$(OBJ_DIR)\registry$(SUFFIX).obj \
 	$(OBJ_DIR)\status$(SUFFIX).obj \
+	$(OBJ_DIR)\string$(SUFFIX).obj \
+	$(OBJ_DIR)\stringpool$(SUFFIX).obj \
 	$(OBJ_DIR)\types$(SUFFIX).obj
 
 #TODO: we don't have proper header dependancies, but this should at least catch everything!
@@ -38,8 +43,10 @@ HEADERS=	include\fudge\codec.h \
 		include\fudge\platform.h \
 		include\fudge\status.h \
 		include\fudge\types.h \
+		src\atomic.h \
 		src\codec_decode.h \
 		src\codec_encode.h \
+		src\coerce.h \
 		src\message_internal.h \
 		src\prefix.h \
 		src\reference.h \
@@ -69,6 +76,18 @@ $(OBJ_DIR)\codec_encode$(SUFFIX).obj:	src\codec_encode.c \
 $(OBJ_DIR)\coerce$(SUFFIX).obj:	src\coerce.c \
 				$(HEADERS)
 	$(CL) /Fo$(OBJ_DIR)\coerce$(SUFFIX).obj src\coerce.c
+
+$(OBJ_DIR)\convertutf$(SUFFIX).obj:	src\convertutf.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\convertutf$(SUFFIX).obj src\convertutf.c
+
+$(OBJ_DIR)\datetime$(SUFFIX).obj:	src\datetime.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\datetime$(SUFFIX).obj src\datetime.c
+
+$(OBJ_DIR)\envelope$(SUFFIX).obj:	src\envelope.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\envelope$(SUFFIX).obj src\envelope.c
 
 $(OBJ_DIR)\fudge$(SUFFIX).obj:	src\fudge.c \
 				$(HEADERS)
@@ -103,8 +122,16 @@ $(OBJ_DIR)\registry$(SUFFIX).obj:	src\registry.c \
 	$(CL) /Fo$(OBJ_DIR)\registry$(SUFFIX).obj src\registry.c
 
 $(OBJ_DIR)\status$(SUFFIX).obj:	src\status.c \
-					$(HEADERS)
+				$(HEADERS)
 	$(CL) /Fo$(OBJ_DIR)\status$(SUFFIX).obj	src\status.c
+
+$(OBJ_DIR)\string$(SUFFIX).obj:	src\string.c \
+				$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\string$(SUFFIX).obj src\string.c
+
+$(OBJ_DIR)\stringpool$(SUFFIX).obj:	src\stringpool.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\stringpool$(SUFFIX).obj src\stringpool.c
 
 $(OBJ_DIR)\types$(SUFFIX).obj:	src\types.c \
 				$(HEADERS)
