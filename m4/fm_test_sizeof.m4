@@ -9,7 +9,7 @@ dnl     FM_TEST_SIZEOF(float, 4)
 dnl     FM_TEST_SIZEOF(double, 8)
 dnl
 dnl @category Misc
-dnl @author Vra Stacey <vrai.stacey@gmail.com>
+dnl @author Vrai Stacey <vrai.stacey@gmail.com>
 dnl @version 2009-11-12
 dnl @license AllPermissive
 AC_DEFUN([FM_TEST_SIZEOF],dnl

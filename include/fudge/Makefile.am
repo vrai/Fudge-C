@@ -21,11 +21,11 @@ libfudgec_include_HEADERS = codec.h         \
                             envelope.h      \
                             fudge.h         \
                             fudgeapi.h      \
-			    header.h        \
+			                header.h        \
                             message.h       \
                             message_ex.h    \
                             platform.h      \
-			    pstdint.h       \
+			                pstdint.h       \
                             registry.h      \
                             status.h        \
                             string.h        \

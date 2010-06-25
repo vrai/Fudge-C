@@ -43,6 +43,10 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_DATETIME_INVALID_DAY:          return "Invalid value for Day of Month";
         case FUDGE_DATETIME_INVALID_SECONDS:      return "Invalid value for Seconds since midnight";
         case FUDGE_DATETIME_INVALID_NANOSECONDS:  return "Invalid value for Nanoseconds since start of second";
+        case FUDGE_PTHREAD_MUTEX_RESOURCES:       return "Insufficient resources to create pthread Mutex";
+        case FUDGE_PTHREAD_MUTEX_BUSY:            return "Cannot destroy pthread mutex that's locked by another thread";
+        case FUDGE_PTHREAD_MUTEX_INVALID:         return "Invalid pthread mutex handle";
+        case FUDGE_PTHREAD_MUTEX_UNKNOWN:         return "Unknown pthread mutex error";
         case FUDGE_INTERNAL_LIST_STATE:           return "Internal List State";
         case FUDGE_INTERNAL_PAYLOAD:              return "Internal Type Payload Is Invalid";
         case FUDGE_REGISTRY_UNINITIALISED:        return "Fudge Registry Not Initialised";

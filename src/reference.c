@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2010 - 2010, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,62 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "reference.h"
-#include "fudge/platform.h"
-#include "atomic.h"
-#include <assert.h>
 
-struct FudgeRefCountImpl
-{
-    int count;
-};
+/* Selects the correct reference.c implementation, depending on whether
+   multithreading support is required and the capabilities of the
+   compiler/environment being used to build the library. */
 
-FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr )
-{
-    if ( ! ( *refcountptr = ( FudgeRefCount ) malloc ( sizeof ( struct FudgeRefCountImpl ) ) ) )
-        return FUDGE_OUT_OF_MEMORY;
+#include "fudge/config.h"
 
-    ( *refcountptr )->count = 1u;
-
-    return FUDGE_OK;
-}
-
-FudgeStatus FudgeRefCount_destroy ( FudgeRefCount refcount )
-{
-    free ( refcount );
-    return FUDGE_OK;
-}
-
-void FudgeRefCount_increment ( FudgeRefCount refcount )
-{
-    if ( refcount )
-	AtomicIncrementAndReturn (refcount->count);
-    else
-        assert ( refcount );
-}
-
-int FudgeRefCount_decrementAndReturn ( FudgeRefCount refcount )
-{
-    if ( refcount )
-    {
-        assert ( refcount->count >= 1u );
-	return AtomicDecrementAndReturn (refcount->count);
-    }
-    else
-    {
-        assert ( refcount );
-        return 0u;
-    }
-}
-
-int FudgeRefCount_count ( FudgeRefCount refcount )
-{
-    if ( refcount )
-        return refcount->count;
-    else
-    {
-        assert ( refcount );
-        return 0u;
-    }
-}
-
+#if defined(_MT)
+#   if defined(FUDGE_HAS_SYNC_FETCH_AND_ADD)
+#       include "reference_atomic_gcc.c"
+#   elif defined(FUDGE_HAS_PTHREADS)
+#       include "reference_pthreads.c"
+#   else
+#       error Cannot find a multithreaded implementation of reference.c that \
+              supports the the current compiler/build environment.
+#   endif
+#else
+#   include "reference_default.c"
+#endif

@@ -77,6 +77,44 @@ AC_CHECK_FUNC(_gmtime_s, AC_DEFINE(HAS__GMTIME_S, 1, [Define to 1 if _gmtime_s i
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAS_SPRINTF, 1, [Define to 1 if snprintf is available.]))
 AC_CHECK_FUNC(sprintf_s, AC_DEFINE(HAS_SPRINTF_S, 1, [Define to 1 if sprintf_s is available.]))
 
+### Does the user want threading enabled?
+AC_ARG_ENABLE(threads, [AS_HELP_STRING([--disable-threads], [disable thread safe reference counting])],
+                       [with_threads='no'],
+                       [with_threads='yes'])
+
+if test "$with_threads" != 'no'
+then
+    # Threading is required, set the multi-threading flag and populate the
+    # config variables necessary to pick a threading implementation.
+    CFLAGS+=" -D_MT "
+
+    # What potential multithreading constructs/libraries are available?
+    AC_C_VOLATILE
+    FM_CHECK_FOR_SYNC_FETCH()
+    ACX_PTHREAD()
+
+    # If an atomic integer implementation isn't available, fall back on using
+    # pthreads (if available)
+    if test "$fm_check_for_sync_fetch" != 'no'
+    then
+        AC_MSG_NOTICE([will use __sync_fetch_and_* atomics to ensure thread-safe reference counting])
+        AC_DEFINE(HAS_SYNC_FETCH_AND_ADD, 1, [Define to 1 if __sync_fetch_and_add is available])
+    else
+        AC_MSG_NOTICE([no atomic integer implementation found, falling back on pthreads])
+
+        if test "$acx_pthread_ok" != 'no'
+        then
+            CFLAGS+="$PTHREAD_CFLAGS"
+            LIBS="$PTHREAD_LIBS $LIBS"
+            AC_DEFINE(HAS_PTHREADS, 1, [Define to 1 if pthreads are available.])
+        else
+            AC_MSG_ERROR([pthreads not found, cannot compiler thread-safe reference counting])
+        fi
+    fi
+else
+    AC_MSG_NOTICE([threading is disabled, reference counting will not be thread safe!])
+fi
+
 ### Crank the warnings up to maximum
 AX_CFLAGS_WARN_ALL
 
