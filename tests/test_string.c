@@ -59,7 +59,8 @@ DEFINE_TEST( Static )
     TEST_EQUALS_INT( FudgeString_compare ( strFromUTF8, strFromStatic1 ), 0 );
 
     /* Tidy up. Note we don't release the static strings (unless we called retain) */
-    TEST_EQUALS_INT ( FudgeString_release ( strFromUTF8 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_release ( strFromStatic1 ), FUDGE_OK );
+    TEST_EQUALS_INT( FudgeString_release ( strFromUTF8 ), FUDGE_OK );
 END_TEST
 
 DEFINE_TEST( CreateFromASCII )
