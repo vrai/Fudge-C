@@ -95,7 +95,7 @@ then
 
     # If an atomic integer implementation isn't available, fall back on using
     # pthreads (if available)
-    if test "$fm_check_for_sync_fetch" != 'no'
+    if test "$fm_cv_check_for_sync_fetch" != 'no'
     then
         AC_MSG_NOTICE([will use __sync_fetch_and_* atomics to ensure thread-safe reference counting])
         AC_DEFINE(HAS_SYNC_FETCH_AND_ADD, 1, [Define to 1 if __sync_fetch_and_add is available])
