@@ -23,8 +23,8 @@
 #include "fudge/config.h"
 
 #if defined(_MT)
-#   if defined(FUDGE_HAS_SYNC_FETCH_AND_ADD)
-#       include "reference_atomic_gcc.c"
+#   if defined(FUDGE_HAS_SYNC_FETCH_AND_ADD) || defined(FUDGE_HAVE_INTRIN_H)
+#       include "reference_atomic.c"
 #   elif defined(FUDGE_HAS_PTHREADS)
 #       include "reference_pthreads.c"
 #   else

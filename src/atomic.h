@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2010; Open Gamma, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,23 @@
 #ifndef INC_FUDGE_ATOMIC_H
 #define INC_FUDGE_ATOMIC_H
 
-// TODO: Use the definitions from config.h to pull in what the system can
-//       provide for atomic operations. As a last resort, fall back to
-//       pthreads with locking. This is a quick hack to work with Visual
-//       Studio builds on Windows.
-
-#if defined(FUDGE_HAVE_INTRIN_H) && defined(_MT)
-// Microsoft compilers, use INTRIN.H functions in MultiThread builds
-#include <intrin.h>
-#define AtomicIncrementAndReturn(var) _InterlockedIncrement(&var)
-#define AtomicDecrementAndReturn(var) _InterlockedDecrement(&var)
-#define AtomicExchangePointer(var,val) (void*)_InterlockedExchange((long*)&var,(long)val)
-
+#if defined(_MT) && defined(FUDGE_HAVE_INTRIN_H)
+    // Microsoft compilers, use INTRIN.H functions in MultiThread builds
+#   include <intrin.h>
+#   define AtomicIncrementAndReturn(var) _InterlockedIncrement(&var)
+#   define AtomicDecrementAndReturn(var) _InterlockedDecrement(&var)
+#   define AtomicExchangePointer(var,val) (void*)_InterlockedExchange((long*)&var,(long)val)
+#elif defined(_MT) && defined(FUDGE_HAS_SYNC_FETCH_AND_ADD)
+    // GCC 4.1+ atomic functions
+#   define AtomicIncrementAndReturn(var) __sync_add_and_fetch ( &var, 1 )
+#   define AtomicDecrementAndReturn(var) __sync_sub_and_fetch ( &var, 1 )
+#   define AtomicExchangePointer(var, val) __sync_lock_test_and_set ( &var, val )
 #else
-// Non atomic defaults
-#define AtomicIncrementAndReturn(var) (++var)
-#define AtomicDecrementAndReturn(var) (--var)
-#define AtomicExchangePointer(var,val) ((var=val)&&0)
+    // No multi-threading support - just use standard operations
+    // TODO AtomicExchangePointer generates errors on GCC due to size mismatch
+#   define AtomicIncrementAndReturn(var) (++var)
+#   define AtomicDecrementAndReturn(var) (--var)
+#   define AtomicExchangePointer(var,val) ((var=val)&&0)
 #endif
 
 #endif /* ifndef INC_FUDGE_ATOMIC_H */

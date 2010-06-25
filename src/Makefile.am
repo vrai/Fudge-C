@@ -16,7 +16,8 @@ lib_LTLIBRARIES = libfudgec.la
 
 INCLUDES = -I$(top_srcdir)/include
 
-noinst_HEADERS = codec_decode.h         \
+noinst_HEADERS = atomic.h               \
+                 codec_decode.h         \
                  codec_encode.h         \
                  coerce.h               \
                  convertutf.h           \
