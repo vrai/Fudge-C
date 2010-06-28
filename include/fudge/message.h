@@ -122,18 +122,18 @@ FUDGEAPI FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
    and remained owned by the parent message (do not release the message until
    the fields contents are no longer required).
    Linear time operation. */
-FUDGEAPI FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, FudgeMsg message, unsigned long index );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, const FudgeMsg message, unsigned long index );
 
 /* As above, but retrieves the first field with the name provided (which must
    be a valid, null terminated char array). Returns FUDGE_INVALID_NAME if no
    field in the message has the name.
    Linear time operation. */
-FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, FudgeMsg message, const FudgeString name );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message, const FudgeString name );
 
 /* As above, but retrieves the first field with the ordinal provided. Returns
    FUDGE_INVALID_ORDINAL if not field in the message has the ordinal.
    Linear time operation. */
-FUDGEAPI FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, FudgeMsg message, fudge_i16 ordinal );
+FUDGEAPI FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, const FudgeMsg message, fudge_i16 ordinal );
 
 /* Bulk field retrieval. Retrieves the fields in index order up to the end of
    the message or until "numfields" is reached. Returns the number of fields
