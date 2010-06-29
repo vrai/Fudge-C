@@ -58,23 +58,29 @@ typedef uint8_t fudge_type_id;
  * Structure/union type definitions
  */
 
-#ifdef _FUDGEMSGENVELOPEIMPL_DEFINED
+#ifndef _FUDGEMSGENVELOPEIMPL_DEFINED
+struct FudgeMsgEnvelopeImpl {
+  void * reserved;
+};
+#define _FUDGEMSGENVELOPEIMPL_DEFINED
+#endif /* ifndef _FUDGEMSGENVELOPEIMPL_DEFINED */
 typedef struct FudgeMsgEnvelopeImpl * FudgeMsgEnvelope;
-#else /* ifdef _FUDGEMSGENVELOPEIMPL_DEFINED */
-typedef struct { void * reserved; } * FudgeMsgEnvelope;
-#endif /* ifdef _FUDGEMSGENVELOPEIMPL_DEFINED */
 
-#ifdef _FUDGEMSGIMPL_DEFINED
+#ifndef _FUDGEMSGIMPL_DEFINED
+struct FudgeMsgImpl {
+  void * reserved;
+};
+#define _FUDGEMSGIMPL_DEFINED
+#endif /* ifndef _FUDGEMSGIMPL_DEFINED */
 typedef struct FudgeMsgImpl * FudgeMsg;
-#else /* ifdef _FUDGEMSGIMPL_DEFINED */
-typedef struct { void * reserved; } * FudgeMsg;
-#endif /* ifdef _FUDGEMSGIMPL_DEFINED */
 
-#ifdef _FUDGESTRINGIMPL_DEFINED
+#ifndef _FUDGESTRINGIMPL_DEFINED
+struct FudgeStringImpl {
+  void * reserved;
+};
+#define _FUDGESTRINGIMPL_DEFINED
+#endif /* ifndef _FUDGESTRINGIMPL_DEFINED */
 typedef struct FudgeStringImpl * FudgeString;
-#else /* ifdef _FUDGESTRINGIMPL_DEFINED */
-typedef struct { void * reserved; } * FudgeString;
-#endif /* ifdef _FUDGESTRINGIMPL_DEFINED */
 
 typedef struct
 {
