@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2010, Vrai Stacey.
+ * Copyright (C) 2009 - 2010; Vrai Stacey, Open Gamma.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,26 +55,36 @@ typedef double  fudge_f64;
 typedef uint8_t fudge_type_id;
 
 /*****************************************************************************
- * Structure/union type definitions
+ * Hidden struct pointer definitions (the actual struct defintions are not
+ * available to client code) - they should be accessed only using the
+ * functions provided in the respective headers.
+ *
+ * MSVC generates exceptions if functions take pointers to undefined types as
+ * arguments; so unless the definition of a *Impl struct is available, a
+ * simple place-holder struct is used.
  */
 
 #ifdef _FUDGEMSGENVELOPEIMPL_DEFINED
 typedef struct FudgeMsgEnvelopeImpl * FudgeMsgEnvelope;
-#else /* ifdef _FUDGEMSGENVELOPEIMPL_DEFINED */
-typedef struct { void * reserved; } * FudgeMsgEnvelope;
-#endif /* ifdef _FUDGEMSGENVELOPEIMPL_DEFINED */
+#else
+typedef struct FudgeMsgEnvelopeImpl { void * reserved; } * FudgeMsgEnvelope;
+#endif
 
 #ifdef _FUDGEMSGIMPL_DEFINED
 typedef struct FudgeMsgImpl * FudgeMsg;
-#else /* ifdef _FUDGEMSGIMPL_DEFINED */
-typedef struct { void * reserved; } * FudgeMsg;
-#endif /* ifdef _FUDGEMSGIMPL_DEFINED */
+#else
+typedef struct FudgeMsgImpl { void * reserved; } * FudgeMsg;
+#endif
 
 #ifdef _FUDGESTRINGIMPL_DEFINED
 typedef struct FudgeStringImpl * FudgeString;
-#else /* ifdef _FUDGESTRINGIMPL_DEFINED */
-typedef struct { void * reserved; } * FudgeString;
-#endif /* ifdef _FUDGESTRINGIMPL_DEFINED */
+#else
+typedef struct FudgeStringImpl { void * reserved; } * FudgeString;
+#endif
+
+/*****************************************************************************
+ * Structure/union type definitions
+ */
 
 typedef struct
 {
