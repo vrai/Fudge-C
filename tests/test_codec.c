@@ -816,6 +816,31 @@ DEFINE_TEST( EncodeDeepTree )
     free ( reference );
 END_TEST
 
+DEFINE_TEST( EncodeDecodeCycle )
+    FudgeMsg msg;
+    FudgeMsgEnvelope envelope;
+    FudgeStatus status;
+    FudgeStringPool stringpool;
+    fudge_byte * encoded;
+    fudge_i32 encodedSize;
+    FudgeField field;
+    TEST_EQUALS_INT ( FudgeStringPool_create ( &stringpool ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeMsg_create ( &msg ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeMsg_addFieldString ( msg, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Field Name" ), 0, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Hello World" ) ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, msg ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedSize ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeMsg_release ( msg ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeStringPool_release ( stringpool ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeCodec_decodeMsg ( &envelope, encoded, encodedSize ), FUDGE_OK );
+    free ( encoded );
+    TEST_EQUALS_INT ( FudgeMsg_getFieldAtIndex ( &field, msg, 0 ), FUDGE_OK );
+    TEST_EQUALS_INT ( field.numbytes, 11 );
+    TEST_EQUALS_INT ( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedSize ), FUDGE_OK );
+    TEST_EQUALS_INT ( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
+    free ( encoded );
+END_TEST
+
 DEFINE_TEST_SUITE( Codec )
     /* Interop decode test files */
     REGISTER_TEST( DecodeAllNames )
@@ -840,6 +865,9 @@ DEFINE_TEST_SUITE( Codec )
 
     /* Other encode tests */
     REGISTER_TEST( EncodeDeepTree );
+
+    /* Decode/Encode cycle */
+    REGISTER_TEST( EncodeDecodeCycle );
 END_TEST_SUITE
 
 FudgeMsg loadFudgeMsg ( const char * filename )
