@@ -64,28 +64,33 @@ typedef uint8_t fudge_type_id;
  * simple place-holder struct is used.
  */
 
-#ifdef _FUDGEMSGENVELOPEIMPL_DEFINED
+#ifndef _FUDGEMSGENVELOPEIMPL_DEFINED
+struct FudgeMsgEnvelopeImpl {
+  void * reserved;
+};
+#define _FUDGEMSGENVELOPEIMPL_DEFINED
+#endif /* ifndef _FUDGEMSGENVELOPEIMPL_DEFINED */
 typedef struct FudgeMsgEnvelopeImpl * FudgeMsgEnvelope;
-#else
-typedef struct FudgeMsgEnvelopeImpl { void * reserved; } * FudgeMsgEnvelope;
-#endif
 
-#ifdef _FUDGEMSGIMPL_DEFINED
+#ifndef _FUDGEMSGIMPL_DEFINED
+struct FudgeMsgImpl {
+  void * reserved;
+};
+#define _FUDGEMSGIMPL_DEFINED
+#endif /* ifndef _FUDGEMSGIMPL_DEFINED */
 typedef struct FudgeMsgImpl * FudgeMsg;
-#else
-typedef struct FudgeMsgImpl { void * reserved; } * FudgeMsg;
-#endif
 
-#ifdef _FUDGESTRINGIMPL_DEFINED
+#ifndef _FUDGESTRINGIMPL_DEFINED
+struct FudgeStringImpl {
+  void * reserved;
+};
+#define _FUDGESTRINGIMPL_DEFINED
+#endif /* ifndef _FUDGESTRINGIMPL_DEFINED */
 typedef struct FudgeStringImpl * FudgeString;
-#else
-typedef struct FudgeStringImpl { void * reserved; } * FudgeString;
-#endif
 
 /*****************************************************************************
  * Structure/union type definitions
  */
-
 typedef struct
 {
     int32_t year;    /* Year: see below for allowable range */

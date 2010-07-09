@@ -22,7 +22,7 @@
 
 fudge_i32 FudgeCodec_getNumBytes ( const FudgeTypeDesc * typedesc, fudge_i32 width )
 {
-    if ( typedesc->payload == FUDGE_TYPE_PAYLOAD_BYTES )
+    if ( ( typedesc->payload == FUDGE_TYPE_PAYLOAD_BYTES ) || ( typedesc->payload == FUDGE_TYPE_PAYLOAD_STRING ) )
         return typedesc->fixedwidth >= 0 ? typedesc->fixedwidth : width;
     else
         return 0;
