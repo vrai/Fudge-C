@@ -824,18 +824,29 @@ DEFINE_TEST( EncodeDecodeCycle )
     fudge_byte * encoded;
     fudge_i32 encodedSize;
     FudgeField field;
+
+    /* Create test message with a single string field */
     TEST_EQUALS_INT ( FudgeStringPool_create ( &stringpool ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeMsg_create ( &msg ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeMsg_addFieldString ( msg, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Field Name" ), 0, FudgeStringPool_createStringFromASCIIZ ( stringpool, &status, "Hello World" ) ), FUDGE_OK );
+
+    /* Encode the message and release the original string and message */
     TEST_EQUALS_INT ( FudgeMsgEnvelope_create ( &envelope, 0, 0, 0, msg ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedSize ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeMsg_release ( msg ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeStringPool_release ( stringpool ), FUDGE_OK );
+
+    /* Decode the message and release the encoded form */
     TEST_EQUALS_INT ( FudgeCodec_decodeMsg ( &envelope, encoded, encodedSize ), FUDGE_OK );
+    TEST_EQUALS_TRUE ( ( msg = FudgeMsgEnvelope_getMessage ( envelope ) ) != 0 );
     free ( encoded );
+
+    /* Make sure the string is present and can retrieved */
+    TEST_EQUALS_INT ( FudgeMsg_numFields ( msg ), 1 );
     TEST_EQUALS_INT ( FudgeMsg_getFieldAtIndex ( &field, msg, 0 ), FUDGE_OK );
     TEST_EQUALS_INT ( field.numbytes, 11 );
+
     TEST_EQUALS_INT ( FudgeCodec_encodeMsg ( envelope, &encoded, &encodedSize ), FUDGE_OK );
     TEST_EQUALS_INT ( FudgeMsgEnvelope_release ( envelope ), FUDGE_OK );
     free ( encoded );
