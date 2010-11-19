@@ -68,7 +68,7 @@ fudge_i32 FudgeCodec_getFieldLength ( const FudgeField * field )
 
     /* Add the optional field header elements */
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
-        numbytes += ( field->name ? FudgeString_getSize ( field->name ) : 0 ) + 1;  /* 1 byte used for length */
+        numbytes += ( field->name ? ( fudge_i32 ) FudgeString_getSize ( field->name ) : 0 ) + 1;  /* 1 byte used for length */
     if ( field->flags & FUDGE_FIELD_HAS_ORDINAL )
         numbytes += 2;
 
@@ -125,7 +125,7 @@ FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFiel
 
     if ( field->flags & FUDGE_FIELD_HAS_NAME )
     {
-        header->namelen = field->name ? FudgeString_getSize ( field->name ) : 0;
+        header->namelen = field->name ? ( fudge_i32 ) FudgeString_getSize ( field->name ) : 0;
 
         /* Allocate the space for the field name: as a NULL pointer indicates
            no name, allocate a single byte if the field name is NULL (used to
@@ -308,7 +308,7 @@ FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * byt
     /* Get the length of the message, plus the envelope header */
     if ( ( status = FudgeCodec_getMessageLength ( message, numbytes ) ) != FUDGE_OK )
         return status;
-    *numbytes += sizeof ( FudgeMsgHeader );
+    *numbytes += 8; // sizeof ( FudgeMsgHeader );
 
     /* Allocate the space required for the encoded message */
     if ( ! ( *bytes = ( fudge_byte * ) malloc ( *numbytes ) ) )
@@ -376,10 +376,12 @@ FUDGECODEC_ENCODE_TYPE_IMPL( F64, fudge_f64, htond )
 
 void FudgeCodec_encodeString ( const FudgeString string, fudge_byte * * data )
 {
-    const size_t size = FudgeString_getSize ( string );
+    size_t size = FudgeString_getSize ( string );
     const fudge_byte * bytes = FudgeString_getData ( string );
-
-    FudgeCodec_encodeFieldLength ( size, data );
+    /* Length encoding uses fudge_i32 so truncate oversized ones on 64-bit platforms */
+    if (size > 0x7FFFFFFF)
+        size = 0x7FFFFFFF;
+    FudgeCodec_encodeFieldLength ( ( fudge_i32 ) size, data );
     if ( bytes && size )
         memcpy ( *data, bytes, size );
     ( *data ) += size;

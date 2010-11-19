@@ -14,28 +14,39 @@
 # limitations under the License.
 #
 
-all:	obj \
-	include\fudge\config.h \
-	libfudgec_cmt.lib \
-	libfudgec_cmtd.lib \
-	libfudgec_crt.lib \
-	libfudgec_crtd.lib \
-	libfudgec.lib \
-	libfudgecd.lib
+PRODUCT=fudge
+PRODUCTU=FUDGE
+PROJECT=$(PRODUCT)c
+OBJ_DIR=obj$(PLATFORM)
+BASENAME=lib$(PROJECT)$(PLATFORM)
 
+all:	$(OBJ_DIR) \
+	include\$(PRODUCT)\config.h \
+	$(BASENAME)_cmt.lib \
+	$(BASENAME)_cmtd.lib \
+	$(BASENAME)_crt.lib \
+	$(BASENAME)_crtd.lib \
+	$(BASENAME).lib \
+	$(BASENAME)d.lib
+
+.IGNORE:
 clean:
-	rd /s/q obj
-	del include\fudge\config.h
-	del libfudgec*.dll
-	del libfudgec*.lib
-	del libfudgec*.ilk
-	del libfudgec*.exp
-	del libfudgec*.dll.manifest
-	del libfudgec*.pdb
+	rd /s/q $(OBJ_DIR)
+	del include\$(PRODUCT)\config.h
+	del $(BASENAME)*.dll
+	del $(BASENAME)*.lib
+	del $(BASENAME)*.ilk
+	del $(BASENAME)*.exp
+	del $(BASENAME)*.dll.manifest
+	del $(BASENAME)*.pdb
 	del tests\runtest.bat
 	del tests\*.log
 	del tests\*.exe
 	del tests\*.exe.manifest
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+!CMDSWITCHES
 
 check:	all \
 	test_cmt \
@@ -45,11 +56,8 @@ check:	all \
 	test \
 	testd
 
-obj:
-	mkdir obj
-
-include\fudge\config.h: include\fudge\config.msvc
-	copy include\fudge\config.msvc include\fudge\config.h
+include\$(PRODUCT)\config.h: include\$(PRODUCT)\config.msvc
+	copy include\$(PRODUCT)\config.msvc include\$(PRODUCT)\config.h
 
 tests\runtest.bat:
 	echo @echo off > tests\runtest.bat
@@ -62,41 +70,108 @@ CL_OPTS=/nologo /Iinclude /W3
 LIB_OPTS=/nologo
 LINK_OPTS=/nologo
 
+!if !defined(BUILD_NO_RELEASE)
+
+!if !defined(BUILD_NO_STATIC)
 CL_LINK_OPT=/MT
 SUFFIX=_cmt
 !include "src\Makefile.msvc"
 !include "tests\Makefile.msvc"
-
 CL_LINK_OPT=/MD
 SUFFIX=_crt
 !include "src\Makefile.msvc"
 !include "tests\Makefile.msvc"
+!else # STATIC
+$(BASENAME)_cmt.lib:
 
-CL_LINK_OPT=/MD /DFUDGEAPI=__declspec(dllexport)
-SUFFIX=
+$(BASENAME)_crt.lib:
+
+test_cmt:
+
+test_crt:
+
+!endif # STATIC
+
+!if !defined(BUILD_NO_DLL)
+CL_LINK_OPT=/MD /D$(PRODUCTU)API=__declspec(dllexport)
 BUILD_DLL=YES
+SUFFIX=
 !include "src\Makefile.msvc"
-CL_LINK_OPT=/MD /DFUDGEAPI=__declspec(dllimport) /DEXTERNAL_TESTS_ONLY
+CL_LINK_OPT=$(CL_LINK_OPT) /DEXTERNAL_TESTS_ONLY
 !include "tests\Makefile.msvc"
 BUILD_DLL=
+!else # DLL
+$(BASENAME).lib:
 
+test:
+
+!endif # DLL
+
+!else # RELEASE
+$(BASENAME)_crt.lib:
+
+$(BASENAME)_cmt.lib:
+
+$(BASENAME).lib:
+
+test_crt:
+
+test_cmt:
+
+test:
+
+!endif # RELEASE
+
+!if !defined(BUILD_NO_DEBUG)
 LINK_OPTS=$(LINK_OPTS) /debug
 
+!if !defined(BUILD_NO_STATIC)
 CL_LINK_OPT=/MTd
 SUFFIX=_cmtd
 !include "src\Makefile.msvc"
 !include "tests\Makefile.msvc"
-
 CL_LINK_OPT=/MDd
 SUFFIX=_crtd
 !include "src\Makefile.msvc"
 !include "tests\Makefile.msvc"
+!else # STATIC
+$(BASENAME)_crtd.lib:
 
-CL_LINK_OPT=/MDd /DFUDGEAPI=__declspec(dllexport)
-SUFFIX=d
+$(BASENAME)_cmtd.lib:
+
+test_crtd:
+
+test_cmtd:
+
+!endif # STATIC
+
+!if !defined(BUILD_NO_DLL)
+CL_LINK_OPT=/MDd /D$(PRODUCTU)API=__declspec(dllexport)
 BUILD_DLL=YES
+SUFFIX=d
 !include "src\Makefile.msvc"
-CL_LINK_OPT=/MDd /DFUDGEAPI=__declspec(dllimport) /DEXTERNAL_TESTS_ONLY
+CL_LINK_OPT=$(CL_LINK_OPT) /DEXTERNAL_TESTS_ONLY
 !include "tests\Makefile.msvc"
 BUILD_DLL=
+!else # DLL
+$(BASENAME).lib:
+
+testd:
+
+!endif # DLL
+
+!else # DEBUG
+$(BASENAME)_crtd.lib:
+
+$(BASENAME)_cmtd.lib:
+
+$(BASENAME).lib:
+
+test_crtd:
+
+test_cmtd:
+
+testd:
+
+!endif # DEBUG
 

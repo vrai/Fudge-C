@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-OBJ_DIR=obj
-
 OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
 	$(OBJ_DIR)\codec_encode$(SUFFIX).obj \
 	$(OBJ_DIR)\coerce$(SUFFIX).obj \
@@ -35,105 +33,110 @@ OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
 	$(OBJ_DIR)\stringpool$(SUFFIX).obj \
 	$(OBJ_DIR)\types$(SUFFIX).obj
 
+INC_DIR=include\$(PRODUCT)
+SRC_DIR=src
+
 #TODO: we don't have proper header dependancies, but this should at least catch everything!
-HEADERS=	include\fudge\codec.h \
-		include\fudge\config.h \
-		include\fudge\fudgeapi.h \
-		include\fudge\message.h \
-		include\fudge\platform.h \
-		include\fudge\status.h \
-		include\fudge\types.h \
-		src\atomic.h \
-		src\codec_decode.h \
-		src\codec_encode.h \
-		src\coerce.h \
-		src\message_internal.h \
-		src\prefix.h \
-		src\reference.h \
-		src\registry_internal.h
+HEADERS=	$(INC_DIR)\codec.h \
+		$(INC_DIR)\config.h \
+		$(INC_DIR)\fudgeapi.h \
+		$(INC_DIR)\message.h \
+		$(INC_DIR)\platform.h \
+		$(INC_DIR)\status.h \
+		$(INC_DIR)\types.h \
+		$(SRC_DIR)\atomic.h \
+		$(SRC_DIR)\codec_decode.h \
+		$(SRC_DIR)\codec_encode.h \
+		$(SRC_DIR)\coerce.h \
+		$(SRC_DIR)\message_internal.h \
+		$(SRC_DIR)\prefix.h \
+		$(SRC_DIR)\reference.h \
+		$(SRC_DIR)\registry_internal.h
+
+TARGET=$(BASENAME)$(SUFFIX)
 
 !if "$(BUILD_DLL)" != ""
-libfudgec$(SUFFIX).lib:	libfudgec$(SUFFIX).dll
+$(TARGET).lib:	$(TARGET).dll
 
 !else
-libfudgec$(SUFFIX).lib:	$(OBJS)
-	lib $(LIB_OPTS) /out:libfudgec$(SUFFIX).lib $(OBJS)
+$(TARGET).lib:	$(OBJS)
+	lib $(LIB_OPTS) /out:$(TARGET).lib $(OBJS)
 !endif
 
-libfudgec$(SUFFIX).dll:	$(OBJS)
-	link $(LINK_OPTS) /dll /implib:libfudgec$(SUFFIX).lib /out:libfudgec$(SUFFIX).dll $(OBJS) wsock32.lib
+$(TARGET).dll:	$(OBJS)
+	link $(LINK_OPTS) /dll /implib:$(TARGET).lib /out:$(TARGET).dll $(OBJS) wsock32.lib
 
 CL=cl $(CL_OPTS) /c $(CL_LINK_OPT)
 
-$(OBJ_DIR)\codec_decode$(SUFFIX).obj:	src\codec_decode.c \
+$(OBJ_DIR)\codec_decode$(SUFFIX).obj:	$(SRC_DIR)\codec_decode.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\codec_decode$(SUFFIX).obj src\codec_decode.c
+	$(CL) /Fo$(OBJ_DIR)\codec_decode$(SUFFIX).obj $(SRC_DIR)\codec_decode.c
 
-$(OBJ_DIR)\codec_encode$(SUFFIX).obj:	src\codec_encode.c \
+$(OBJ_DIR)\codec_encode$(SUFFIX).obj:	$(SRC_DIR)\codec_encode.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\codec_encode$(SUFFIX).obj src\codec_encode.c
+	$(CL) /Fo$(OBJ_DIR)\codec_encode$(SUFFIX).obj $(SRC_DIR)\codec_encode.c
 
-$(OBJ_DIR)\coerce$(SUFFIX).obj:	src\coerce.c \
+$(OBJ_DIR)\coerce$(SUFFIX).obj:	$(SRC_DIR)\coerce.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\coerce$(SUFFIX).obj src\coerce.c
+	$(CL) /Fo$(OBJ_DIR)\coerce$(SUFFIX).obj $(SRC_DIR)\coerce.c
 
-$(OBJ_DIR)\convertutf$(SUFFIX).obj:	src\convertutf.c \
+$(OBJ_DIR)\convertutf$(SUFFIX).obj:	$(SRC_DIR)\convertutf.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\convertutf$(SUFFIX).obj src\convertutf.c
+	$(CL) /Fo$(OBJ_DIR)\convertutf$(SUFFIX).obj $(SRC_DIR)\convertutf.c
 
-$(OBJ_DIR)\datetime$(SUFFIX).obj:	src\datetime.c \
+$(OBJ_DIR)\datetime$(SUFFIX).obj:	$(SRC_DIR)\datetime.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\datetime$(SUFFIX).obj src\datetime.c
+	$(CL) /Fo$(OBJ_DIR)\datetime$(SUFFIX).obj $(SRC_DIR)\datetime.c
 
-$(OBJ_DIR)\envelope$(SUFFIX).obj:	src\envelope.c \
+$(OBJ_DIR)\envelope$(SUFFIX).obj:	$(SRC_DIR)\envelope.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\envelope$(SUFFIX).obj src\envelope.c
+	$(CL) /Fo$(OBJ_DIR)\envelope$(SUFFIX).obj $(SRC_DIR)\envelope.c
 
-$(OBJ_DIR)\fudge$(SUFFIX).obj:	src\fudge.c \
+$(OBJ_DIR)\fudge$(SUFFIX).obj:	$(SRC_DIR)\fudge.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\fudge$(SUFFIX).obj src\fudge.c
+	$(CL) /Fo$(OBJ_DIR)\fudge$(SUFFIX).obj $(SRC_DIR)\fudge.c
 
-$(OBJ_DIR)\header$(SUFFIX).obj:	src\header.c \
+$(OBJ_DIR)\header$(SUFFIX).obj:	$(SRC_DIR)\header.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\header$(SUFFIX).obj	src\header.c
+	$(CL) /Fo$(OBJ_DIR)\header$(SUFFIX).obj	$(SRC_DIR)\header.c
 
-$(OBJ_DIR)\message$(SUFFIX).obj:	src\message.c \
+$(OBJ_DIR)\message$(SUFFIX).obj:	$(SRC_DIR)\message.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\message$(SUFFIX).obj src\message.c
+	$(CL) /Fo$(OBJ_DIR)\message$(SUFFIX).obj $(SRC_DIR)\message.c
 
-$(OBJ_DIR)\message_ex$(SUFFIX).obj:	src\message_ex.c \
+$(OBJ_DIR)\message_ex$(SUFFIX).obj:	$(SRC_DIR)\message_ex.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\message_ex$(SUFFIX).obj src\message_ex.c
+	$(CL) /Fo$(OBJ_DIR)\message_ex$(SUFFIX).obj $(SRC_DIR)\message_ex.c
 
-$(OBJ_DIR)\platform$(SUFFIX).obj:	src\platform.c \
+$(OBJ_DIR)\platform$(SUFFIX).obj:	$(SRC_DIR)\platform.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\platform$(SUFFIX).obj src\platform.c
+	$(CL) /Fo$(OBJ_DIR)\platform$(SUFFIX).obj $(SRC_DIR)\platform.c
 
-$(OBJ_DIR)\prefix$(SUFFIX).obj:	src\prefix.c \
+$(OBJ_DIR)\prefix$(SUFFIX).obj:	$(SRC_DIR)\prefix.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\prefix$(SUFFIX).obj	src\prefix.c
+	$(CL) /Fo$(OBJ_DIR)\prefix$(SUFFIX).obj	$(SRC_DIR)\prefix.c
 
-$(OBJ_DIR)\reference$(SUFFIX).obj:	src\reference.c \
+$(OBJ_DIR)\reference$(SUFFIX).obj:	$(SRC_DIR)\reference.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\reference$(SUFFIX).obj src\reference.c
+	$(CL) /Fo$(OBJ_DIR)\reference$(SUFFIX).obj $(SRC_DIR)\reference.c
 
-$(OBJ_DIR)\registry$(SUFFIX).obj:	src\registry.c \
+$(OBJ_DIR)\registry$(SUFFIX).obj:	$(SRC_DIR)\registry.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\registry$(SUFFIX).obj src\registry.c
+	$(CL) /Fo$(OBJ_DIR)\registry$(SUFFIX).obj $(SRC_DIR)\registry.c
 
-$(OBJ_DIR)\status$(SUFFIX).obj:	src\status.c \
+$(OBJ_DIR)\status$(SUFFIX).obj:	$(SRC_DIR)\status.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\status$(SUFFIX).obj	src\status.c
+	$(CL) /Fo$(OBJ_DIR)\status$(SUFFIX).obj	$(SRC_DIR)\status.c
 
-$(OBJ_DIR)\string$(SUFFIX).obj:	src\string.c \
+$(OBJ_DIR)\string$(SUFFIX).obj:	$(SRC_DIR)\string.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\string$(SUFFIX).obj src\string.c
+	$(CL) /Fo$(OBJ_DIR)\string$(SUFFIX).obj $(SRC_DIR)\string.c
 
-$(OBJ_DIR)\stringpool$(SUFFIX).obj:	src\stringpool.c \
+$(OBJ_DIR)\stringpool$(SUFFIX).obj:	$(SRC_DIR)\stringpool.c \
 					$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\stringpool$(SUFFIX).obj src\stringpool.c
+	$(CL) /Fo$(OBJ_DIR)\stringpool$(SUFFIX).obj $(SRC_DIR)\stringpool.c
 
-$(OBJ_DIR)\types$(SUFFIX).obj:	src\types.c \
+$(OBJ_DIR)\types$(SUFFIX).obj:	$(SRC_DIR)\types.c \
 				$(HEADERS)
-	$(CL) /Fo$(OBJ_DIR)\types$(SUFFIX).obj src\types.c
+	$(CL) /Fo$(OBJ_DIR)\types$(SUFFIX).obj $(SRC_DIR)\types.c
 

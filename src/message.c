@@ -73,7 +73,6 @@ void FieldListNode_destroy ( FieldListNode * node )
     free ( node );
 }
 
-
 struct FudgeMsgImpl
 {
     FudgeRefCount refcount;
@@ -353,8 +352,11 @@ FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
                                                      const type * elements,                                         \
                                                      fudge_i32 numelements )                                        \
     {                                                                                                               \
+        fudge_i32 maxelements = 0x7FFFFFFF / sizeof ( type );                                                       \
+        if ( numelements > maxelements )                                                                            \
+            return FUDGE_PAYLOAD_TOO_LONG;                                                                          \
         return FudgeMsg_addFieldOpaque ( message, typeid, name, ordinal,                                            \
-                                         ( const fudge_byte * ) elements, numelements * sizeof ( type ) );          \
+                                         ( const fudge_byte * ) elements, sizeof ( type ) * numelements );          \
     }
 
 FUDGE_ADDARRAYFIELD_IMPL( Byte, fudge_byte, FUDGE_TYPE_BYTE_ARRAY )
@@ -368,14 +370,18 @@ FudgeStatus FudgeMsg_addFieldString ( FudgeMsg message, const FudgeString name, 
 {
     FudgeStatus status;
     FudgeFieldData data;
+    size_t stringbytes;
 
     if ( ! ( message && string ) )
         return FUDGE_NULL_POINTER;
+    stringbytes = FudgeString_getSize ( string );
+    if ( stringbytes > 0x7FFFFFFF )
+        return FUDGE_PAYLOAD_TOO_LONG;
     if ( ( status = FudgeString_retain ( string ) ) != FUDGE_OK )
         return status;
     data.string = string;
 
-    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, name, ordinal, &data, FudgeString_getSize ( string ) ) ) != FUDGE_OK )
+    if ( ( status = FudgeMsg_addFieldData ( message, FUDGE_TYPE_STRING, name, ordinal, &data, ( fudge_i32 ) stringbytes ) ) != FUDGE_OK )
         FudgeString_release ( string );
     return status;
 }

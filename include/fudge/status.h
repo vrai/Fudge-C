@@ -32,6 +32,7 @@ typedef enum
     FUDGE_INVALID_NAME                  = 0x0011,
     FUDGE_INVALID_ORDINAL               = 0x0012,
     FUDGE_NAME_TOO_LONG                 = 0x0013,
+    FUDGE_PAYLOAD_TOO_LONG              = 0x0014,
 
     FUDGE_INVALID_TYPE_COERCION         = 0x0020,
     FUDGE_COERCION_NOT_REQUIRED         = 0x0021,

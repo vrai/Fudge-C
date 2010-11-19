@@ -16,11 +16,11 @@ This will build all versions of the library and run the test suite against
 each to confirm the build was successful. The following files will be
 created:
 
-  libfudgec.dll	       - DLL version of the library
+  libfudgec.dll        - DLL version of the library
   libfudgec.lib        - Import library for libfudgec.dll
 
-  libfudgecd.dll       - DLL version of the library (debug mode)
-  libfudgecd.lib       - Import library for libfudgecd.dll
+  libfudgecd.dll       - DLL version of the library (debug build)
+  libfudgecd.lib       - Import library for libfudged.dll
 
   libfudgec_cmt.lib    - Linked with LIBCMT.LIB  (/MT)
   libfudgec_cmtd.lib   - Linked with LIBCMTD.LIB (/MTd)
@@ -29,7 +29,23 @@ created:
 
 You do not need all of these files to develop against Fudge - select the one
 appropriate for the compiler settings of the project you wish to use Fudge
-with.
+with. The files produced can be restricted if required, or if your Visual
+Studio does not have the components for all targets, by defining one or more
+of the following macros:
+
+  BUILD_NO_DEBUG       - Will not generate any of the debug builds
+  BUILD_NO_RELEASE     - Will not generate any of the release builds
+  BUILD_NO_DLL         - Will not generate any of the DLL versions
+  BUILD_NO_STATIC      - Will not generate any of the static libraries
+
+If you use one of the cross compiler command environments, for example to
+create libraries for x64 or Itanium on and i386 platform then the files
+will be generated with the platform suffix, for example:
+
+  libfudgecItanium.dll
+  libfudgecItanium.lib
+  libfudgecItanium_crt.lib
+  libfudgecItanium_crtd.lib
 
 The .lib files should be copied to your LIB folder, the .dll files to
 somewhere on the system path, and the include/fudge folder should be copied
