@@ -26,6 +26,7 @@ const char * FudgeStatus_strerror ( FudgeStatus status )
         case FUDGE_INVALID_NAME:                  return "Invalid Name";
         case FUDGE_INVALID_ORDINAL:               return "Invalid Ordinal";
         case FUDGE_NAME_TOO_LONG:                 return "Name Too Long";
+        case FUDGE_PAYLOAD_TOO_LONG:              return "Payload Too Long";
         case FUDGE_INVALID_TYPE_COERCION:         return "Invaild Type Coercion";
         case FUDGE_COERCION_NOT_REQUIRED:         return "Coercion Not Required";
         case FUDGE_INVALID_TYPE_ACCESSOR:         return "Cannot use this accessor/field type combination";
