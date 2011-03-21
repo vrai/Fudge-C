@@ -47,3 +47,6 @@ libfudgec_la_SOURCES = codec_decode.c   \
 
 libfudgec_la_LDFLAGS = -no-undefined -version-info @API_VERSION@
 
+EXTRA_DIST = reference_atomic.c \
+             reference_default.c \
+             reference_pthreads.c
