@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2011, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ FudgeStatus FudgeType_coerceByte ( const FudgeField * source, const fudge_type_i
         case FUDGE_TYPE_SHORT:      target->i16 = ( fudge_i16 ) source->data.byte; break;
         case FUDGE_TYPE_INT:        target->i32 = ( fudge_i32 ) source->data.byte; break;
         case FUDGE_TYPE_LONG:       target->i64 = ( fudge_i64 ) source->data.byte; break;
+        case FUDGE_TYPE_FLOAT:      target->f32 = ( fudge_f32 ) source->data.byte; break;
+        case FUDGE_TYPE_DOUBLE:     target->f64 = ( fudge_f64 ) source->data.byte; break;
         default:
             return FUDGE_INVALID_TYPE_COERCION;
     }
@@ -73,6 +75,8 @@ FudgeStatus FudgeType_coerceShort ( const FudgeField * source, const fudge_type_
         case FUDGE_TYPE_BOOLEAN:    target->boolean = source->data.i16 != 0; break;
         case FUDGE_TYPE_INT:        target->i32 = ( fudge_i32 ) source->data.i16; break;
         case FUDGE_TYPE_LONG:       target->i64 = ( fudge_i64 ) source->data.i16; break;
+        case FUDGE_TYPE_FLOAT:      target->f32 = ( fudge_f32 ) source->data.i16; break;
+        case FUDGE_TYPE_DOUBLE:     target->f64 = ( fudge_f64 ) source->data.i16; break;
         default:
             return FUDGE_INVALID_TYPE_COERCION;
     }
@@ -87,6 +91,8 @@ FudgeStatus FudgeType_coerceInt ( const FudgeField * source, const fudge_type_id
     {
         case FUDGE_TYPE_BOOLEAN:    target->boolean = source->data.i32 != 0; break;
         case FUDGE_TYPE_LONG:       target->i64 = ( fudge_i64 ) source->data.i32; break;
+        case FUDGE_TYPE_FLOAT:      target->f32 = ( fudge_f32 ) source->data.i32; break;
+        case FUDGE_TYPE_DOUBLE:     target->f64 = ( fudge_f64 ) source->data.i32; break;
         default:
             return FUDGE_INVALID_TYPE_COERCION;
     }
@@ -97,14 +103,16 @@ FudgeStatus FudgeType_coerceInt ( const FudgeField * source, const fudge_type_id
 FudgeStatus FudgeType_coerceLong ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes )
 {
     FUDGETYPE_COERCE_CHECK_SAME_TYPE;
-    if ( type == FUDGE_TYPE_BOOLEAN )
+    switch ( type )
     {
-        target->boolean = source->data.i64 != 0;
-        *numbytes = 0;
-        return FUDGE_OK;
+        case FUDGE_TYPE_BOOLEAN:    target->boolean = source->data.i64 != 0; break;
+        case FUDGE_TYPE_FLOAT:      target->f32 = ( fudge_f32 ) source->data.i64; break;
+        case FUDGE_TYPE_DOUBLE:     target->f64 = ( fudge_f64 ) source->data.i64; break;
+        default:
+            return FUDGE_INVALID_TYPE_COERCION;
     }
-    else    
-        return FUDGE_INVALID_TYPE_COERCION;
+    *numbytes = 0;
+    return FUDGE_OK;
 }
 
 FudgeStatus FudgeType_coerceFloat ( const FudgeField * source, const fudge_type_id type, FudgeFieldData * target, fudge_i32 * numbytes )

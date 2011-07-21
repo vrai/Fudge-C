@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009 - 2009, Vrai Stacey.
+ * Copyright (C) 2009 - 2011, Vrai Stacey.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -403,8 +403,13 @@ DEFINE_TEST( FieldCoercion )
     for ( index = 8; index < numfields; ++index )
         TEST_EQUALS_INT( FudgeMsg_getFieldAsI64 ( fields + index, &i64 ), FUDGE_INVALID_TYPE_COERCION );
 
-    for ( index = 0; index < 8; ++index )
+    for ( index = 0; index < 3; ++index )
         TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields + index, &f32 ), FUDGE_INVALID_TYPE_COERCION );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  3, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, 0.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  4, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, -42.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  5, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, 256.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  6, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, -40000.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  7, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, 10000000000.0, 0.001 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  8, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, 0.0, 0.001 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields +  9, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, -1.234, 0.001 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields + 10, &f32 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f32, 0.0, 0.001 );
@@ -412,8 +417,13 @@ DEFINE_TEST( FieldCoercion )
     for ( index = 12; index < numfields; ++index )
         TEST_EQUALS_INT( FudgeMsg_getFieldAsF32 ( fields + index, &f32 ), FUDGE_INVALID_TYPE_COERCION );
 
-    for ( index = 0; index < 8; ++index )
+    for ( index = 0; index < 3; ++index )
         TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields + index, &f64 ), FUDGE_INVALID_TYPE_COERCION );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  3, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, 0.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  4, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, -42.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  5, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, 256.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  6, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, -40000.0, 0.001 );
+    TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  7, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, 10000000000.0, 0.001 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  8, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, 0.0, 0.001 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields +  9, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, -1.234, 0.001 );
     TEST_EQUALS_INT( FudgeMsg_getFieldAsF64 ( fields + 10, &f64 ), FUDGE_OK );   TEST_EQUALS_FLOAT( f64, 0.0, 0.001 );
