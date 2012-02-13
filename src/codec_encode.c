@@ -17,6 +17,7 @@
 #include "fudge/string.h"
 #include "codec_encode.h"
 #include "fudge/header.h"
+#include "memory_internal.h"
 #include "message_internal.h"
 #include "prefix.h"
 #include "registry_internal.h"
@@ -39,7 +40,7 @@ fudge_byte FudgeCodec_calculateBytesToHoldSize ( fudge_i32 size )
 fudge_i32 FudgeCodec_getFieldDataLength ( const FudgeField * field )
 {
     const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( field->type );
-    
+
     /* Fixed width is the easiest to check */
     if ( typedesc->fixedwidth >= 0 )
         return typedesc->fixedwidth;
@@ -130,7 +131,7 @@ FudgeStatus FudgeCodec_populateFieldHeader ( const FudgeField * field, FudgeFiel
         /* Allocate the space for the field name: as a NULL pointer indicates
            no name, allocate a single byte if the field name is NULL (used to
            indicate a field with a name of zero bytes in length). */
-        if ( ! ( header->name = ( fudge_byte * ) malloc ( field->name ? header->namelen : 1 ) ) )
+        if ( ! ( header->name = FUDGEMEMORY_MALLOC( fudge_byte *, field->name ? header->namelen : 1 ) ) )
             return FUDGE_OUT_OF_MEMORY;
 
         if ( field->name )
@@ -311,7 +312,7 @@ FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * byt
     *numbytes += 8; // sizeof ( FudgeMsgHeader );
 
     /* Allocate the space required for the encoded message */
-    if ( ! ( *bytes = ( fudge_byte * ) malloc ( *numbytes ) ) )
+    if ( ! ( *bytes = FUDGEMEMORY_MALLOC( fudge_byte *,  *numbytes ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     /* Write the message envelope */
@@ -335,7 +336,7 @@ FudgeStatus FudgeCodec_encodeMsg ( FudgeMsgEnvelope envelope, fudge_byte * * byt
     return status;
 
 release_bytes_and_fail:
-    free ( *bytes );
+    FUDGEMEMORY_FREE( *bytes );
     return status;
 }
 

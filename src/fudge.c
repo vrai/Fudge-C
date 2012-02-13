@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 #include "fudge/fudge.h"
+#include "memory_internal.h"
 #include "registry_internal.h"
 
 FudgeStatus Fudge_init ( )
 {
+    return Fudge_initEx ( FudgeMemory_defaultManager ( ) );
+}
+
+FudgeStatus Fudge_initEx ( FudgeMemoryManager * mm )
+{
+    FudgeStatus status;
+    if ( ( status = FudgeMemory_init ( mm ) ) )
+        return status;
     return FudgeRegistry_init ( );
 }
 

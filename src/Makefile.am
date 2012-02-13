@@ -21,6 +21,7 @@ noinst_HEADERS = atomic.h               \
                  codec_encode.h         \
                  coerce.h               \
                  convertutf.h           \
+		 memory_internal.h	\
                  message_internal.h     \
                  prefix.h               \
                  reference.h            \
@@ -34,6 +35,7 @@ libfudgec_la_SOURCES = codec_decode.c   \
                        envelope.c       \
                        fudge.c          \
                        header.c         \
+		       memory.c		\
                        message.c        \
                        message_ex.c     \
                        platform.c       \

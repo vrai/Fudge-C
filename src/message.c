@@ -18,6 +18,7 @@
 #include "fudge/message.h"
 #include "fudge/platform.h"
 #include "fudge/string.h"
+#include "memory_internal.h"
 #include "message_internal.h"
 #include "fudge/header.h"
 #include "reference.h"
@@ -64,13 +65,13 @@ void FieldListNode_destroy ( FieldListNode * node )
 
         /* Every other type will store its data in the bytes array */
         default:
-            free ( ( fudge_byte * ) node->field.data.bytes );
+            FUDGEMEMORY_FREE( ( fudge_byte * ) node->field.data.bytes );
             break;
     }
 
     if ( node->field.name )
         FudgeString_release ( node->field.name );
-    free ( node );
+    FUDGEMEMORY_FREE( node );
 }
 
 struct FudgeMsgImpl
@@ -100,7 +101,7 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     message->width = -1;
 
     /* Allocate and initialise the new node, taking a copy of the name if required */
-    if ( ! ( node = ( FieldListNode * ) malloc ( sizeof ( FieldListNode ) ) ) )
+    if ( ! ( node = FUDGEMEMORY_MALLOC( FieldListNode *, sizeof ( FieldListNode ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
     node->next = 0;
     node->field.type = type;
@@ -166,7 +167,7 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     return FUDGE_OK;
 
 release_node_and_fail:
-    free ( node );
+    FUDGEMEMORY_FREE( node );
     return status;
 }
 
@@ -174,12 +175,12 @@ FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr )
 {
     FudgeStatus status;
 
-    if ( ! ( *messageptr = ( FudgeMsg ) malloc ( sizeof ( struct FudgeMsgImpl ) ) ) )
+    if ( ! ( *messageptr = FUDGEMEMORY_MALLOC( FudgeMsg, sizeof ( struct FudgeMsgImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     if ( ( status = FudgeRefCount_create ( &( ( *messageptr )->refcount ) ) ) != FUDGE_OK )
     {
-        free ( *messageptr );
+        FUDGEMEMORY_FREE( *messageptr );
         return status;
     }
 
@@ -221,7 +222,7 @@ FudgeStatus FudgeMsg_release ( FudgeMsg message )
             FieldListNode_destroy ( node );
         }
 
-        free ( message );
+        FUDGEMEMORY_FREE( message );
     }
     return FUDGE_OK;
 }
@@ -333,7 +334,7 @@ FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
 
     if ( numbytes )
     {
-        if ( ! ( data.bytes = ( fudge_byte * ) malloc ( numbytes ) ) )
+        if ( ! ( data.bytes = FUDGEMEMORY_MALLOC( fudge_byte *, numbytes ) ) )
             return FUDGE_OUT_OF_MEMORY;
         memcpy ( ( fudge_byte * ) data.bytes, bytes, numbytes );
     }
@@ -341,7 +342,7 @@ FudgeStatus FudgeMsg_addFieldOpaque ( FudgeMsg message,
         data.bytes = 0;
 
     if ( ( status = FudgeMsg_addFieldData ( message, type, name, ordinal, &data, numbytes ) ) != FUDGE_OK )
-        free ( ( fudge_byte * ) data.bytes );
+        FUDGEMEMORY_FREE( ( fudge_byte * ) data.bytes );
     return status;
 }
 

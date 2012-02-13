@@ -16,6 +16,7 @@
 
 #include "reference.h"
 #include "errno.h"
+#include "memory_internal.h"
 #include "fudge/platform.h"
 #include <pthread.h>
 #include <assert.h>
@@ -43,12 +44,12 @@ FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr )
 {
     int result;
 
-    if ( ! ( *refcountptr = ( FudgeRefCount ) malloc ( sizeof ( struct FudgeRefCountImpl ) ) ) )
+    if ( ! ( *refcountptr = FUDGEMEMORY_MALLOC( FudgeRefCount, sizeof ( struct FudgeRefCountImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     if ( ( result = pthread_mutex_init ( &( ( *refcountptr )->mutex ), NULL ) ) )
     {
-        free ( *refcountptr );
+        FUDGEMEMORY_FREE( *refcountptr );
         return Reference_pthreadResultToFudgeStatus ( result );
     }
 
@@ -59,9 +60,9 @@ FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr )
 FudgeStatus FudgeRefCount_destroy ( FudgeRefCount refcount )
 {
     int result;
-    
+
     result = pthread_mutex_destroy ( &( refcount->mutex ) );
-    free ( refcount );
+    FUDGEMEMORY_FREE( refcount );
     return Reference_pthreadResultToFudgeStatus ( result );
 }
 

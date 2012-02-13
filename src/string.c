@@ -15,9 +15,10 @@
  */
 #define _FUDGESTRINGIMPL_DEFINED 1
 #include "fudge/string.h"
-#include "convertutf.h"
-#include "reference.h"
 #include "atomic.h"
+#include "convertutf.h"
+#include "memory_internal.h"
+#include "reference.h"
 #include <assert.h>
 
 struct FudgeStringImpl
@@ -44,7 +45,7 @@ FudgeStatus FudgeString_allocate ( FudgeString * string, size_t numbytes )
     if ( ! string )
         return FUDGE_NULL_POINTER;
 
-    if ( ! ( *string = ( FudgeString ) malloc ( sizeof ( struct FudgeStringImpl ) ) ) )
+    if ( ! ( *string = FUDGEMEMORY_MALLOC( FudgeString, sizeof ( struct FudgeStringImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     if ( ( status = FudgeRefCount_create ( &( ( *string )->refcount ) ) ) != FUDGE_OK )
@@ -52,7 +53,7 @@ FudgeStatus FudgeString_allocate ( FudgeString * string, size_t numbytes )
 
     if ( numbytes )
     {
-        if ( ! ( ( *string )->bytes = ( fudge_byte * ) malloc ( numbytes ) ) )
+        if ( ! ( ( *string )->bytes = FUDGEMEMORY_MALLOC( fudge_byte *, numbytes ) ) )
         {
             status = FUDGE_OUT_OF_MEMORY;
             goto destroy_refcount_and_fail;
@@ -67,7 +68,7 @@ destroy_refcount_and_fail:
     FudgeRefCount_destroy ( ( *string )->refcount );
 
 free_string_and_fail:
-    free ( string );
+    FUDGEMEMORY_FREE( string );
     return status;
 }
 
@@ -76,8 +77,8 @@ void FudgeString_destroy ( FudgeString string )
     if ( string )
     {
         FudgeRefCount_destroy ( string->refcount );
-        free ( string->bytes );
-        free ( string );
+        FUDGEMEMORY_FREE( string->bytes );
+        FUDGEMEMORY_FREE( string );
     }
 }
 
@@ -269,7 +270,7 @@ FudgeStatus FudgeString_convertToASCIIZ ( char * * target, const FudgeString str
     if ( ! ( target && string ) )
         return FUDGE_NULL_POINTER;
 
-    if ( ! ( *target = ( char * ) malloc ( string->numbytes + 1 ) ) )
+    if ( ! ( *target = FUDGEMEMORY_MALLOC( char *, string->numbytes + 1 ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     if ( string->numbytes )
@@ -288,7 +289,7 @@ FudgeStatus FudgeString_convertToASCIIZ ( char * * target, const FudgeString str
                    there's enough bytes in the source to complete it */
                 if ( readPosition + trailing > string->numbytes )
                 {
-                    free ( *target );
+                    FUDGEMEMORY_FREE( *target );
                     return FUDGE_STRING_INCOMPLETE_UNICODE;
                 }
 
@@ -337,7 +338,7 @@ FudgeStatus FudgeString_convertToUTF16 ( fudge_byte * * target, size_t * numbyte
         return FUDGE_OK;
     }
 
-    if ( ! ( *target = ( fudge_byte * ) malloc ( string->numbytes * 2 ) ) )
+    if ( ! ( *target = FUDGEMEMORY_MALLOC( fudge_byte *, string->numbytes * 2 ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     sourceStart = ( const UTF8 * ) string->bytes;
@@ -349,7 +350,7 @@ FudgeStatus FudgeString_convertToUTF16 ( fudge_byte * * target, size_t * numbyte
                                          ( UTF16 * ) ( *target + string->numbytes * 2 ),
                                          lenientConversion ) ) )
     {
-        free ( *target );
+        FUDGEMEMORY_FREE( *target );
         return FudgeString_convertUTFResultToStatus ( result );
     }
     *numbytes = ( size_t ) targetStart - ( size_t ) *target;
@@ -372,7 +373,7 @@ FudgeStatus FudgeString_convertToUTF32 ( fudge_byte * * target, size_t * numbyte
         return FUDGE_OK;
     }
 
-    if ( ! ( *target = ( fudge_byte * ) malloc ( string->numbytes * 4 ) ) )
+    if ( ! ( *target = FUDGEMEMORY_MALLOC( fudge_byte *, string->numbytes * 4 ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     sourceStart = ( const UTF8 * ) string->bytes;
@@ -384,7 +385,7 @@ FudgeStatus FudgeString_convertToUTF32 ( fudge_byte * * target, size_t * numbyte
                                          ( UTF32 * ) ( *target + string->numbytes * 4 ),
                                          lenientConversion ) ) )
     {
-        free ( *target );
+        FUDGEMEMORY_FREE( *target );
         return FudgeString_convertUTFResultToStatus ( result );
     }
     *numbytes = ( size_t ) targetStart - ( size_t ) *target;

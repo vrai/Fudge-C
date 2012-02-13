@@ -17,6 +17,7 @@
 #define _FUDGEMSGENVELOPEIMPL_DEFINED 1
 #include "fudge/envelope.h"
 #include "fudge/message.h"
+#include "memory_internal.h"
 #include "reference.h"
 
 struct FudgeMsgEnvelopeImpl
@@ -36,7 +37,7 @@ FudgeStatus FudgeMsgEnvelope_create ( FudgeMsgEnvelope * envelopeptr,
 {
     FudgeStatus status;
 
-    if ( ! ( *envelopeptr = ( FudgeMsgEnvelope ) malloc ( sizeof ( struct FudgeMsgEnvelopeImpl ) ) ) )
+    if ( ! ( *envelopeptr = FUDGEMEMORY_MALLOC( FudgeMsgEnvelope, sizeof ( struct FudgeMsgEnvelopeImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     if ( ( status = FudgeRefCount_create ( &( ( *envelopeptr )->refcount ) ) ) != FUDGE_OK )
@@ -53,7 +54,7 @@ FudgeStatus FudgeMsgEnvelope_create ( FudgeMsgEnvelope * envelopeptr,
     return FUDGE_OK;
 
 release_and_fail:
-    free ( *envelopeptr );
+    FUDGEMEMORY_FREE( *envelopeptr );
     return status;
 }
 
@@ -82,7 +83,7 @@ FudgeStatus FudgeMsgEnvelope_release ( FudgeMsgEnvelope envelope )
         if ( ( status = FudgeRefCount_destroy ( envelope->refcount ) ) != FUDGE_OK )
             return status;
 
-        free ( envelope );
+        FUDGEMEMORY_FREE( envelope );
     }
     return FUDGE_OK;
 }

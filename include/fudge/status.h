@@ -64,7 +64,8 @@ typedef enum
     FUDGE_INTERNAL_LIST_STATE           = 0x1000,
     FUDGE_INTERNAL_PAYLOAD              = 0x1001,
 
-    FUDGE_REGISTRY_UNINITIALISED        = 0x2000
+    FUDGE_REGISTRY_UNINITIALISED        = 0x2000,
+    FUDGE_CHANGED_MEMORY_MANAGER        = 0x2001
 
 } FudgeStatus;
 

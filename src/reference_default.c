@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "reference.h"
+#include "memory_internal.h"
 #include "fudge/platform.h"
 #include <assert.h>
 
@@ -24,7 +25,7 @@ struct FudgeRefCountImpl
 
 FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr )
 {
-    if ( ! ( *refcountptr = ( FudgeRefCount ) malloc ( sizeof ( struct FudgeRefCountImpl ) ) ) )
+    if ( ! ( *refcountptr = FUDGEMEMORY_MALLOC( FudgeRefCount, sizeof ( struct FudgeRefCountImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     ( *refcountptr )->count = 1u;
@@ -34,7 +35,7 @@ FudgeStatus FudgeRefCount_create ( FudgeRefCount * refcountptr )
 
 FudgeStatus FudgeRefCount_destroy ( FudgeRefCount refcount )
 {
-    free ( refcount );
+    FUDGEMEMORY_FREE( refcount );
     return FUDGE_OK;
 }
 

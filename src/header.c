@@ -15,6 +15,7 @@
  */
 #include "fudge/codec_ex.h"
 #include "fudge/header.h"
+#include "memory_internal.h"
 #include "prefix.h"
 
 FudgeStatus FudgeHeader_decodeMsgHeader ( FudgeMsgHeader * header, const fudge_byte * bytes, fudge_i32 numbytes )
@@ -76,7 +77,7 @@ FudgeStatus FudgeHeader_decodeFieldHeader ( FudgeFieldHeader * header, fudge_i32
 
         if ( index + length > numbytes )
             return FUDGE_OUT_OF_BYTES;
-        if ( ! ( header->name = ( fudge_byte * ) malloc ( length ) ) )
+        if ( ! ( header->name = FUDGEMEMORY_MALLOC( fudge_byte *, length ) ) )
             return FUDGE_OUT_OF_MEMORY;
         memcpy ( header->name, bytes + index, length );
         index += length;
@@ -120,7 +121,7 @@ FudgeStatus FudgeHeader_encodeFieldHeader ( const FudgeFieldHeader * header, fud
 
 FudgeStatus FudgeHeader_destroyFieldHeader ( FudgeFieldHeader header )
 {
-    free ( header.name );
+    FUDGEMEMORY_FREE( header.name );
     return FUDGE_OK;
 }
 

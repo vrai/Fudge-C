@@ -17,6 +17,7 @@
 #include "fudge/string.h"
 #include "codec_decode.h"
 #include "fudge/header.h"
+#include "memory_internal.h"
 #include "registry_internal.h"
 #include <assert.h>
 
@@ -141,7 +142,7 @@ inline FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data, const f
 
     if ( width )
     {
-        if ( ! ( *bytes = ( fudge_byte * ) malloc ( width ) ) )
+        if ( ! ( *bytes = FUDGEMEMORY_MALLOC( fudge_byte *, width ) ) )
             return FUDGE_OUT_OF_MEMORY;
         memcpy ( *bytes, data, width );
     }
@@ -211,7 +212,7 @@ FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f64, F64, f64 )
             int index,                                                                                                              \
                 numfields = width / sizeof ( type );                                                                                \
                                                                                                                                     \
-            if ( ! ( target = ( type * ) malloc ( width ) ) )                                                                       \
+            if ( ! ( target = FUDGEMEMORY_MALLOC( type *, width ) ) )                                                               \
                 return FUDGE_OUT_OF_MEMORY;                                                                                         \
             for ( index = 0; index < numfields; ++index )                                                                           \
                 target [ index ] = swapper ( source [ index ] );                                                                    \

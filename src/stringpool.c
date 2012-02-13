@@ -15,6 +15,7 @@
  */
 #define _FUDGESTRINGPOOLIMPL_DEFINED 1
 #include "fudge/stringpool.h"
+#include "memory_internal.h"
 #include "reference.h"
 
 typedef struct StringPoolNode
@@ -36,13 +37,13 @@ FudgeStatus FudgeStringPool_create ( FudgeStringPool * pool )
     if ( ! pool )
         return FUDGE_NULL_POINTER;
 
-    if ( ! ( *pool = ( FudgeStringPool ) malloc ( sizeof ( struct FudgeStringPoolImpl ) ) ) )
+    if ( ! ( *pool = FUDGEMEMORY_MALLOC( FudgeStringPool, sizeof ( struct FudgeStringPoolImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     ( *pool )->stringhead = 0;
 
     if ( ( status = FudgeRefCount_create ( &( ( *pool )->refcount ) ) ) != FUDGE_OK )
-        free ( pool );
+        FUDGEMEMORY_FREE( pool );
 
     return status;
 }
@@ -58,7 +59,7 @@ FudgeStatus FudgeStringPool_clear ( FudgeStringPool pool )
     {
         FudgeString_release ( node->string );
         pool->stringhead = node->next;
-        free ( node );
+        FUDGEMEMORY_FREE( node );
     }
 
     return FUDGE_OK;
@@ -70,7 +71,7 @@ void FudgeStringPool_destroy ( FudgeStringPool pool )
     {
         FudgeStringPool_clear ( pool );
         FudgeRefCount_destroy ( pool->refcount );
-        free ( pool );
+        FUDGEMEMORY_FREE( pool );
     }
 }
 
@@ -100,7 +101,7 @@ FudgeStatus FudgeStringPool_acquire ( FudgeStringPool pool, FudgeString string )
     if ( ! ( pool && string ) )
         return FUDGE_NULL_POINTER;
 
-    if ( ! ( node = ( StringPoolNode * ) malloc ( sizeof ( StringPoolNode )) ) )
+    if ( ! ( node = FUDGEMEMORY_MALLOC( StringPoolNode *, sizeof ( StringPoolNode ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
     node->string = string;
