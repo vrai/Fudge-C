@@ -15,7 +15,7 @@
 ### Need modern autoconf, only 2.60+ has the AC_TYPE_INT*_T macros
 AC_PREREQ([2.60])
 
-AC_INIT([Fudge-C], [0.4], [vrai.stacey@gmail.com])
+AC_INIT([Fudge-C], [0.5], [vrai.stacey@gmail.com])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER(include/config.h)
@@ -32,7 +32,7 @@ AM_INIT_AUTOMAKE
 ### API changed, backwards compatible:      +1 :  0 : +1
 ### API changed, not backwards compatible:  +1 :  0 :  0
 ### API unchanged, internals updated:        ? : +1 :  ?
-API_VERSION="1:0:1"
+API_VERSION="2:0:2"
 AC_SUBST(API_VERSION)
 
 ### Make sure we're in the right directory
