@@ -22,6 +22,7 @@ FudgeMemoryManager * s_memoryManager = 0;
 FudgeMemoryManager FudgeMemory_default =
 {
     malloc,     /* Allocate */
+    realloc,    /* Reallocate */
     free        /* Deallocate */
 };
 
@@ -45,6 +46,11 @@ FudgeMemoryManager * FudgeMemory_defaultManager ( )
 void * FudgeMemory_malloc ( size_t size )
 {
     return s_memoryManager->allocate ( size );
+}
+
+void * FudgeMemroy_realloc ( void * ptr, size_t size )
+{
+    return s_memoryManager->reallocate ( ptr, size );
 }
 
 void FudgeMemory_free ( void * ptr )

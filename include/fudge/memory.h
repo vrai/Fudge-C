@@ -22,22 +22,25 @@
     extern "C" {
 #endif
 
-/* The Fudge-C memory manager structure. Holds pointers to the allocator
-   and deallocator functions that are used by the library. If none is
-   specified by Fudge_init the default implementation will be used (see
-   below). Any user implementation must meet the following assumptions:
+/* The Fudge-C memory manager structure. Holds pointers to the allocator,
+   reallocator and deallocator functions that are used by the library. If
+   none is specified by Fudge_init the default implementation will be used
+   (see below). Any user implementation must meet the following assumptions:
 
-   1. The allocator will return NULL on failure.
+   1. The allocator and reallocator will return NULL on failure.
    2. The deallocator will ignore NULL pointers (i.e. attempting to free
       NULL is a noop).
-   3. The manager is safe to call from multiple threads concurrently; all
+   3. The reallocator will free the old memory if necessary and move the
+      contents to the new memory.
+   4. The manager is safe to call from multiple threads concurrently; all
       thread safety is handled internally.
-   4. Any construction or cleanup of the manager itself must be handled
+   5. Any construction or cleanup of the manager itself must be handled
       outside of the Fudge-C library.
 */
 typedef struct
 {
     void * ( *allocate ) ( size_t );
+    void * ( *reallocate ) ( void *, size_t );
     void ( *deallocate ) ( void * );
 
 } FudgeMemoryManager;
@@ -50,6 +53,7 @@ FUDGEAPI FudgeMemoryManager * FudgeMemory_defaultManager ( );
 /* Access to the current memory managers allocate/deallocate
    functionality */
 FUDGEAPI void * FudgeMemory_malloc ( size_t size );
+FUDGEAPI void * FudgeMemroy_realloc ( void * ptr, size_t size );
 FUDGEAPI void FudgeMemory_free ( void * ptr );
 
 #ifdef __cplusplus

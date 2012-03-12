@@ -1,12 +1,12 @@
 /**
- * Copyright (C) 2009 - 2010, Vrai Stacey.
- * 
+ * Copyright (C) 2009 - 2012, Vrai Stacey.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *     
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,28 +25,22 @@
 #include "registry_internal.h"
 #include <assert.h>
 
-typedef struct FieldListNode
+void FudgeField_destroy ( FudgeField * fld )
 {
-    FudgeField field;
-    struct FieldListNode * next;
-} FieldListNode;
+    assert ( fld );
 
-void FieldListNode_destroy ( FieldListNode * node )
-{
-    assert ( node );
-
-    switch ( node->field.type )
+    switch ( fld->type )
     {
         /* Fudge message type: free the message pointer */
         case FUDGE_TYPE_FUDGE_MSG:
-            if ( node->field.data.message )
-                FudgeMsg_release ( node->field.data.message );
+            if ( fld->data.message )
+                FudgeMsg_release ( fld->data.message );
             break;
 
         /* Fudge string type: free the string pointer */
         case FUDGE_TYPE_STRING:
-            if ( node->field.data.string )
-                FudgeString_release ( node->field.data.string );
+            if ( fld->data.string )
+                FudgeString_release ( fld->data.string );
             break;
 
         /* Primitive type: nothing needs freeing */
@@ -65,21 +59,85 @@ void FieldListNode_destroy ( FieldListNode * node )
 
         /* Every other type will store its data in the bytes array */
         default:
-            FUDGEMEMORY_FREE( ( fudge_byte * ) node->field.data.bytes );
+            FUDGEMEMORY_FREE( ( fudge_byte * ) fld->data.bytes );
             break;
     }
 
-    if ( node->field.name )
-        FudgeString_release ( node->field.name );
-    FUDGEMEMORY_FREE( node );
+    if ( fld->name )
+        FudgeString_release ( fld->name );
+}
+
+typedef struct FieldVector
+{
+    FudgeField * fields;
+    size_t capacity,
+           top;
+} FieldVector;
+
+FudgeStatus FieldVector_init ( FieldVector * vec, size_t initialcap )
+{
+    if ( ! vec ) return FUDGE_NULL_POINTER;
+
+    vec->capacity = initialcap > 0u ? initialcap : 1u;;
+    vec->top = 0u;
+
+    if ( ! ( vec->fields = FUDGEMEMORY_MALLOC( FudgeField *,
+                                               sizeof ( FudgeField ) * vec->capacity ) ) )
+        return FUDGE_OUT_OF_MEMORY;
+    return FUDGE_OK;
+}
+
+FudgeStatus FieldVector_grow ( FieldVector * vec, size_t size )
+{
+    FudgeField * newflds;
+    size_t newcap;
+
+    if ( size < vec->capacity )
+        return FUDGE_OK;
+
+    if ( ( newcap = vec->capacity * 2 ) <= size )
+        newcap = size + 1;
+
+    if ( ! ( newflds = FUDGEMEMORY_REALLOC( FudgeField *,
+                                            vec->fields,
+                                            sizeof ( FudgeField ) * newcap ) ) )
+        return FUDGE_OUT_OF_MEMORY;
+    vec->fields = newflds;
+    vec->capacity = newcap;
+    return FUDGE_OK;
+}
+
+FudgeStatus FieldVector_append ( FieldVector * vec, FudgeField * fld )
+{
+    size_t newtop;
+    FudgeStatus status;
+
+    if ( ! ( vec && fld ) ) return FUDGE_NULL_POINTER;
+
+    if ( ( newtop = vec->top + 1 ) >= vec->capacity )
+        if ( (status = FieldVector_grow ( vec, newtop + 1 ) ) )
+            return status;
+
+    vec->fields [ vec->top ] = *fld;
+    vec->top = newtop;
+    return FUDGE_OK;
+}
+
+void FieldVector_destroy ( FieldVector * vec )
+{
+    assert ( vec && vec->fields );
+
+    size_t idx;
+    for ( idx = 0u; idx < vec->top; ++idx )
+        FudgeField_destroy ( &( vec->fields [ idx ] ) );
+
+    FUDGEMEMORY_FREE( vec->fields );
 }
 
 struct FudgeMsgImpl
 {
     FudgeRefCount refcount;
-    FieldListNode * fieldhead,
-                  * fieldtail;
-    unsigned long numfields;
+    FieldVector fields;
     fudge_i32 width;
 };
 
@@ -91,7 +149,7 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
                                     fudge_i32 numbytes )
 {
     FudgeStatus status;
-    FieldListNode * node;
+    FudgeField field;
     const FudgeTypeDesc * typedesc = FudgeRegistry_getTypeDesc ( type );
 
     if ( ! ( message && data ) )
@@ -100,20 +158,17 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
     /* Adding a field will invalidate the message's width */
     message->width = -1;
 
-    /* Allocate and initialise the new node, taking a copy of the name if required */
-    if ( ! ( node = FUDGEMEMORY_MALLOC( FieldListNode *, sizeof ( FieldListNode ) ) ) )
-        return FUDGE_OUT_OF_MEMORY;
-    node->next = 0;
-    node->field.type = type;
-    node->field.numbytes = numbytes;
-    node->field.flags = 0;
+    /* Initialise the new new */
+    field.type = type;
+    field.numbytes = numbytes;
+    field.flags = 0;
 
     /* Copy across the data */
     if ( typedesc->payload == FUDGE_TYPE_PAYLOAD_SUBMSG && ! data->message )
         return FUDGE_NULL_POINTER;
     else if ( typedesc->payload == FUDGE_TYPE_PAYLOAD_STRING && ! data->string )
         return FUDGE_NULL_POINTER;
-    node->field.data = *data;
+    field.data = *data;
 
     /* Set the field name (if required) */
     if ( name )
@@ -121,54 +176,33 @@ FudgeStatus FudgeMsg_addFieldData ( FudgeMsg message,
         /* Names may not have a length greater than 255 bytes (only one byte is
            available for their length) */
         if ( FudgeString_getSize ( name ) >= 256 )
-        {
-            status = FUDGE_NAME_TOO_LONG;
-            goto release_node_and_fail;
-        }
+            return FUDGE_NAME_TOO_LONG;
 
         if ( ( status = FudgeString_retain ( name ) ) != FUDGE_OK )
-            goto release_node_and_fail;
+            return status;
 
-        node->field.name = name;
-        node->field.flags |= FUDGE_FIELD_HAS_NAME;
+        field.name = name;
+        field.flags |= FUDGE_FIELD_HAS_NAME;
     }
     else
-    {
-        node->field.name = 0;
-    }
+        field.name = 0;
 
     /* Set the field ordinal (if required) */
     if ( ordinal )
     {
-        node->field.ordinal = *ordinal;
-        node->field.flags |= FUDGE_FIELD_HAS_ORDINAL;
+        field.ordinal = *ordinal;
+        field.flags |= FUDGE_FIELD_HAS_ORDINAL;
     }
     else
-        node->field.ordinal = 0;
+        field.ordinal = 0;
 
     /* Append the node to the message's list */
-    if ( message->fieldtail )
+    if ( ( status = FieldVector_append ( &message->fields, &field ) ) )
     {
-        if ( message->fieldtail->next )
-        {
-            /* Field tail is pointing at a non-tail node - something's gone very wrong */
-            assert ( message->fieldtail->next == 0 );
-            FieldListNode_destroy ( node );
-            return FUDGE_INTERNAL_LIST_STATE;
-        }
-
-        message->fieldtail->next = node;
-        message->fieldtail = node;
+        FudgeField_destroy ( &field );
+        return status;
     }
-    else
-        message->fieldhead = message->fieldtail = node;
-
-    message->numfields += 1ul;
     return FUDGE_OK;
-
-release_node_and_fail:
-    FUDGEMEMORY_FREE( node );
-    return status;
 }
 
 FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr )
@@ -178,18 +212,17 @@ FudgeStatus FudgeMsg_create ( FudgeMsg * messageptr )
     if ( ! ( *messageptr = FUDGEMEMORY_MALLOC( FudgeMsg, sizeof ( struct FudgeMsgImpl ) ) ) )
         return FUDGE_OUT_OF_MEMORY;
 
-    if ( ( status = FudgeRefCount_create ( &( ( *messageptr )->refcount ) ) ) != FUDGE_OK )
-    {
-        FUDGEMEMORY_FREE( *messageptr );
-        return status;
-    }
+    if ( ( status = FudgeRefCount_create ( &( ( *messageptr )->refcount ) ) ) )
+        goto release_message_and_fail;
+    if ( ( status = FieldVector_init ( &( *messageptr )->fields, 16 ) ) )
+        goto release_message_and_fail;
 
-    ( *messageptr )->fieldhead = 0;
-    ( *messageptr )->fieldtail = 0;
-    ( *messageptr )->numfields = 0ul;
     ( *messageptr )->width = -1;
-
     return FUDGE_OK;
+
+release_message_and_fail:
+    FUDGEMEMORY_FREE( *messageptr );
+    return status;
 }
 
 FudgeStatus FudgeMsg_retain ( FudgeMsg message )
@@ -210,18 +243,11 @@ FudgeStatus FudgeMsg_release ( FudgeMsg message )
     {
         /* Last reference has been released - destroy the message and all of its fields */
         FudgeStatus status;
-        FieldListNode * node;
 
         if ( ( status = FudgeRefCount_destroy ( message->refcount ) ) != FUDGE_OK )
             return status;
 
-        while ( message->fieldhead )
-        {
-            node = message->fieldhead;
-            message->fieldhead = node->next;
-            FieldListNode_destroy ( node );
-        }
-
+        FieldVector_destroy ( &message->fields );
         FUDGEMEMORY_FREE( message );
     }
     return FUDGE_OK;
@@ -229,7 +255,7 @@ FudgeStatus FudgeMsg_release ( FudgeMsg message )
 
 unsigned long FudgeMsg_numFields ( FudgeMsg message )
 {
-    return message ? message->numfields : 0lu;
+    return message ? message->fields.top : 0lu;
 }
 
 FudgeStatus FudgeMsg_addFieldIndicator ( FudgeMsg message, const FudgeString name, const fudge_i16 * ordinal )
@@ -251,7 +277,7 @@ fudge_type_id FudgeMsg_pickIntegerType ( const fudge_type_id type, const fudge_i
     return FUDGE_TYPE_LONG;
 }
 
-FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message, 
+FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message,
                                        const FudgeString name,
                                        const fudge_i16 * ordinal,
                                        fudge_type_id type,
@@ -271,7 +297,7 @@ FudgeStatus FudgeMsg_addFieldInteger ( FudgeMsg message,
         default:
             return FUDGE_INTERNAL_PAYLOAD;
     }
-    
+
     return FudgeMsg_addFieldData ( message, type, name, ordinal, &data, 0 );
 }
 
@@ -439,56 +465,44 @@ FudgeStatus FudgeMsg_addFieldDateTime ( FudgeMsg message, const FudgeString name
 
 FudgeStatus FudgeMsg_getFieldAtIndex ( FudgeField * field, const FudgeMsg message, unsigned long index )
 {
-    FieldListNode * node;
-
     if ( ! ( message && field ) )
         return FUDGE_NULL_POINTER;
-    if ( index >= message->numfields )
+    if ( index >= message->fields.top )
         return FUDGE_INVALID_INDEX;
 
-    node = message->fieldhead;
-    while ( node && index-- )
-        node = node->next;
-
-    if ( node )
-    {
-        *field = node->field;
-        return FUDGE_OK;
-    }
-    else
-        return FUDGE_INTERNAL_LIST_STATE;
+    *field = message->fields.fields [ index ];
+    return FUDGE_OK;
 }
 
 FudgeStatus FudgeMsg_getFieldByName ( FudgeField * field, const FudgeMsg message, const FudgeString name )
 {
-    FieldListNode * node;
+    size_t idx;
 
     if ( ! ( message && field && name ) )
         return FUDGE_NULL_POINTER;
 
-    for ( node = message->fieldhead; node; node = node->next )
-    {
-        if ( FudgeString_compare ( node->field.name, name ) == 0 )
+    for ( idx = 0u; idx < message->fields.top; ++idx )
+        if ( FudgeString_compare ( message->fields.fields [ idx ].name, name ) == 0 )
         {
-            *field = node->field;
+            *field = message->fields.fields [ idx ];
             return FUDGE_OK;
         }
-    }
 
     return FUDGE_INVALID_NAME;
 }
 
 FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, const FudgeMsg message, fudge_i16 ordinal )
 {
-    FieldListNode * node;
+    size_t idx;
 
     if ( ! ( message && field ) )
         return FUDGE_NULL_POINTER;
 
-    for ( node = message->fieldhead; node; node = node->next )
-        if ( node->field.flags & FUDGE_FIELD_HAS_ORDINAL && node->field.ordinal == ordinal )
+    for ( idx = 0u; idx < message->fields.top; ++idx )
+        if ( message->fields.fields [ idx ].flags & FUDGE_FIELD_HAS_ORDINAL
+             && message->fields.fields [ idx ].ordinal == ordinal )
         {
-            *field = node->field;
+            *field = message->fields.fields [ idx ];
             return FUDGE_OK;
         }
 
@@ -497,16 +511,14 @@ FudgeStatus FudgeMsg_getFieldByOrdinal ( FudgeField * field, const FudgeMsg mess
 
 fudge_i32 FudgeMsg_getFields ( FudgeField * fields, fudge_i32 numfields, const FudgeMsg message )
 {
-    FieldListNode * node;
-    fudge_i32 index;
-
     if ( ! ( fields && message && numfields >= 0 ) )
         return -1;
 
-    for ( index = 0, node = message->fieldhead; index < numfields && node; ++index, node = node->next )
-        fields [ index ] = node->field;
+    if ( numfields > message->fields.top )
+        numfields = message->fields.top;
 
-    return index;
+    memcpy ( fields, message->fields.fields, numfields * sizeof ( FudgeField ) );
+    return numfields;
 }
 
 FudgeStatus FudgeMsg_setWidth ( FudgeMsg message, fudge_i32 width )

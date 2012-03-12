@@ -27,6 +27,7 @@ FudgeStatus FudgeMemory_init ( FudgeMemoryManager * manager );
 /* Internal macros around memory manager - avoids function call overhead and
    hides the need to cast the return types */
 #define FUDGEMEMORY_MALLOC( TYPE, SIZE ) ( TYPE ) s_memoryManager->allocate ( SIZE )
+#define FUDGEMEMORY_REALLOC( TYPE, PTR, SIZE ) ( TYPE ) s_memoryManager->reallocate ( PTR, SIZE )
 #define FUDGEMEMORY_FREE( PTR ) s_memoryManager->deallocate ( PTR )
 
 #endif
