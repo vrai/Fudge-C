@@ -125,9 +125,10 @@ FudgeStatus FieldVector_append ( FieldVector * vec, FudgeField * fld )
 
 void FieldVector_destroy ( FieldVector * vec )
 {
+	size_t idx;
+
     assert ( vec && vec->fields );
 
-    size_t idx;
     for ( idx = 0u; idx < vec->top; ++idx )
         FudgeField_destroy ( &( vec->fields [ idx ] ) );
 
@@ -514,7 +515,7 @@ fudge_i32 FudgeMsg_getFields ( FudgeField * fields, fudge_i32 numfields, const F
     if ( ! ( fields && message && numfields >= 0 ) )
         return -1;
 
-    if ( numfields > message->fields.top )
+    if ( numfields > ( fudge_i32 ) message->fields.top )
         numfields = message->fields.top;
 
     memcpy ( fields, message->fields.fields, numfields * sizeof ( FudgeField ) );

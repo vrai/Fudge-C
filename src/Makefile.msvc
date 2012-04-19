@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 - 2009, OpenGamma.
+# Copyright (C) 2009 - 2012; OpenGamma, Vrai Stacey.
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ OBJS=	$(OBJ_DIR)\codec_decode$(SUFFIX).obj \
 	$(OBJ_DIR)\envelope$(SUFFIX).obj \
 	$(OBJ_DIR)\fudge$(SUFFIX).obj \
 	$(OBJ_DIR)\header$(SUFFIX).obj \
+	$(OBJ_DIR)\memory$(SUFFIX).obj \
 	$(OBJ_DIR)\message$(SUFFIX).obj \
 	$(OBJ_DIR)\message_ex$(SUFFIX).obj \
 	$(OBJ_DIR)\platform$(SUFFIX).obj \
@@ -51,7 +52,8 @@ HEADERS=	$(INC_DIR)\codec.h \
 		$(SRC_DIR)\message_internal.h \
 		$(SRC_DIR)\prefix.h \
 		$(SRC_DIR)\reference.h \
-		$(SRC_DIR)\registry_internal.h
+		$(SRC_DIR)\registry_internal.h \
+		$(SRC_DIR)\reference.h
 
 TARGET=$(BASENAME)$(SUFFIX)
 
@@ -99,6 +101,10 @@ $(OBJ_DIR)\fudge$(SUFFIX).obj:	$(SRC_DIR)\fudge.c \
 $(OBJ_DIR)\header$(SUFFIX).obj:	$(SRC_DIR)\header.c \
 				$(HEADERS)
 	$(CL) /Fo$(OBJ_DIR)\header$(SUFFIX).obj	$(SRC_DIR)\header.c
+
+$(OBJ_DIR)\memory$(SUFFIX).obj:	$(SRC_DIR)\memory.c \
+					$(HEADERS)
+	$(CL) /Fo$(OBJ_DIR)\memory$(SUFFIX).obj $(SRC_DIR)\memory.c
 
 $(OBJ_DIR)\message$(SUFFIX).obj:	$(SRC_DIR)\message.c \
 					$(HEADERS)
