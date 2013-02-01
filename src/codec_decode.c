@@ -1,12 +1,12 @@
 /**
- * Copyright (C) 2009 - 2010, Vrai Stacey.
- * 
+ * Copyright (C) 2009 - 2013, Vrai Stacey.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- *     
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,7 @@ FudgeStatus FudgeCodec_decodeMsgFields ( FudgeMsg message, const fudge_byte * by
         /* Clean up this iteration */
         FudgeHeader_destroyFieldHeader ( fieldheader );
     }
-    
+
     return FUDGE_OK;
 
 /* Sorry Dijkstra */
@@ -132,8 +132,16 @@ inline fudge_byte FudgeCodec_decodeByte ( const fudge_byte * bytes )
 FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_i16, I16, i16, ntohs )
 FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_i32, I32, i32, ntohl )
 FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_i64, I64, i64, ntohi64 )
-FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_f32, F32, f32, ntohf )
-FUDGECODEC_DECODE_PRIMITIVE_IMPL( fudge_f64, F64, f64, ntohd )
+
+#define FUDGECODEC_DECODE_PRIMITIVE_FP_IMPL( type, typename, field, swapper )   \
+    inline type FudgeCodec_decode##typename ( const fudge_byte * bytes )        \
+    {                                                                           \
+        type value = *( ( type * ) bytes );                                     \
+        return swapper ( value );                                               \
+    }
+
+FUDGECODEC_DECODE_PRIMITIVE_FP_IMPL( fudge_f32, F32, f32, ntohf )
+FUDGECODEC_DECODE_PRIMITIVE_FP_IMPL( fudge_f64, F64, f64, ntohd )
 
 inline FudgeStatus FudgeCodec_decodeByteArray ( const fudge_byte * data, const fudge_i32 width, fudge_byte * * bytes )
 {
@@ -209,13 +217,17 @@ FUDGECODEC_DECODE_PRIMITIVE_FIELD_IMPL( fudge_f64, F64, f64 )
                                                                                                                                     \
         if ( width )                                                                                                                \
         {                                                                                                                           \
+            type value;                                                                                                             \
             int index,                                                                                                              \
                 numfields = width / sizeof ( type );                                                                                \
                                                                                                                                     \
             if ( ! ( target = FUDGEMEMORY_MALLOC( type *, width ) ) )                                                               \
                 return FUDGE_OUT_OF_MEMORY;                                                                                         \
             for ( index = 0; index < numfields; ++index )                                                                           \
-                target [ index ] = swapper ( source [ index ] );                                                                    \
+            {                                                                                                                       \
+                value = source [ index ];                                                                                           \
+                target [ index ] = swapper ( value );                                                                               \
+            }                                                                                                                       \
         }                                                                                                                           \
         else                                                                                                                        \
             target = 0;                                                                                                             \
