@@ -3,3 +3,4 @@ install-sh
 missing
 config.*
 lt*.sh
+test-driver
